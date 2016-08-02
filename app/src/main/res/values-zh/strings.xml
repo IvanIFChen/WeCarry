@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--Nav Drawer-->
+    <string name="navigation_drawer_role">角色</string>
+    <string name="navigation_drawer_goal">目標</string>
+    <string name="navigation_drawer_plan">計畫</string>
+    <string name="navigation_drawer_calendar">行事曆</string>
+    <string name="navigation_drawer_delegate">授權</string>
+
+</resources>

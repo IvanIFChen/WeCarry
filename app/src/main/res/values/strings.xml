@@ -5,4 +5,13 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+
+    <!--Nav Drawer-->
+    <string name="navigation_drawer_role">Role</string>
+    <string name="navigation_drawer_goal">Goal</string>
+    <string name="navigation_drawer_plan">Plan</string>
+    <string name="navigation_drawer_calendar">Calendar</string>
+    <string name="navigation_drawer_delegate">Delegate</string>
+
 </resources>
