@@ -1,4 +1,4 @@
-package space.wecarry.wecarryandroidapp201608.fragment;
+package space.wecarry.wecarryapp.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import space.wecarry.wecarryandroidapp201608.R;
+import space.wecarry.wecarryapp.R;
 
 /**
  * Created by Tunabutter on 8/2/2016.

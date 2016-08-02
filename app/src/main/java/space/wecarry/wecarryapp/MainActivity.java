@@ -1,4 +1,4 @@
-package space.wecarry.wecarryandroidapp201608;
+package space.wecarry.wecarryapp;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,16 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 
-import java.util.Locale;
-
-import space.wecarry.wecarryandroidapp201608.fragment.CalendarFragment;
-import space.wecarry.wecarryandroidapp201608.fragment.DelegateFragment;
-import space.wecarry.wecarryandroidapp201608.fragment.GoalFragment;
-import space.wecarry.wecarryandroidapp201608.fragment.PlanFragment;
-import space.wecarry.wecarryandroidapp201608.fragment.RoleFragment;
+import space.wecarry.wecarryapp.fragment.CalendarFragment;
+import space.wecarry.wecarryapp.fragment.DelegateFragment;
+import space.wecarry.wecarryapp.fragment.GoalFragment;
+import space.wecarry.wecarryapp.fragment.PlanFragment;
+import space.wecarry.wecarryapp.fragment.RoleFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -140,41 +135,4 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-//    private void selectItem(int position) {
-//        // update the main content by replacing fragments
-//        Fragment fragment = new PlanetFragment();
-//        Bundle args = new Bundle();
-//        args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
-//        fragment.setArguments(args);
-//
-//        FragmentManager fragmentManager = getFragmentManager();
-//        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
-//
-//        // update selected item and title, then close the drawer
-//        mDrawerList.setItemChecked(position, true);
-//        setTitle(mPlanetTitles[position]);
-//        mDrawerLayout.closeDrawer(mDrawerList);
-//    }
-//    public static class PlanetFragment extends Fragment {
-//        public static final String ARG_PLANET_NUMBER = "planet_number";
-//
-//        public PlanetFragment() {
-//            // Empty constructor required for fragment subclasses
-//        }
-//
-//        @Override
-//        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                                 Bundle savedInstanceState) {
-//            View rootView = inflater.inflate(R.layout.fragment_planet, container, false);
-//            int i = getArguments().getInt(ARG_PLANET_NUMBER);
-//            String planet = getResources().getStringArray(R.array.planets_array)[i];
-//
-//            int imageId = getResources().getIdentifier(planet.toLowerCase(Locale.getDefault()),
-//                    "drawable", getActivity().getPackageName());
-//            ((ImageView) rootView.findViewById(R.id.image)).setImageResource(imageId);
-//            getActivity().setTitle(planet);
-//            return rootView;
-//        }
-//    }
 }

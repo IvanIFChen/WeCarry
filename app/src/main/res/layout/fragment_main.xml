@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="space.wecarry.wecarryandroidapp201608.MainActivity"
+    tools:context="space.wecarry.wecarryapp.MainActivity"
     android:id="@+id/mainContainer">
 
 </FrameLayout>

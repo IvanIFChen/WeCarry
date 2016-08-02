@@ -1,4 +1,4 @@
-package space.wecarry.wecarryandroidapp201608;
+package space.wecarry.wecarryapp;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
