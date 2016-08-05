@@ -130,6 +130,10 @@ public class MainActivity extends AppCompatActivity
                 // update the main content by replacing fragments
 //                fragment = new StatsFragment();
 //                fragmentManager.beginTransaction().replace(R.id.mainContainer, fragment).commit();
+                /*
+                TODO: now will start the example activity, should link to stats fragment and have
+                the pie chart there.
+                 */
                 Intent intent = new Intent(this, PieChartActivity.class);
                 startActivity(intent);
                 break;
