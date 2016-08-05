@@ -49,10 +49,10 @@ public class RoleFragment extends Fragment {
     private void getRoleGoal() {
         mList = new ArrayList<>();
         // TODO: Get data from DB
-        // Testing
+        // Testing (Sample)
         RoleItem roleItem = new RoleItem();
-        roleItem.setText("Student");
         GoalItem goalItem = new GoalItem();
+        roleItem.setText("Student");
         goalItem.setText("Read a book");
         goalItem.setDeadline(Calendar.getInstance().getTimeInMillis()+2*60*60*1000);
         goalItem.setDuration(2*60*60*1000);
@@ -62,6 +62,23 @@ public class RoleFragment extends Fragment {
         GoalItem goalItem2 = new GoalItem();
         goalItem2.setText("Be the top one");
         roleItem.addGoalItem(goalItem2);
+        mList.add(roleItem);
+
+        roleItem = new RoleItem();
+        roleItem.setText("Programmer");
+        mList.add(roleItem);
+
+        roleItem = new RoleItem();
+        goalItem = new GoalItem();
+        roleItem.setText("TA");
+        goalItem.setText("Teach a student");
+        roleItem.addGoalItem(goalItem);
+        goalItem.setText("Teach a student");
+        roleItem.addGoalItem(goalItem);
+        goalItem.setText("Teach a student");
+        roleItem.addGoalItem(goalItem);
+        goalItem.setText("Teach a student");
+        roleItem.addGoalItem(goalItem);
         mList.add(roleItem);
 //
     }
