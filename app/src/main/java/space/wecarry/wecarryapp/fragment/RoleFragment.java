@@ -73,10 +73,13 @@ public class RoleFragment extends Fragment {
         roleItem.setText("TA");
         goalItem.setText("Teach a student");
         roleItem.addGoalItem(goalItem);
+        goalItem = new GoalItem();
         goalItem.setText("Teach a student");
         roleItem.addGoalItem(goalItem);
-        goalItem.setText("Teach a student");
+        goalItem = new GoalItem();
+        goalItem.setText("Teach a studenttttttttt");
         roleItem.addGoalItem(goalItem);
+        goalItem = new GoalItem();
         goalItem.setText("Teach a student");
         roleItem.addGoalItem(goalItem);
         mList.add(roleItem);
