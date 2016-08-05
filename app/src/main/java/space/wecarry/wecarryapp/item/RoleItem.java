@@ -65,6 +65,7 @@ public class RoleItem {
 
     @Override
     public String toString() {
-        return "[ text: " + text + ",  deadline: " + deadline +",  duration: " + duration +",  goal num: " + goalList.size() +"]" ;
+        return "[ text: " + text + ",  deadline: " + deadline +",  duration: " + duration +
+                ",  goal num: " + Integer.toString(goalList.size()) +"]" ;
     }
 }
