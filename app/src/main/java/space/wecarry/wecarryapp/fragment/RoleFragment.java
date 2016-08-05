@@ -63,7 +63,7 @@ public class RoleFragment extends Fragment {
         goalItem2.setText("Be the top one");
         roleItem.addGoalItem(goalItem2);
         mList.add(roleItem);
-
+//
     }
 
 }

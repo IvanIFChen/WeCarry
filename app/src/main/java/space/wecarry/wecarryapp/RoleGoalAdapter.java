@@ -79,4 +79,5 @@ public class RoleGoalAdapter extends BaseAdapter {
         TextView textRole;
         TextView textGoal;
     }
+    //
 }
