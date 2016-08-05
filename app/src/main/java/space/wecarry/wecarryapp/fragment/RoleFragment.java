@@ -2,11 +2,14 @@ package space.wecarry.wecarryapp.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -37,8 +40,21 @@ public class RoleFragment extends Fragment {
         listView = (ListView) rootView.findViewById(R.id.listView);
 
         getRoleGoal();
-        // TODO: Click Listener
-//        listView.setOnItemClickListener();
+        // TODO: Click and do something like edit
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getActivity(), "#"+Long.toString(id)+ " Click",Toast.LENGTH_SHORT).show();
+            }
+        });
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Snackbar.make(view, "#"+Long.toString(id)+" Long Click", Snackbar.LENGTH_SHORT)
+                        .setAction("Action", null).show();
+                return false;
+            }
+        });
         adapter = new RoleGoalAdapter(getActivity(), mList);
         listView.setAdapter(adapter);
 
