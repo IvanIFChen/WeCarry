@@ -130,19 +130,7 @@ public class MainActivity extends AppCompatActivity
                 // update the main content by replacing fragments
                 fragment = new StatsFragment();
                 fragmentManager.beginTransaction().replace(R.id.mainContainer, fragment).commit();
-                /*
-                TODO: now will start the example activity, should link to stats fragment and have
-                the pie chart there.
-                 */
-//                Intent intent = new Intent(this, PieChartActivity.class);
-//                startActivity(intent);
                 break;
-//            case R.id.nav_share:
-//                Log.d("Clicked", "share");
-//                break;
-//            case R.id.nav_send:
-//                Log.d("Clicked", "send");
-//                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

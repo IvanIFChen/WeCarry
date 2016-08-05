@@ -41,10 +41,6 @@ public class PieChartActivity extends AppCompatActivity
     private SeekBar mSeekBarX, mSeekBarY;
     private TextView tvX, tvY;
 
-    String[] mMonths = new String[] {
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"
-    };
-
     String[] mParties = new String[] {
             "Party A", "Party B", "Party C", "Party D", "Party E", "Party F", "Party G", "Party H",
             "Party I", "Party J", "Party K", "Party L", "Party M", "Party N", "Party O", "Party P",
@@ -64,8 +60,6 @@ public class PieChartActivity extends AppCompatActivity
         // can't find font
 //        mTfRegular = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
 //        mTfLight = Typeface.createFromAsset(getAssets(), "OpenSans-Light.ttf");
-
-
 
         tvX = (TextView) findViewById(R.id.tvXMax);
         tvY = (TextView) findViewById(R.id.tvYMax);
@@ -125,10 +119,9 @@ public class PieChartActivity extends AppCompatActivity
         mChart.setEntryLabelColor(Color.WHITE);
         mChart.setEntryLabelTypeface(mTfRegular);
         mChart.setEntryLabelTextSize(12f);
-    }
 
-    float getRandom(float range, float startsfrom) {
-        return (float) (Math.random() * range) + startsfrom;
+        // WeCarry Modifications
+        mChart.setDrawHoleEnabled(false);
     }
 
     @Override
