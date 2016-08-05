@@ -2,6 +2,7 @@ package space.wecarry.wecarryapp;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -21,6 +22,7 @@ import space.wecarry.wecarryapp.fragment.DelegateFragment;
 import space.wecarry.wecarryapp.fragment.GoalFragment;
 import space.wecarry.wecarryapp.fragment.PlanFragment;
 import space.wecarry.wecarryapp.fragment.RoleFragment;
+import space.wecarry.wecarryapp.fragment.StatsFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -122,6 +124,14 @@ public class MainActivity extends AppCompatActivity
                 // update the main content by replacing fragments
                 fragment = new DelegateFragment();
                 fragmentManager.beginTransaction().replace(R.id.mainContainer, fragment).commit();
+                break;
+            case R.id.nav_stats:
+                Log.d("Clicked", "stats");
+                // update the main content by replacing fragments
+//                fragment = new StatsFragment();
+//                fragmentManager.beginTransaction().replace(R.id.mainContainer, fragment).commit();
+                Intent intent = new Intent(this, PieChartActivity.class);
+                startActivity(intent);
                 break;
 //            case R.id.nav_share:
 //                Log.d("Clicked", "share");

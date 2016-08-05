@@ -19,13 +19,8 @@ public class DelegateFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_delegate, container, false);
-//        int i = getArguments().getInt(ARG_PLANET_NUMBER);
-//        String planet = getResources().getStringArray(R.array.planets_array)[i];
-//
-//        int imageId = getResources().getIdentifier(planet.toLowerCase(Locale.getDefault()),
-//                "drawable", getActivity().getPackageName());
-//        ((ImageView) rootView.findViewById(R.id.image)).setImageResource(imageId);
-//        getActivity().setTitle(planet);
+        getActivity().setTitle(getString(R.string.navigation_drawer_delegate));
+
         return rootView;
     }
 

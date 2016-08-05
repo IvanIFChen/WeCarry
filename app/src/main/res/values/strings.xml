@@ -13,5 +13,6 @@
     <string name="navigation_drawer_plan">Plan</string>
     <string name="navigation_drawer_calendar">Calendar</string>
     <string name="navigation_drawer_delegate">Delegate</string>
+    <string name="navigation_drawer_stats">Statistics</string>
 
 </resources>

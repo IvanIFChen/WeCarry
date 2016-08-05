@@ -7,5 +7,6 @@
     <string name="navigation_drawer_plan">計畫</string>
     <string name="navigation_drawer_calendar">行事曆</string>
     <string name="navigation_drawer_delegate">授權</string>
+    <string name="navigation_drawer_stats">統計</string>
 
 </resources>
