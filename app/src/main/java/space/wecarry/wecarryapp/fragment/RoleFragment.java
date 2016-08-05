@@ -5,13 +5,23 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 import space.wecarry.wecarryapp.R;
+import space.wecarry.wecarryapp.item.GoalItem;
+import space.wecarry.wecarryapp.item.RoleItem;
 
 /**
  * Created by Tunabutter on 8/2/2016.
  */
 public class RoleFragment extends Fragment {
+
+    private ListView listView;
+    private List mList;
 
     public RoleFragment() { }
 
@@ -20,8 +30,33 @@ public class RoleFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_role, container, false);
         getActivity().setTitle(getString(R.string.navigation_drawer_role));
+        listView = (ListView) rootView.findViewById(R.id.listView);
+
+        getRoleGoal();
+        // TODO: Click Listener
+//        listView.setOnItemClickListener();
+        // TODO: Adapter
+//        listView.setAdapter();
 
         return rootView;
+    }
+
+    // Testing
+    private void getRoleGoal() {
+        mList = new ArrayList<>();
+        // TODO: Get data from DB
+        // Testing
+        RoleItem roleItem = new RoleItem();
+        roleItem.setText("Student");
+        GoalItem goalItem = new GoalItem();
+        goalItem.setText("Read a book");
+        goalItem.setDeadline(Calendar.getInstance().getTimeInMillis()+2*60*60*1000);
+        goalItem.setDuration(2*60*60*1000);
+        goalItem.setImportance(true);
+        goalItem.setUrgency(true);
+        roleItem.addGoalItem(goalItem);
+        mList.add(roleItem);
+
     }
 
 }

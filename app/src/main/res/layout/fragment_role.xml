@@ -7,9 +7,12 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="space.wecarry.wecarryapp.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Role" />
+        android:layout_gravity="center_horizontal"
+        />
+
 
 </RelativeLayout>
