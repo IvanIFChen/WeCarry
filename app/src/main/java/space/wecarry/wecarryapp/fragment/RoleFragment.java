@@ -5,13 +5,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.ListView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import space.wecarry.wecarryapp.R;
+import space.wecarry.wecarryapp.RoleGoalAdapter;
 import space.wecarry.wecarryapp.item.GoalItem;
 import space.wecarry.wecarryapp.item.RoleItem;
 
@@ -21,7 +24,8 @@ import space.wecarry.wecarryapp.item.RoleItem;
 public class RoleFragment extends Fragment {
 
     private ListView listView;
-    private List mList;
+    private ArrayList mList;
+    private RoleGoalAdapter adapter;
 
     public RoleFragment() { }
 
@@ -35,8 +39,8 @@ public class RoleFragment extends Fragment {
         getRoleGoal();
         // TODO: Click Listener
 //        listView.setOnItemClickListener();
-        // TODO: Adapter
-//        listView.setAdapter();
+        adapter = new RoleGoalAdapter(getActivity(), mList);
+        listView.setAdapter(adapter);
 
         return rootView;
     }
@@ -55,6 +59,9 @@ public class RoleFragment extends Fragment {
         goalItem.setImportance(true);
         goalItem.setUrgency(true);
         roleItem.addGoalItem(goalItem);
+        GoalItem goalItem2 = new GoalItem();
+        goalItem2.setText("Be the top one");
+        roleItem.addGoalItem(goalItem2);
         mList.add(roleItem);
 
     }
