@@ -1,5 +1,5 @@
 
-package space.wecarry.wecarryapp;
+package space.wecarry.wecarryapp.activity;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -33,6 +33,8 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
+
+import space.wecarry.wecarryapp.R;
 
 public class PieChartActivity extends AppCompatActivity
         implements OnSeekBarChangeListener, OnChartValueSelectedListener {

@@ -1,7 +1,9 @@
 package space.wecarry.wecarryapp.fragment;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +16,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import space.wecarry.wecarryapp.R;
-import space.wecarry.wecarryapp.RoleGoalAdapter;
+import space.wecarry.wecarryapp.activity.RoleGoalActivity;
+import space.wecarry.wecarryapp.adapter.RoleGoalAdapter;
 import space.wecarry.wecarryapp.item.GoalItem;
 import space.wecarry.wecarryapp.item.RoleItem;
 
@@ -32,11 +35,12 @@ public class RoleGoalFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_role, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_role_goal, container, false);
         getActivity().setTitle(getString(R.string.navigation_drawer_role_goal));
         listView = (ListView) rootView.findViewById(R.id.listView);
 
         getRoleGoal();
+
         // TODO: Click and do something like edit
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -54,6 +58,14 @@ public class RoleGoalFragment extends Fragment {
         });
         adapter = new RoleGoalAdapter(getActivity(), mList);
         listView.setAdapter(adapter);
+
+        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), RoleGoalActivity.class));
+            }
+        });
 
         return rootView;
     }

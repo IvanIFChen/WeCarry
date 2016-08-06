@@ -1,4 +1,4 @@
-package space.wecarry.wecarryapp;
+package space.wecarry.wecarryapp.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import space.wecarry.wecarryapp.R;
 import space.wecarry.wecarryapp.item.GoalItem;
 import space.wecarry.wecarryapp.item.RoleItem;
 
