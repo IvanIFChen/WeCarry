@@ -3,13 +3,9 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_role"
+            android:id="@+id/nav_role_goal"
             android:icon="@drawable/ic_menu_manage"
-            android:title="@string/navigation_drawer_role" />
-        <item
-            android:id="@+id/nav_goal"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/navigation_drawer_goal" />
+            android:title="@string/navigation_drawer_role_goal" />
         <item
             android:id="@+id/nav_plan"
             android:icon="@drawable/ic_menu_manage"

@@ -6,15 +6,12 @@ import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import space.wecarry.wecarryapp.R;
 import space.wecarry.wecarryapp.RoleGoalAdapter;
@@ -24,19 +21,19 @@ import space.wecarry.wecarryapp.item.RoleItem;
 /**
  * Created by Tunabutter on 8/2/2016.
  */
-public class RoleFragment extends Fragment {
+public class RoleGoalFragment extends Fragment {
 
     private ListView listView;
     private ArrayList mList;
     private RoleGoalAdapter adapter;
 
-    public RoleFragment() { }
+    public RoleGoalFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_role, container, false);
-        getActivity().setTitle(getString(R.string.navigation_drawer_role));
+        getActivity().setTitle(getString(R.string.navigation_drawer_role_goal));
         listView = (ListView) rootView.findViewById(R.id.listView);
 
         getRoleGoal();

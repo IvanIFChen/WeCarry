@@ -2,7 +2,6 @@ package space.wecarry.wecarryapp;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,9 +18,8 @@ import android.view.MenuItem;
 
 import space.wecarry.wecarryapp.fragment.CalendarFragment;
 import space.wecarry.wecarryapp.fragment.DelegateFragment;
-import space.wecarry.wecarryapp.fragment.GoalFragment;
 import space.wecarry.wecarryapp.fragment.PlanFragment;
-import space.wecarry.wecarryapp.fragment.RoleFragment;
+import space.wecarry.wecarryapp.fragment.RoleGoalFragment;
 import space.wecarry.wecarryapp.fragment.StatsFragment;
 
 public class MainActivity extends AppCompatActivity
@@ -95,16 +93,10 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fragmentManager = getFragmentManager();
 
         switch (id) {
-            case R.id.nav_role:
+            case R.id.nav_role_goal:
                 Log.d("Clicked", "role");
                 // update the main content by replacing fragments
-                fragment = new RoleFragment();
-                fragmentManager.beginTransaction().replace(R.id.mainContainer, fragment).commit();
-                break;
-            case R.id.nav_goal:
-                Log.d("Clicked", "goal");
-                // update the main content by replacing fragments
-                fragment = new GoalFragment();
+                fragment = new RoleGoalFragment();
                 fragmentManager.beginTransaction().replace(R.id.mainContainer, fragment).commit();
                 break;
             case R.id.nav_plan:
