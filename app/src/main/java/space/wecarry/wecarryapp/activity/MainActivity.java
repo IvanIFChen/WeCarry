@@ -2,6 +2,7 @@ package space.wecarry.wecarryapp.activity;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -22,10 +23,12 @@ import space.wecarry.wecarryapp.fragment.DelegateFragment;
 import space.wecarry.wecarryapp.fragment.PlanFragment;
 import space.wecarry.wecarryapp.fragment.RoleGoalFragment;
 import space.wecarry.wecarryapp.fragment.StatsFragment;
+import space.wecarry.wecarryapp.sqlite.DBHelper;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawerLayout;
+    private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,11 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // testing dbHelper by upgrading to same version.
+        DBHelper dbHelper = new DBHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        dbHelper.onUpgrade(db,1,1);
     }
 
     @Override

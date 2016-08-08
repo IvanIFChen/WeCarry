@@ -3,6 +3,7 @@ package space.wecarry.wecarryapp.sqlite;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import static android.provider.BaseColumns._ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.*;
@@ -17,6 +18,7 @@ public class DBHelper extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        Log.d("DBHelper", "onCreate");
 
         final String INIT_ROLE_TABLE =
                 "CREATE TABLE IF NOT EXISTS " +
@@ -58,13 +60,17 @@ public class DBHelper extends SQLiteOpenHelper{
         db.execSQL(INIT_ROLE_TABLE);
         db.execSQL(INIT_GOAL_TABLE);
         db.execSQL(INIT_ROLE_TABLE);
+
     }
+
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         final String role = "DROP TABLE IF EXISTS " + TABLE_NAME_ROLE_LIST;
         final String goal = "DROP TABLE IF EXISTS " + TABLE_NAME_GOAL_LIST;
         final String task = "DROP TABLE IF EXISTS " + TABLE_NAME_TASK_LIST;
+        Log.d("DBHelper", "onUpgrade");
         // Note: To upgrade table by deleting&creating table is not the best way.
         db.execSQL(role);
         db.execSQL(goal);
