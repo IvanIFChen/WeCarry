@@ -1,7 +1,6 @@
 
 package space.wecarry.wecarryapp.activity;
 
-import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -36,7 +34,7 @@ import java.util.ArrayList;
 
 import space.wecarry.wecarryapp.R;
 
-public class PieChartActivity extends AppCompatActivity
+public class PieChartActivity_old extends AppCompatActivity
         implements OnSeekBarChangeListener, OnChartValueSelectedListener {
 
     private PieChart mChart;
@@ -57,7 +55,7 @@ public class PieChartActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 //        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.fragment_piechart);
+        setContentView(R.layout.fragment_piechart_old);
 
         // can't find font
 //        mTfRegular = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");

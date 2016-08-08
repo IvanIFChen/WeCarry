@@ -1,164 +1,147 @@
 package space.wecarry.wecarryapp.fragment;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SeekBar;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
-import com.github.mikephil.charting.animation.Easing;
-import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.Legend.LegendPosition;
 import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.interfaces.datasets.IDataSet;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import space.wecarry.wecarryapp.R;
+import space.wecarry.wecarryapp.listviewitems.ChartItem;
+import space.wecarry.wecarryapp.listviewitems.LineChartItem;
+import space.wecarry.wecarryapp.listviewitems.PieChartItem;
 
 /**
- * Created by Tunabutter on 8/2/2016.
+ * Created by Tunabutter on 8/6/2016.
  */
 public class StatsFragment extends Fragment {
-
-    private PieChart mChart;
-    private SeekBar mSeekBarX, mSeekBarY;
-    private TextView tvX, tvY;
-
-    String[] mParties = new String[] {
-            "Party A", "Party B", "Party C", "Party D", "Party E", "Party F", "Party G", "Party H",
-            "Party I", "Party J", "Party K", "Party L", "Party M", "Party N", "Party O", "Party P",
-            "Party Q", "Party R", "Party S", "Party T", "Party U", "Party V", "Party W", "Party X",
-            "Party Y", "Party Z"
-    };
-    Typeface mTfRegular;
-    Typeface mTfLight;
-
-
-    public StatsFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_piechart, container, false);
+        super.onCreate(savedInstanceState);
+        Log.d("Enter", "stats");
+        View rootView = inflater.inflate(R.layout.fragment_stats, container, false);
         getActivity().setTitle(getString(R.string.navigation_drawer_stats));
 
-        tvX = (TextView) rootView.findViewById(R.id.tvXMax);
-        tvY = (TextView) rootView.findViewById(R.id.tvYMax);
+        ListView lv = (ListView) rootView.findViewById(R.id.listView1);
 
-        mSeekBarX = (SeekBar) rootView.findViewById(R.id.seekBar1);
-        mSeekBarY = (SeekBar) rootView.findViewById(R.id.seekBar2);
-//        mSeekBarX.setProgress(4);
-//        mSeekBarY.setProgress(10);
+        ArrayList<ChartItem> list = new ArrayList<ChartItem>();
 
-        mChart = (PieChart) rootView.findViewById(R.id.chart1);
-        mChart.setUsePercentValues(true);
-        mChart.setDescription("");
-        mChart.setExtraOffsets(5, 10, 5, 5);
+        list.add(new LineChartItem(generateDataLine(1), getActivity()));
+        list.add(new PieChartItem(generateDataPie(1), getActivity()));
 
-        mChart.setDragDecelerationFrictionCoef(0.95f);
-
-//        mChart.setCenterTextTypeface(mTfLight);
-//        mChart.setCenterText(generateCenterSpannableText());
-
-        mChart.setDrawHoleEnabled(false);
-//        mChart.setHoleColor(Color.WHITE);
-
-        mChart.setTransparentCircleColor(Color.WHITE);
-        mChart.setTransparentCircleAlpha(110);
-
-        mChart.setHoleRadius(58f);
-        mChart.setTransparentCircleRadius(61f);
-
-//        mChart.setDrawCenterText(true);
-
-        mChart.setRotationAngle(0);
-        // enable rotation of the chart by touch
-        mChart.setRotationEnabled(false);
-        mChart.setHighlightPerTapEnabled(true);
-
-        setData(4, 100);
-
-        mChart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
-
-//        Legend l = mChart.getLegend();
-//        l.setPosition(LegendPosition.RIGHT_OF_CHART);
-//        l.setXEntrySpace(7f);
-//        l.setYEntrySpace(0f);
-//        l.setYOffset(0f);
-
-        // entry label styling
-        mChart.setEntryLabelColor(Color.BLACK);
-        mChart.setEntryLabelTypeface(mTfRegular);
-        mChart.setEntryLabelTextSize(12f);
+        ChartDataAdapter cda = new ChartDataAdapter(getActivity(), list);
+        lv.setAdapter(cda);
 
         return rootView;
     }
-    private void setData(int count, float range) {
 
-        float mult = range;
+    /** adapter that supports 3 different item types */
+    private class ChartDataAdapter extends ArrayAdapter<ChartItem> {
+
+        public ChartDataAdapter(Context context, List<ChartItem> objects) {
+            super(context, 0, objects);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            return getItem(position).getView(position, convertView, getContext());
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            // return the views type
+            return getItem(position).getItemType();
+        }
+
+        @Override
+        public int getViewTypeCount() {
+            return 3; // we have 3 different item-types
+        }
+    }
+
+    /**
+     * generates a random ChartData object with just one DataSet
+     *
+     * @return
+     */
+    private LineData generateDataLine(int cnt) {
+
+        ArrayList<Entry> e1 = new ArrayList<Entry>();
+
+        // TODO: Insert data here.
+        for (int i = 0; i < 12; i++) {
+            e1.add(new Entry(i, (int) (Math.random() * 65) + 40));
+        }
+
+        LineDataSet d1 = new LineDataSet(e1, "New DataSet " + cnt + ", (1)");
+        d1.setLineWidth(2.5f);
+        d1.setCircleRadius(4.5f);
+        d1.setHighLightColor(Color.rgb(244, 117, 117));
+        d1.setDrawValues(false);
+
+        ArrayList<Entry> e2 = new ArrayList<Entry>();
+
+        for (int i = 0; i < 12; i++) {
+            e2.add(new Entry(i, e1.get(i).getY() - 30));
+        }
+
+        LineDataSet d2 = new LineDataSet(e2, "New DataSet " + cnt + ", (2)");
+        d2.setLineWidth(2.5f);
+        d2.setCircleRadius(4.5f);
+        d2.setHighLightColor(Color.rgb(244, 117, 117));
+        d2.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+        d2.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+        d2.setDrawValues(false);
+
+        ArrayList<ILineDataSet> sets = new ArrayList<ILineDataSet>();
+        sets.add(d1);
+        sets.add(d2);
+
+        LineData cd = new LineData(sets);
+        return cd;
+    }
+
+    /**
+     * generates a random ChartData object with just one DataSet
+     *
+     * @return
+     */
+    private PieData generateDataPie(int cnt) {
 
         ArrayList<PieEntry> entries = new ArrayList<PieEntry>();
 
-        // NOTE: The order of the entries when being added to the entries array determines their position around the center of
-        // the chart.
-        for (int i = 0; i < count ; i++) {
-            entries.add(new PieEntry((float) ((Math.random() * mult) + mult / 5), mParties[i % mParties.length]));
+        // TODO: Insert data here.
+        for (int i = 0; i < 4; i++) {
+            entries.add(new PieEntry((float) ((Math.random() * 70) + 30), "Quadrant " + (i+1)));
         }
 
-        PieDataSet dataSet = new PieDataSet(entries, "");
-        dataSet.setSliceSpace(3f);
-        dataSet.setSelectionShift(5f);
+        PieDataSet d = new PieDataSet(entries, "");
 
-        // add a lot of colors
+        // space between slices
+        d.setSliceSpace(2f);
+        d.setColors(ColorTemplate.VORDIPLOM_COLORS);
 
-        ArrayList<Integer> colors = new ArrayList<Integer>();
+        PieData cd = new PieData(d);
 
-        for (int c : ColorTemplate.VORDIPLOM_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.JOYFUL_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.COLORFUL_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.LIBERTY_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.PASTEL_COLORS)
-            colors.add(c);
-
-        colors.add(ColorTemplate.getHoloBlue());
-
-        dataSet.setColors(colors);
-        //dataSet.setSelectionShift(0f);
-
-        PieData data = new PieData(dataSet);
-        data.setValueFormatter(new PercentFormatter());
-        data.setValueTextSize(11f);
-        data.setValueTextColor(Color.BLACK);
-        data.setValueTypeface(mTfLight);
-        mChart.setData(data);
-
-        // undo all highlights
-        mChart.highlightValues(null);
-
-        mChart.invalidate();
+        return cd;
     }
 }
