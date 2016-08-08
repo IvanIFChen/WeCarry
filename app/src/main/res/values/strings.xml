@@ -26,6 +26,10 @@
     <string name="line">-------------------------</string>
     <string name="add">Add</string>
 
+    <!--Menu-->
+    <string name="action_show_week">Last 7 days</string>
+    <string name="action_show_month">Last 30 days</string>
+
     <!--Testing-->
     <string name="large_text">
         "Material is the metaphor.\n\n"

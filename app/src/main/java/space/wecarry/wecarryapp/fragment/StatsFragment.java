@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -28,9 +30,6 @@ import space.wecarry.wecarryapp.listviewitems.ChartItem;
 import space.wecarry.wecarryapp.listviewitems.LineChartItem;
 import space.wecarry.wecarryapp.listviewitems.PieChartItem;
 
-/**
- * Created by Tunabutter on 8/6/2016.
- */
 public class StatsFragment extends Fragment {
 
     @Override
@@ -45,16 +44,24 @@ public class StatsFragment extends Fragment {
 
         ArrayList<ChartItem> list = new ArrayList<ChartItem>();
 
-        list.add(new LineChartItem(generateDataLine(1), getActivity()));
+        list.add(new LineChartItem(generateDataLine(2), getActivity()));
         list.add(new PieChartItem(generateDataPie(1), getActivity()));
 
         ChartDataAdapter cda = new ChartDataAdapter(getActivity(), list);
         lv.setAdapter(cda);
 
+        setHasOptionsMenu(true);
+
         return rootView;
     }
 
-    /** adapter that supports 3 different item types */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        menu.clear();
+        inflater.inflate(R.menu.menu_stats,menu);
+    }
+
+    /** adapter that supports 2 different item types */
     private class ChartDataAdapter extends ArrayAdapter<ChartItem> {
 
         public ChartDataAdapter(Context context, List<ChartItem> objects) {
@@ -74,7 +81,7 @@ public class StatsFragment extends Fragment {
 
         @Override
         public int getViewTypeCount() {
-            return 3; // we have 3 different item-types
+            return 2; // we have 2 different item-types
         }
     }
 

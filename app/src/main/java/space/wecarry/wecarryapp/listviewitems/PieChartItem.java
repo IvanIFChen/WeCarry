@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.ChartData;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.formatter.PercentFormatter;
@@ -60,8 +61,8 @@ public class PieChartItem extends ChartItem {
         holder.chart.setCenterTextSize(9f);
         holder.chart.setUsePercentValues(true);
 //        holder.chart.setExtraOffsets(5, 10, 50, 10);
-        holder.chart.setScaleX((float) 0.8);
-        holder.chart.setScaleY((float) 0.8);
+        holder.chart.setScaleX((float) 0.9);
+        holder.chart.setScaleY((float) 0.9);
         holder.chart.setDrawHoleEnabled(false);
         holder.chart.setRotationEnabled(false);
         holder.chart.setEntryLabelColor(Color.BLACK);
@@ -75,10 +76,10 @@ public class PieChartItem extends ChartItem {
         // set data
         holder.chart.setData((PieData) mChartData);
 
-//        Legend l = holder.chart.getLegend();
-//        l.setPosition(LegendPosition.RIGHT_OF_CHART);
-//        l.setYEntrySpace(0f);
-//        l.setYOffset(0f);
+        Legend l = holder.chart.getLegend();
+        l.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
+        l.setYEntrySpace(0f);
+        l.setYOffset(0f);
 
         // do not forget to refresh the chart
         // holder.chart.invalidate();

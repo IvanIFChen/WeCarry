@@ -22,7 +22,7 @@ import space.wecarry.wecarryapp.item.GoalItem;
 import space.wecarry.wecarryapp.item.RoleItem;
 
 /**
- * Created by Tunabutter on 8/2/2016.
+ * Created by Ivan IF Chen on 8/2/2016.
  */
 public class RoleGoalFragment extends Fragment {
 

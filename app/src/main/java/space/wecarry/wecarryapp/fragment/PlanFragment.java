@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import space.wecarry.wecarryapp.R;
 
 /**
- * Created by Tunabutter on 8/2/2016.
+ * Created by Ivan IF Chen on 8/2/2016.
  */
 public class PlanFragment extends Fragment {
 

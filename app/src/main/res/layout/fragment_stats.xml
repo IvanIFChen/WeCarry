@@ -7,6 +7,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".activity.MainActivity">
 
+    <!--This will then add the two list items into it, line and pie chart-->
     <ListView
         android:id="@+id/listView1"
         android:layout_width="match_parent"
