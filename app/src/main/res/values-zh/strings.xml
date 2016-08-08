@@ -8,4 +8,15 @@
     <string name="navigation_drawer_delegate">授權</string>
     <string name="navigation_drawer_stats">統計</string>
 
+    <!--Object-->
+    <string name="backtrack">返回</string>
+    <string name="confirmed">確認</string>
+    <string name="role">角色</string>
+    <string name="goal">目標</string>
+    <string name="deadline">截止日</string>
+    <string name="importance">重要性</string>
+    <string name="delete">刪除</string>
+    <string name="line">-------------------------</string>
+    <string name="add">新增</string>
+
 </resources>
