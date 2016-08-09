@@ -18,7 +18,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 
 import space.wecarry.wecarryapp.R;
@@ -34,6 +33,7 @@ public class RoleGoalActivity extends AppCompatActivity {
     private View buttonView;
     private ArrayList<RoleItem> mList;
     private int mYear, mMonth, mDay;
+    private Calendar today = null;
     private int roleIndex = 0; // User select in RoleGoalFragment
 
     @Override
@@ -47,12 +47,9 @@ public class RoleGoalActivity extends AppCompatActivity {
         btnCancel = (Button)findViewById(R.id.info_dialog_cancel);
         btnNewList = (Button)buttonView.findViewById(R.id.info_dialog_new);
 
-        final Calendar c = Calendar.getInstance();
-        mYear = c.get(Calendar.YEAR);
-        mMonth = c.get(Calendar.MONTH);
-        mDay = c.get(Calendar.DAY_OF_MONTH);
+        today = Calendar.getInstance();
 
-        roleIndex = 0; // User select in RoleGoalFragment   //Testing   //TODO
+        roleIndex = 0; // User select in RoleGoalFragment   //Testing   //TODO: Get which user selected
         getRoleGoal();  // Get data from DB, and save in mList
         editRole.setText(mList.get(0).getText());
         addListView();
@@ -93,13 +90,13 @@ public class RoleGoalActivity extends AppCompatActivity {
             editGoal = (EditText)ll.findViewById(R.id.editTextGoal);
             editGoal.setText(mList.get(roleIndex).getGoalList().get(i).getText());
 
-            // TODO: If user didn't set any deadline?
             editDeadline = (EditText)ll.findViewById(R.id.editTextDeadline);
             long deadline = mList.get(roleIndex).getGoalList().get(i).getDeadline();
             if(deadline !=0) {
                 editDeadline.setText(millsecToDateConverter(deadline));
             }else {
-                editDeadline.setText("未設定");
+                // If user didn't set any deadline
+                editDeadline.setText("未設定");    //TODO: English?
             }
             editDeadline.setOnClickListener(deadlineClickHandler);
             editDeadline.setId(listViewId);
@@ -134,10 +131,31 @@ public class RoleGoalActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.i("msg", "Confirmed");
-                // TODO: Save data in sqlite
-                saveDataInBuffer();
-                mList.get(roleIndex).setText(editRole.getText().toString());    // save Role
-                finish();
+                // Check it
+                if(!"".equals(editRole.getText().toString().trim())) {
+                    // Pass
+                    saveDataInBuffer();
+                    mList.get(roleIndex).setText(editRole.getText().toString());    // save Role
+                    // Tasting
+                    String goal ="";
+                    int i = 1;
+                    for(GoalItem goalItem:mList.get(roleIndex).getGoalList()) {
+                        // TODO: Clean empty goal
+                        String g =goalItem.getText();
+                        if(!"".equals(g.trim())) {
+                            goal += Integer.toString(i) + ". " + g + "\n";
+                            i++;
+                        }
+                    }
+                    Toast.makeText(getApplicationContext(),"" +
+                            "角色: " +mList.get(roleIndex).getText() +"\n"+
+                            "目標: " +"\n"+goal+
+                            "",Toast.LENGTH_SHORT).show();
+//                    finish();
+                    // TODO: Save data in sqlite
+                }else {
+                    Toast.makeText(getApplicationContext(),"尚未填寫「角色」",Toast.LENGTH_SHORT).show();   // TODO: English?
+                }
             }
         });
 
@@ -215,29 +233,31 @@ public class RoleGoalActivity extends AppCompatActivity {
             mYear = Integer.parseInt(new SimpleDateFormat("yyyy").format(date));
             mMonth = Integer.parseInt(new SimpleDateFormat("MM").format(date)) - 1;
             mDay = Integer.parseInt(new SimpleDateFormat("dd").format(date));
+        }else {
+            // show today
+            mYear = today.get(Calendar.YEAR);
+            mMonth = today.get(Calendar.MONTH);
+            mDay = today.get(Calendar.DAY_OF_MONTH);
         }
-        Log.i("year",Integer.toString(mYear));
-        Log.i("month",Integer.toString(mMonth));
-        Log.i("day",Integer.toString(mDay));
+
         // DatePickerDialog
         DatePickerDialog dpd = new DatePickerDialog(this,
                 new DatePickerDialog.OnDateSetListener() {
-                    public void onDateSet(DatePicker view, int year,
-                                          int monthOfYear, int dayOfMonth) {
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         // Show the date user pick
                         SpannableString content = new SpannableString(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
-//                        Log.i("year",Integer.toString(year));
-//                        Log.i("month",Integer.toString(monthOfYear + 1));
-//                        Log.i("day",Integer.toString(dayOfMonth));
-                        editText.setText(content);
-                        // Store the date user picked into mList
+                        Long deadline;
                         try {
-                            mList.get(roleIndex).getGoalList().get(id).setDeadline(
-                                    dateToMillsecConverter(content.toString()));
+                            deadline = dateToMillsecConverter(content.toString());
                         } catch (ParseException e) {
-                            mList.get(roleIndex).getGoalList().get(id).setDeadline(0);
+                            deadline = Long.valueOf(0);
                             e.printStackTrace();
                         }
+                        // Why do we converted it twice(string > long > string)? Because we want the same format.
+                        editText.setText(millsecToDateConverter(deadline));
+                        // Store the date user picked into mList
+                        mList.get(roleIndex).getGoalList().get(id).setDeadline(deadline);
+
                     }
                 }, mYear, mMonth, mDay);
         dpd.show();
