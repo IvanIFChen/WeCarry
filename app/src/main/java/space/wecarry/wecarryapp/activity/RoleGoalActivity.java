@@ -172,6 +172,7 @@ public class RoleGoalActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.i("msg", "Add");
+                // TODO: 數量限制?
                 // We need to store data before adding, or data will be missing
                 saveDataInBuffer();
                 mList.get(roleIndex).addGoalItem(new GoalItem());
