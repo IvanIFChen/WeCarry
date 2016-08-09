@@ -1,29 +1,29 @@
-package space.wecarry.wecarryapp.model;
+package space.wecarry.wecarryapp.item;
 
 /**
  * Created by Ivan IF Chen on 8/9/2016.
  */
-public class Task {
+public class TaskItem {
     String name;
     double earliestStartTime;
     double latestStartTime;
     double earliestEndTime;
     double latestEndTime;
     double processTime;
-    Task preprocess;
+    TaskItem preprocess;
     String resources;
 
-    public Task() { }
+    public TaskItem() { }
 
-    public Task(String name, double processTime) {
+    public TaskItem(String name, double processTime) {
     
         this.name = name;
         this.processTime = processTime;
     }
 
-    public Task(String name, double earliestStartTime, double latestStartTime,
-                double earliestEndTime, double latestEndTime, double processTime,
-                Task preprocess, String resources) {
+    public TaskItem(String name, double earliestStartTime, double latestStartTime,
+                    double earliestEndTime, double latestEndTime, double processTime,
+                    TaskItem preprocess, String resources) {
         this.name = name;
         this.earliestStartTime = earliestStartTime;
         this.latestStartTime = latestStartTime;
@@ -83,11 +83,11 @@ public class Task {
         this.processTime = processTime;
     }
 
-    public Task getPreprocess() {
+    public TaskItem getPreprocess() {
         return preprocess;
     }
 
-    public void setPreprocess(Task preprocess) {
+    public void setPreprocess(TaskItem preprocess) {
         this.preprocess = preprocess;
     }
 

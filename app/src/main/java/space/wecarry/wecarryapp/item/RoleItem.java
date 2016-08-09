@@ -21,6 +21,13 @@ public class RoleItem {
         this.goalList = new ArrayList<>();
     }
 
+    public RoleItem(String text, long deadline, long duration, ArrayList<GoalItem> goalList) {
+        this.text = text;
+        this.deadline = deadline;
+        this.duration = duration;
+        this.goalList = goalList;
+    }
+
     public void setText(String text) {
         this.text = text;
     }
