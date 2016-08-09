@@ -14,8 +14,11 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import space.wecarry.wecarryapp.R;
@@ -31,7 +34,6 @@ public class RoleGoalActivity extends AppCompatActivity {
     private View buttonView;
     private ArrayList<RoleItem> mList;
     private int mYear, mMonth, mDay;
-    private SpannableString content;
     private int roleIndex = 0; // User select in RoleGoalFragment
 
     @Override
@@ -89,18 +91,24 @@ public class RoleGoalActivity extends AppCompatActivity {
             LinearLayout ll = (LinearLayout) view.findViewById(R.id.ll);
 
             editGoal = (EditText)ll.findViewById(R.id.editTextGoal);
-            editGoal.setText(mList.get(0).getGoalList().get(i).getText());
+            editGoal.setText(mList.get(roleIndex).getGoalList().get(i).getText());
 
+            // TODO: If user didn't set any deadline?
             editDeadline = (EditText)ll.findViewById(R.id.editTextDeadline);
-            editDeadline.setText(Long.toString(mList.get(0).getGoalList().get(i).getDeadline()));
+            long deadline = mList.get(roleIndex).getGoalList().get(i).getDeadline();
+            if(deadline !=0) {
+                editDeadline.setText(millsecToDateConverter(deadline));
+            }else {
+                editDeadline.setText("未設定");
+            }
             editDeadline.setOnClickListener(deadlineClickHandler);
             editDeadline.setId(listViewId);
 
             switchImportance = (Switch)ll.findViewById(R.id.switchImportance);
-            switchImportance.setChecked(mList.get(0).getGoalList().get(i).isImportance());
+            switchImportance.setChecked(mList.get(roleIndex).getGoalList().get(i).isImportance());
 
             switchUrgency = (Switch)ll.findViewById(R.id.switchUrgency);
-            switchUrgency.setChecked((mList.get(0)).getGoalList().get(i).isUrgency());
+            switchUrgency.setChecked((mList.get(roleIndex)).getGoalList().get(i).isUrgency());
 
             btnDelete = (Button)ll.findViewById(R.id.btn_del);
             btnDelete.setOnClickListener(deleteClickHandler);//設定監聽method
@@ -128,7 +136,7 @@ public class RoleGoalActivity extends AppCompatActivity {
                 Log.i("msg", "Confirmed");
                 // TODO: Save data in sqlite
                 saveDataInBuffer();
-                mList.get(0).setText(editRole.getText().toString());    // save Role
+                mList.get(roleIndex).setText(editRole.getText().toString());    // save Role
                 finish();
             }
         });
@@ -148,7 +156,7 @@ public class RoleGoalActivity extends AppCompatActivity {
                 Log.i("msg", "Add");
                 // We need to store data before adding, or data will be missing
                 saveDataInBuffer();
-                mList.get(0).addGoalItem(new GoalItem());
+                mList.get(roleIndex).addGoalItem(new GoalItem());
                 addListView(); //reload view
             }
         });
@@ -159,14 +167,13 @@ public class RoleGoalActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-
             Button delBtn =  (Button)v;
             int id = delBtn.getId();// Get the id which user click
 //            objectList.get(id);//從 objectList得到此筆資料
             // We need to store data before delete, or data will be missing
             int i = 0;
             saveDataInBuffer();
-            mList.get(0).getGoalList().remove(id);
+            mList.get(roleIndex).getGoalList().remove(id);
             addListView(); //reload view
         }
     };
@@ -176,7 +183,9 @@ public class RoleGoalActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(getApplicationContext(),"asdfsadf",Toast.LENGTH_SHORT).show();
+            // Get the deadline(Long)
+            Long deadline = mList.get(roleIndex).getGoalList().get(v.getId()).getDeadline();
+            showDatePickerDialog(deadline, (EditText) v, v.getId());
         }
     };
 
@@ -187,39 +196,62 @@ public class RoleGoalActivity extends AppCompatActivity {
             String deadline = ((EditText)editMap.get("DEADLINE")).getText().toString();
             boolean importance = ((Switch)editMap.get("IMPORTANCE")).isChecked();
             boolean urgency = ((Switch)editMap.get("URGENCY")).isChecked();
-            mList.get(0).getGoalList().get(i).setText(goal);
-            mList.get(0).getGoalList().get(i).setDeadline(123); //Testing //TODO deadline
-            mList.get(0).getGoalList().get(i).setImportance(importance);
-            mList.get(0).getGoalList().get(i).setUrgency(urgency);
+            mList.get(roleIndex).getGoalList().get(i).setText(goal);
+            try {mList.get(roleIndex).getGoalList().get(i).setDeadline(dateToMillsecConverter(deadline));
+            } catch (ParseException e) {
+                mList.get(roleIndex).getGoalList().get(i).setDeadline(0);
+                e.printStackTrace();
+            }
+            mList.get(roleIndex).getGoalList().get(i).setImportance(importance);
+            mList.get(roleIndex).getGoalList().get(i).setUrgency(urgency);
             i++;
         }
     }
 
-    private void showDatePickerDialog(final EditText date) {
-        // TODO: Convert millisecond(in the goal of mList) to date
-//        try {
-//            // to get the last data user just set
-//            // (editView -> string -> date -> string(format) -> integer)
-//            mYear = Integer.parseInt(new SimpleDateFormat("yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse(date.getText().toString())));
-//            mMonth = Integer.parseInt(new SimpleDateFormat("MM").format(new SimpleDateFormat("yyyy-MM-dd").parse(date.getText().toString()))) -1;
-//            mDay = Integer.parseInt(new SimpleDateFormat("dd").format(new SimpleDateFormat("yyyy-MM-dd").parse(date.getText().toString())));
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-
+    private void showDatePickerDialog(Long date, final EditText editText, final int id) {
+        //TODO: If the date is 0 ?
+        // If date is 0, it means user didn't set the deadline of goal
+        if(date !=0) {
+            mYear = Integer.parseInt(new SimpleDateFormat("yyyy").format(date));
+            mMonth = Integer.parseInt(new SimpleDateFormat("MM").format(date)) - 1;
+            mDay = Integer.parseInt(new SimpleDateFormat("dd").format(date));
+        }
+        Log.i("year",Integer.toString(mYear));
+        Log.i("month",Integer.toString(mMonth));
+        Log.i("day",Integer.toString(mDay));
         // DatePickerDialog
         DatePickerDialog dpd = new DatePickerDialog(this,
                 new DatePickerDialog.OnDateSetListener() {
                     public void onDateSet(DatePicker view, int year,
                                           int monthOfYear, int dayOfMonth) {
                         // Show the date user pick
-                        content = new SpannableString(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
-                        date.setText(content);
-//                        taskDeadline = content.toString();
-//                        positiveAction.setEnabled(taskTitle.trim().length() > 0 && checkedColor != null && taskDeadline.trim().length() > 0 && taskDuration > 0);
+                        SpannableString content = new SpannableString(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
+//                        Log.i("year",Integer.toString(year));
+//                        Log.i("month",Integer.toString(monthOfYear + 1));
+//                        Log.i("day",Integer.toString(dayOfMonth));
+                        editText.setText(content);
+                        // Store the date user picked into mList
+                        try {
+                            mList.get(roleIndex).getGoalList().get(id).setDeadline(
+                                    dateToMillsecConverter(content.toString()));
+                        } catch (ParseException e) {
+                            mList.get(roleIndex).getGoalList().get(id).setDeadline(0);
+                            e.printStackTrace();
+                        }
                     }
                 }, mYear, mMonth, mDay);
         dpd.show();
     }
 
+    private Long dateToMillsecConverter(String date) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Long m = sdf.parse(date).getTime();
+        return m;
+    }
+
+    private String millsecToDateConverter(Long date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String s = sdf.format(date);
+        return s;
+    }
 }
