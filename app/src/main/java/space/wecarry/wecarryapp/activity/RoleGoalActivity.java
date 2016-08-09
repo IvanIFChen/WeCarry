@@ -1,13 +1,17 @@
 package space.wecarry.wecarryapp.activity;
 
+import android.app.DatePickerDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -19,32 +23,40 @@ import space.wecarry.wecarryapp.item.GoalItem;
 import space.wecarry.wecarryapp.item.RoleItem;
 
 public class RoleGoalActivity extends AppCompatActivity {
-    EditText editName , editAddress , editPhone ,data_id;
-    Button confirm, cancel,newList,btnDelect;
-    LinearLayout ll_in_sv , objectLayout;
-    ArrayList<HashMap> objectList;
-    View buttonView;
-
-    ArrayList<RoleItem> mList;
+    private EditText editRole, editGoal, editDeadline;
+    private Switch switchImportance, switchUrgency;
+    private Button btnConfirm, btnCancel, btnNewList, btnDelete;
+    private LinearLayout ll_in_sv;
+    private ArrayList<HashMap> objectList;
+    private View buttonView;
+    private ArrayList<RoleItem> mList;
+    private int mYear, mMonth, mDay;
+    private SpannableString content;
+    private int roleIndex = 0; // User select in RoleGoalFragment
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_role_goal);
         buttonView = LayoutInflater.from(RoleGoalActivity.this).inflate(R.layout.role_goal_object_button, null);
-
+        editRole = (EditText)findViewById(R.id.editTextRole);
         ll_in_sv = (LinearLayout)findViewById(R.id.linearLayout_in_scrollView);
-        confirm = (Button)findViewById(R.id.info_dialog_confirm);
-        cancel = (Button)findViewById(R.id.info_dialog_cancel);
-        newList = (Button)buttonView.findViewById(R.id.info_dialog_new);
+        btnConfirm = (Button)findViewById(R.id.info_dialog_confirm);
+        btnCancel = (Button)findViewById(R.id.info_dialog_cancel);
+        btnNewList = (Button)buttonView.findViewById(R.id.info_dialog_new);
 
-        getRoleGoal();
+        final Calendar c = Calendar.getInstance();
+        mYear = c.get(Calendar.YEAR);
+        mMonth = c.get(Calendar.MONTH);
+        mDay = c.get(Calendar.DAY_OF_MONTH);
 
+        roleIndex = 0; // User select in RoleGoalFragment   //Testing   //TODO
+        getRoleGoal();  // Get data from DB, and save in mList
+        editRole.setText(mList.get(0).getText());
         addListView();
         setActions();
     }
 
-    // Testing
     private void getRoleGoal() {
         mList = new ArrayList<>();
         // TODO: Get data from DB
@@ -62,58 +74,43 @@ public class RoleGoalActivity extends AppCompatActivity {
         goalItem2.setText("Be the top one");
         roleItem.addGoalItem(goalItem2);
         mList.add(roleItem);
-
-        roleItem = new RoleItem();
-        roleItem.setText("Programmer");
-        mList.add(roleItem);
-
-        roleItem = new RoleItem();
-        goalItem = new GoalItem();
-        roleItem.setText("TA");
-        goalItem.setText("Teach a student");
-        roleItem.addGoalItem(goalItem);
-        goalItem = new GoalItem();
-        goalItem.setText("Teach a student");
-        roleItem.addGoalItem(goalItem);
-        goalItem = new GoalItem();
-        goalItem.setText("Teach a studenttttttttt");
-        roleItem.addGoalItem(goalItem);
-        goalItem = new GoalItem();
-        goalItem.setText("Teach a student");
-        roleItem.addGoalItem(goalItem);
-        mList.add(roleItem);
-//
     }
 
     private void addListView() {
         objectList = new ArrayList<HashMap>();
-        int btnId = 0;
+        int listViewId = 0;
         ll_in_sv.removeAllViews();
 
         //資料來源
         for (int i = 0; i < mList.get(0).getGoalList().size(); i++) {
 
-            HashMap<String,EditText> editMap = new HashMap();
+            HashMap editMap = new HashMap();
             View view = LayoutInflater.from(RoleGoalActivity.this).inflate(R.layout.role_goal_object, null); //物件來源
             LinearLayout ll = (LinearLayout) view.findViewById(R.id.ll);
 
-            editName = (EditText)ll.findViewById(R.id.editTextGoal);
-            editName.setText(mList.get(0).getGoalList().get(i).getText());
+            editGoal = (EditText)ll.findViewById(R.id.editTextGoal);
+            editGoal.setText(mList.get(0).getGoalList().get(i).getText());
 
-            editPhone = (EditText)ll.findViewById(R.id.editTextDeadline);
-            editPhone.setText(Long.toString(mList.get(0).getGoalList().get(i).getDeadline()));
+            editDeadline = (EditText)ll.findViewById(R.id.editTextDeadline);
+            editDeadline.setText(Long.toString(mList.get(0).getGoalList().get(i).getDeadline()));
+            editDeadline.setOnClickListener(deadlineClickHandler);
+            editDeadline.setId(listViewId);
 
-            editAddress = (EditText)ll.findViewById(R.id.editTextImportance);
-            editAddress.setText("IIIII:P");
+            switchImportance = (Switch)ll.findViewById(R.id.switchImportance);
+            switchImportance.setChecked(mList.get(0).getGoalList().get(i).isImportance());
 
-            btnDelect = (Button)ll.findViewById(R.id.btn_del);
-            btnDelect.setOnClickListener(clickHandler);//設定監聽method
-            btnDelect.setId(btnId);//將按鈕帶入id 以供監聽時辨識使用
-            btnId++;
+            switchUrgency = (Switch)ll.findViewById(R.id.switchUrgency);
+            switchUrgency.setChecked((mList.get(0)).getGoalList().get(i).isUrgency());
+
+            btnDelete = (Button)ll.findViewById(R.id.btn_del);
+            btnDelete.setOnClickListener(deleteClickHandler);//設定監聽method
+            btnDelete.setId(listViewId);//將按鈕帶入id 以供監聽時辨識使用
+            listViewId++;
             //將所有的元件放入map並存入list中
-            editMap.put("NAME", editName);
-            editMap.put("ADDRESS", editAddress);
-            editMap.put("PHONE", editPhone);
+            editMap.put("GOAL", editGoal);
+            editMap.put("DEADLINE", editDeadline);
+            editMap.put("IMPORTANCE", switchImportance);
+            editMap.put("URGENCY", switchUrgency);
             objectList.add(editMap);
 
             //將上面新建的例元件新增到主頁面的ll_in_sv中
@@ -124,53 +121,105 @@ public class RoleGoalActivity extends AppCompatActivity {
     }
 
     private void setActions() {
-        //設定各元件的監聽
-        confirm.setOnClickListener(new View.OnClickListener() {
+        btnConfirm.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                Log.i("msg", "！！確定！！");
-                //.....//儲存方式
+                Log.i("msg", "Confirmed");
+                // TODO: Save data in sqlite
+                saveDataInBuffer();
+                mList.get(0).setText(editRole.getText().toString());    // save Role
                 finish();
             }
         });
 
-        cancel.setOnClickListener(new View.OnClickListener() {
+        btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("msg", "！！返回！！");
+                Log.i("msg", "Backtrack");
+                // TODO: AlertDialog
                 finish();
             }
         });
 
-        newList.setOnClickListener(new View.OnClickListener() {
+        btnNewList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("msg", "！！新增！！");
-                //在view中新增一筆新的list 你可以直接在 personal list 直接增加一筆然後再創立一次view
+                Log.i("msg", "Add");
+                // We need to store data before adding, or data will be missing
+                saveDataInBuffer();
                 mList.get(0).addGoalItem(new GoalItem());
-                for(HashMap<String, EditText> editMap:objectList){
-                    //我們Map中是存放EditText物件所以取出之後就像一般的物件使用喔
-                    String name = editMap.get("NAME").getText().toString();
-                }
-                addListView();
+                addListView(); //reload view
             }
         });
     }
 
-    //刪除
-    private View.OnClickListener clickHandler= new View.OnClickListener() {
+    //Delete
+    private View.OnClickListener deleteClickHandler = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
 
-            Button delBtn =  (Button)v; //在new 出所按下的按鈕
-            int id = delBtn.getId();//獲取被點擊的按鈕的id
-            objectList.get(id);//從 objectList得到此比資料
-            //.....刪除list（略）
-            Toast.makeText(getApplicationContext(),Integer.toString(id),Toast.LENGTH_SHORT).show();
-            addListView(); //重新整理 view
+            Button delBtn =  (Button)v;
+            int id = delBtn.getId();// Get the id which user click
+//            objectList.get(id);//從 objectList得到此筆資料
+            // We need to store data before delete, or data will be missing
+            int i = 0;
+            saveDataInBuffer();
+            mList.get(0).getGoalList().remove(id);
+            addListView(); //reload view
         }
     };
+
+    //DeadlineClick
+    private View.OnClickListener deadlineClickHandler = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(getApplicationContext(),"asdfsadf",Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    private void saveDataInBuffer() {
+        int i = 0;
+        for(HashMap editMap:objectList){
+            String goal = ((EditText)editMap.get("GOAL")).getText().toString();
+            String deadline = ((EditText)editMap.get("DEADLINE")).getText().toString();
+            boolean importance = ((Switch)editMap.get("IMPORTANCE")).isChecked();
+            boolean urgency = ((Switch)editMap.get("URGENCY")).isChecked();
+            mList.get(0).getGoalList().get(i).setText(goal);
+            mList.get(0).getGoalList().get(i).setDeadline(123); //Testing //TODO deadline
+            mList.get(0).getGoalList().get(i).setImportance(importance);
+            mList.get(0).getGoalList().get(i).setUrgency(urgency);
+            i++;
+        }
+    }
+
+    private void showDatePickerDialog(final EditText date) {
+        // TODO: Convert millisecond(in the goal of mList) to date
+//        try {
+//            // to get the last data user just set
+//            // (editView -> string -> date -> string(format) -> integer)
+//            mYear = Integer.parseInt(new SimpleDateFormat("yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse(date.getText().toString())));
+//            mMonth = Integer.parseInt(new SimpleDateFormat("MM").format(new SimpleDateFormat("yyyy-MM-dd").parse(date.getText().toString()))) -1;
+//            mDay = Integer.parseInt(new SimpleDateFormat("dd").format(new SimpleDateFormat("yyyy-MM-dd").parse(date.getText().toString())));
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+
+        // DatePickerDialog
+        DatePickerDialog dpd = new DatePickerDialog(this,
+                new DatePickerDialog.OnDateSetListener() {
+                    public void onDateSet(DatePicker view, int year,
+                                          int monthOfYear, int dayOfMonth) {
+                        // Show the date user pick
+                        content = new SpannableString(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
+                        date.setText(content);
+//                        taskDeadline = content.toString();
+//                        positiveAction.setEnabled(taskTitle.trim().length() > 0 && checkedColor != null && taskDeadline.trim().length() > 0 && taskDuration > 0);
+                    }
+                }, mYear, mMonth, mDay);
+        dpd.show();
+    }
 
 }
