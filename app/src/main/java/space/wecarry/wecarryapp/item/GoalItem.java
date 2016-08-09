@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class GoalItem {
 
-    private String text;
+    private String title;
     private long deadline;
     private long duration;
     private boolean importance;
@@ -15,23 +15,23 @@ public class GoalItem {
     private ArrayList<TaskItem> taskList;
 
     public GoalItem() {
-        this.text = "";
+        this.title = "";
         this.deadline = 0;
         this.duration = 0;
         this.importance = false;
         this.urgency = false;
     }
 
-    public GoalItem(String text, long deadline, boolean importance, boolean urgency, ArrayList<TaskItem> taskList) {
-        this.text = text;
+    public GoalItem(String title, long deadline, boolean importance, boolean urgency, ArrayList<TaskItem> taskList) {
+        this.title = title;
         this.deadline = deadline;
         this.importance = importance;
         this.urgency = urgency;
         this.taskList = taskList;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public void setDeadline(long deadline) {
@@ -50,12 +50,16 @@ public class GoalItem {
         this.importance = importance;
     }
 
-    public String getText() {
-        return text;
+    public String getTitle() {
+        return title;
     }
 
     public void setTaskList(ArrayList<TaskItem> taskList) {
         this.taskList = taskList;
+    }
+
+    public void addTaskItem(TaskItem taskItem) {
+        this.taskList.add(taskItem);
     }
 
     public long getDeadline() {
@@ -81,7 +85,7 @@ public class GoalItem {
     @Override
     public String toString() {
         return "Goal{" +
-                "text='" + text + '\'' +
+                "title='" + title + '\'' +
                 ", deadline=" + deadline +
                 ", importance=" + importance +
                 ", urgency=" + urgency +

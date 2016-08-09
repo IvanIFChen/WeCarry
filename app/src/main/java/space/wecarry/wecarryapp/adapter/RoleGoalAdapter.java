@@ -63,12 +63,12 @@ public class RoleGoalAdapter extends BaseAdapter {
         holder.textGoal.setTag(roleList.get(position));
 
         //Set the text of the listview
-        holder.textRole.setText(roleList.get(position).getText());
+        holder.textRole.setText(roleList.get(position).getTitle());
         //Get the all of goal
         String temp = "";
         int index = 1;
         for(GoalItem gi : roleList.get(position).getGoalList()) {
-            temp += Integer.toString(index)+". " + gi.getText() + "\n";
+            temp += Integer.toString(index)+". " + gi.getTitle() + "\n";
             index++;
         }
         holder.textGoal.setText(temp);

@@ -2,34 +2,32 @@ package space.wecarry.wecarryapp.item;
 
 import java.util.ArrayList;
 
-import space.wecarry.wecarryapp.item.GoalItem;
-
 /**
  * Created by Blair on 2016/8/5.
  */
 public class RoleItem {
 
-    private String text;
+    private String title;
     private long deadline;
     private long duration;
-    ArrayList<GoalItem> goalList;
+    private ArrayList<GoalItem> goalList;
 
     public RoleItem() {
-        this.text = "";
+        this.title = "";
         this.deadline = 0;
         this.duration = 0;
         this.goalList = new ArrayList<>();
     }
 
-    public RoleItem(String text, long deadline, long duration, ArrayList<GoalItem> goalList) {
-        this.text = text;
+    public RoleItem(String title, long deadline, long duration, ArrayList<GoalItem> goalList) {
+        this.title = title;
         this.deadline = deadline;
         this.duration = duration;
         this.goalList = goalList;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public void setDeadline(long deadline) {
@@ -40,7 +38,7 @@ public class RoleItem {
         this.duration = duration;
     }
 
-    public void setGoalList(ArrayList goalList) {
+    public void setGoalList(ArrayList<GoalItem> goalList) {
         this.goalList = goalList;
     }
 
@@ -48,8 +46,8 @@ public class RoleItem {
         this.goalList.add(goalItem);
     }
 
-    public String getText() {
-        return text;
+    public String getTitle() {
+        return title;
     }
 
     public long getDeadline() {
@@ -72,7 +70,7 @@ public class RoleItem {
 
     @Override
     public String toString() {
-        return "[ text: " + text + ",  deadline: " + deadline +",  duration: " + duration +
+        return "[ title: " + title + ",  deadline: " + deadline +",  duration: " + duration +
                 ",  goal num: " + Integer.toString(goalList.size()) +"]" ;
     }
 }

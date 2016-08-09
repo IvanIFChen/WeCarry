@@ -77,35 +77,35 @@ public class RoleGoalFragment extends Fragment {
         // Testing (Sample)
         RoleItem roleItem = new RoleItem();
         GoalItem goalItem = new GoalItem();
-        roleItem.setText("Student");
-        goalItem.setText("Read a book");
+        roleItem.setTitle("Student");
+        goalItem.setTitle("Read a book");
         goalItem.setDeadline(Calendar.getInstance().getTimeInMillis()+2*60*60*1000);
         goalItem.setDuration(2*60*60*1000);
         goalItem.setImportance(true);
         goalItem.setUrgency(true);
         roleItem.addGoalItem(goalItem);
         GoalItem goalItem2 = new GoalItem();
-        goalItem2.setText("Be the top one");
+        goalItem2.setTitle("Be the top one");
         roleItem.addGoalItem(goalItem2);
         mList.add(roleItem);
 
         roleItem = new RoleItem();
-        roleItem.setText("Programmer");
+        roleItem.setTitle("Programmer");
         mList.add(roleItem);
 
         roleItem = new RoleItem();
         goalItem = new GoalItem();
-        roleItem.setText("TA");
-        goalItem.setText("Teach a student");
+        roleItem.setTitle("TA");
+        goalItem.setTitle("Teach a student");
         roleItem.addGoalItem(goalItem);
         goalItem = new GoalItem();
-        goalItem.setText("Teach a student");
+        goalItem.setTitle("Teach a student");
         roleItem.addGoalItem(goalItem);
         goalItem = new GoalItem();
-        goalItem.setText("Teach a studenttttttttt");
+        goalItem.setTitle("Teach a studenttttttttt");
         roleItem.addGoalItem(goalItem);
         goalItem = new GoalItem();
-        goalItem.setText("Teach a student");
+        goalItem.setTitle("Teach a student");
         roleItem.addGoalItem(goalItem);
         mList.add(roleItem);
 //

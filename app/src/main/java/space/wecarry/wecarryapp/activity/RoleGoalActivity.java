@@ -51,7 +51,7 @@ public class RoleGoalActivity extends AppCompatActivity {
 
         roleIndex = 0; // User select in RoleGoalFragment   //Testing   //TODO: Get which user selected
         getRoleGoal();  // Get data from DB, and save in mList
-        editRole.setText(mList.get(0).getText());
+        editRole.setText(mList.get(0).getTitle());
         addListView();
         setActions();
     }
@@ -62,15 +62,15 @@ public class RoleGoalActivity extends AppCompatActivity {
         // Testing (Sample)
         RoleItem roleItem = new RoleItem();
         GoalItem goalItem = new GoalItem();
-        roleItem.setText("Student");
-        goalItem.setText("Read a book");
+        roleItem.setTitle("Student");
+        goalItem.setTitle("Read a book");
         goalItem.setDeadline(Calendar.getInstance().getTimeInMillis()+2*60*60*1000);
         goalItem.setDuration(2*60*60*1000);
         goalItem.setImportance(true);
         goalItem.setUrgency(true);
         roleItem.addGoalItem(goalItem);
         GoalItem goalItem2 = new GoalItem();
-        goalItem2.setText("Be the top one");
+        goalItem2.setTitle("Be the top one");
         roleItem.addGoalItem(goalItem2);
         mList.add(roleItem);
     }
@@ -88,7 +88,7 @@ public class RoleGoalActivity extends AppCompatActivity {
             LinearLayout ll = (LinearLayout) view.findViewById(R.id.ll);
 
             editGoal = (EditText)ll.findViewById(R.id.editTextGoal);
-            editGoal.setText(mList.get(roleIndex).getGoalList().get(i).getText());
+            editGoal.setText(mList.get(roleIndex).getGoalList().get(i).getTitle());
 
             editDeadline = (EditText)ll.findViewById(R.id.editTextDeadline);
             long deadline = mList.get(roleIndex).getGoalList().get(i).getDeadline();
@@ -135,20 +135,20 @@ public class RoleGoalActivity extends AppCompatActivity {
                 if(!"".equals(editRole.getText().toString().trim())) {
                     // Pass
                     saveDataInBuffer();
-                    mList.get(roleIndex).setText(editRole.getText().toString());    // save Role
+                    mList.get(roleIndex).setTitle(editRole.getText().toString());    // save Role
                     // Tasting
                     String goal ="";
                     int i = 1;
                     for(GoalItem goalItem:mList.get(roleIndex).getGoalList()) {
                         // TODO: Clean empty goal
-                        String g =goalItem.getText();
+                        String g =goalItem.getTitle();
                         if(!"".equals(g.trim())) {
                             goal += Integer.toString(i) + ". " + g + "\n";
                             i++;
                         }
                     }
                     Toast.makeText(getApplicationContext(),"" +
-                            "角色: " +mList.get(roleIndex).getText() +"\n"+
+                            "角色: " +mList.get(roleIndex).getTitle() +"\n"+
                             "目標: " +"\n"+goal+
                             "",Toast.LENGTH_SHORT).show();
 //                    finish();
@@ -215,7 +215,7 @@ public class RoleGoalActivity extends AppCompatActivity {
             String deadline = ((EditText)editMap.get("DEADLINE")).getText().toString();
             boolean importance = ((Switch)editMap.get("IMPORTANCE")).isChecked();
             boolean urgency = ((Switch)editMap.get("URGENCY")).isChecked();
-            mList.get(roleIndex).getGoalList().get(i).setText(goal);
+            mList.get(roleIndex).getGoalList().get(i).setTitle(goal);
             try {mList.get(roleIndex).getGoalList().get(i).setDeadline(dateToMillsecConverter(deadline));
             } catch (ParseException e) {
                 mList.get(roleIndex).getGoalList().get(i).setDeadline(0);
