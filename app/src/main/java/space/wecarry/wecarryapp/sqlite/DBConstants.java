@@ -13,7 +13,7 @@ public class DBConstants {
     public static final String ROLE_ID = "ROLE_ID";
     public static final String ROLE_TITLE = "ROLE_TITLE";
     public static final String ROLE_DEADLINE = "ROLE_DEADLINE";
-    public static final String ROLE_DURATION = "ROEL_DURATION";
+    public static final String ROLE_DURATION = "ROLE_DURATION";
 
     // Goal
     public static final String GOAL_ID = "GOAL_ID";

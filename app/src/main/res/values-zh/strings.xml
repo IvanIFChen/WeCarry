@@ -14,12 +14,16 @@
     <string name="role">角色</string>
     <string name="goal">目標</string>
     <string name="deadline">截止日</string>
-    <string name="importance">重要性</string>
+    <string name="important">重要性</string>
     <string name="delete">刪除</string>
     <string name="line">-------------------------</string>
     <string name="add">新增</string>
     <string name="editRoleHint">你的角色是什麼？</string>
-    <string name="urgency">急迫性</string>
+    <string name="urgent">急迫性</string>
     <string name="editGoalHint">想要完成什麼？</string>
     <string name="editDeadlineHint">預計何時達成？</string>
+
+    <!--Menu-->
+    <string name="action_show_week">過去7天</string>
+    <string name="action_show_month">過去30天</string>
 </resources>

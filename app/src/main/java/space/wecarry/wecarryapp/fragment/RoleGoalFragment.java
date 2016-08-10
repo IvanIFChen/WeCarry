@@ -92,8 +92,8 @@ public class RoleGoalFragment extends Fragment {
         goalItem.setTitle("Read a book");
         goalItem.setDeadline(Calendar.getInstance().getTimeInMillis()+2*60*60*1000);
         goalItem.setDuration(2*60*60*1000);
-        goalItem.setImportance(true);
-        goalItem.setUrgency(true);
+        goalItem.setImportant(true);
+        goalItem.setUrgent(true);
         roleItem.addGoalItem(goalItem);
         GoalItem goalItem2 = new GoalItem();
         goalItem2.setTitle("Be the top one");

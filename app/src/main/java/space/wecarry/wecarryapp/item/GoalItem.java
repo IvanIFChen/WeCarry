@@ -11,25 +11,33 @@ public class GoalItem implements Serializable {
     private String title;
     private long deadline;
     private long duration;
-    private boolean importance;
-    private boolean urgency;
+    private boolean isImportant;
+    private boolean isUrgent;
     private ArrayList<TaskItem> taskList;
 
     public GoalItem() {
         this.title = "";
         this.deadline = 0;
         this.duration = 0;
-        this.importance = false;
-        this.urgency = false;
+        this.isImportant = false;
+        this.isUrgent = false;
         this.taskList = new ArrayList<>();
     }
 
-    public GoalItem(String title, long deadline, long duration, boolean importance, boolean urgency, ArrayList<TaskItem> taskList) {
+    public GoalItem(String title, long deadline, boolean isImportant, boolean isUrgent, ArrayList<TaskItem> taskList) {
+        this.title = title;
+        this.deadline = deadline;
+        this.isImportant = isImportant;
+        this.isUrgent = isUrgent;
+        this.taskList = taskList;
+    }
+
+    public GoalItem(String title, long deadline, long duration, boolean isImportant, boolean isUrgent, ArrayList<TaskItem> taskList) {
         this.title = title;
         this.deadline = deadline;
         this.duration = duration;
-        this.importance = importance;
-        this.urgency = urgency;
+        this.isImportant = isImportant;
+        this.isUrgent = isUrgent;
         this.taskList = taskList;
     }
 
@@ -45,12 +53,12 @@ public class GoalItem implements Serializable {
         this.duration = duration;
     }
 
-    public void setUrgency(boolean urgency) {
-        this.urgency = urgency;
+    public void setUrgent(boolean urgent) {
+        this.isUrgent = urgent;
     }
 
-    public void setImportance(boolean importance) {
-        this.importance = importance;
+    public void setImportant(boolean important) {
+        this.isImportant = important;
     }
 
     public String getTitle() {
@@ -73,12 +81,12 @@ public class GoalItem implements Serializable {
         return duration;
     }
 
-    public boolean isImportance() {
-        return importance;
+    public boolean isImportant() {
+        return isImportant;
     }
 
-    public boolean isUrgency() {
-        return urgency;
+    public boolean isUrgent() {
+        return isUrgent;
     }
 
     public ArrayList<TaskItem> getTaskList() {
@@ -91,8 +99,8 @@ public class GoalItem implements Serializable {
                 "title='" + title + '\'' +
                 ", deadline=" + deadline +
                 ", duration=" + duration +
-                ", importance=" + importance +
-                ", urgency=" + urgency +
+                ", isImportant=" + isImportant +
+                ", isUrgent=" + isUrgent +
                 ", taskList=" + taskList +
                 '}';
     }

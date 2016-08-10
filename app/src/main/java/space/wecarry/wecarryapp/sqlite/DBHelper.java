@@ -18,7 +18,6 @@ public class DBHelper extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d("DBHelper", "onCreate");
 
         final String INIT_ROLE_TABLE =
                 "CREATE TABLE IF NOT EXISTS " +
@@ -74,11 +73,11 @@ public class DBHelper extends SQLiteOpenHelper{
         final String role = "DROP TABLE IF EXISTS " + TABLE_NAME_ROLE_LIST;
         final String goal = "DROP TABLE IF EXISTS " + TABLE_NAME_GOAL_LIST;
         final String task = "DROP TABLE IF EXISTS " + TABLE_NAME_TASK_LIST;
-        Log.d("DBHelper", "onUpgrade");
         // Note: To upgrade table by deleting&creating table is not the best way.
         db.execSQL(role);
         db.execSQL(goal);
         db.execSQL(task);
         this.onCreate(db);
+        Log.d("DBHelper", "onUpgrade");
     }
 }

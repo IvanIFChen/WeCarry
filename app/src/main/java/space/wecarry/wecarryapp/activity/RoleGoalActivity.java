@@ -94,10 +94,10 @@ public class RoleGoalActivity extends AppCompatActivity {
             editDeadline.setId(listViewId);
 
             switchImportance = (Switch)ll.findViewById(R.id.switchImportance);
-            switchImportance.setChecked(mRole.getGoalList().get(i).isImportance());
+            switchImportance.setChecked(mRole.getGoalList().get(i).isImportant());
 
             switchUrgency = (Switch)ll.findViewById(R.id.switchUrgency);
-            switchUrgency.setChecked((mRole).getGoalList().get(i).isUrgency());
+            switchUrgency.setChecked((mRole).getGoalList().get(i).isUrgent());
 
             btnDelete = (Button)ll.findViewById(R.id.btn_del);
             btnDelete.setOnClickListener(deleteClickHandler);//設定監聽method
@@ -216,8 +216,8 @@ public class RoleGoalActivity extends AppCompatActivity {
                 mRole.getGoalList().get(i).setDeadline(0);
                 e.printStackTrace();
             }
-            mRole.getGoalList().get(i).setImportance(importance);
-            mRole.getGoalList().get(i).setUrgency(urgency);
+            mRole.getGoalList().get(i).setImportant(importance);
+            mRole.getGoalList().get(i).setUrgent(urgency);
             i++;
         }
     }

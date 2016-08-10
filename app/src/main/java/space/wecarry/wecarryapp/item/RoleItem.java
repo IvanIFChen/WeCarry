@@ -14,6 +14,11 @@ public class RoleItem implements Serializable {
     private long duration;
     private ArrayList<GoalItem> goalList;
 
+    public RoleItem(String title, ArrayList<GoalItem> goalList) {
+        this.title = title;
+        this.goalList = goalList;
+    }
+
     public RoleItem() {
         this.title = "";
         this.deadline = 0;

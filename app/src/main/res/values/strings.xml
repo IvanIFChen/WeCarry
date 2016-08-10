@@ -21,7 +21,7 @@
     <string name="role">Role</string>
     <string name="goal">Goal</string>
     <string name="deadline">Deadline</string>
-    <string name="importance">Importance</string>
+    <string name="important">Importance</string>
     <string name="delete">Delete</string>
     <string name="line">-------------------------</string>
     <string name="add">Add</string>
@@ -31,7 +31,7 @@
     <string name="action_show_month">Last 30 days</string>
 
     <string name="editRoleHint">What is your role?</string>
-    <string name="urgency">Urgency</string>
+    <string name="urgent">Urgency</string>
     <string name="editGoalHint">想要完成什麼？</string>
     <string name="editDeadlineHint">預計何時達成？</string>
 
