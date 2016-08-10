@@ -32,7 +32,6 @@ public class RoleGoalActivity extends AppCompatActivity {
     private LinearLayout ll_in_sv;
     private ArrayList<HashMap> objectList;
     private View buttonView;
-//    private ArrayList<RoleItem> mList;
     private RoleItem mRole;
     private int mYear, mMonth, mDay;
     private Calendar today = null;
