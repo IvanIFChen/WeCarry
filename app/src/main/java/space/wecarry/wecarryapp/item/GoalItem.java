@@ -33,14 +33,14 @@ public class GoalItem implements Serializable {
         calculateTotalDuration();
     }
 
-    public GoalItem(String title, long deadline, long duration, boolean isImportant, boolean isUrgent, ArrayList<TaskItem> taskList) {
-        this.title = title;
-        this.deadline = deadline;
-        this.duration = duration;
-        this.isImportant = isImportant;
-        this.isUrgent = isUrgent;
-        this.taskList = taskList;
-    }
+//    public GoalItem(String title, long deadline, long duration, boolean isImportant, boolean isUrgent, ArrayList<TaskItem> taskList) {
+//        this.title = title;
+//        this.deadline = deadline;
+//        this.duration = duration;
+//        this.isImportant = isImportant;
+//        this.isUrgent = isUrgent;
+//        this.taskList = taskList;
+//    }
 
     public void setTitle(String title) {
         this.title = title;
