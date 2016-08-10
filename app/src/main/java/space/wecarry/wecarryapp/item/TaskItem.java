@@ -11,7 +11,8 @@ public class TaskItem {
     private long latestStartTime;
     private long earliestEndTime;
     private long latestEndTime;
-    private long processTime;
+    private long deadline;
+    private long duration;
     private TaskItem preprocess;
     private ArrayList<ResourceItem> resourcesList;
 
@@ -21,15 +22,15 @@ public class TaskItem {
         this.latestStartTime = 0;
         this.earliestEndTime = 0;
         this.latestEndTime = 0;
-        this.processTime = 0;
+        this.duration = 0;
         this.preprocess = new TaskItem();
         this.resourcesList = new ArrayList<>();
     }
 
     public TaskItem(String title, long processTime) {
-    
+
         this.title = title;
-        this.processTime = processTime;
+        this.duration = processTime;
     }
 
     public TaskItem(String title, long earliestStartTime, long latestStartTime,
@@ -40,13 +41,13 @@ public class TaskItem {
         this.latestStartTime = latestStartTime;
         this.earliestEndTime = earliestEndTime;
         this.latestEndTime = latestEndTime;
-        this.processTime = processTime;
+        this.duration = processTime;
         this.preprocess = preprocess;
         this.resourcesList = resourcesList;
     }
 
     public String getTitle() {
-    
+
         return title;
     }
 
@@ -86,20 +87,20 @@ public class TaskItem {
         this.latestEndTime = latestEndTime;
     }
 
-    public long getProcessTime() {
-        return processTime;
+    public long getDeadline() {
+        return deadline;
     }
 
-    public void setProcessTime(long processTime) {
-        this.processTime = processTime;
+    public void setDeadline(long deadline) {
+        this.deadline = deadline;
     }
 
-    public TaskItem getPreprocess() {
-        return preprocess;
+    public long getDuration() {
+        return duration;
     }
 
-    public void setPreprocess(TaskItem preprocess) {
-        this.preprocess = preprocess;
+    public void setDuration(long duration) {
+        this.duration = duration;
     }
 
     public ArrayList<ResourceItem> getResourcesList() {
@@ -116,15 +117,16 @@ public class TaskItem {
 
     @Override
     public String toString() {
-        return "Task{" +
+        return "TaskItem{" +
                 "title='" + title + '\'' +
                 ", earliestStartTime=" + earliestStartTime +
                 ", latestStartTime=" + latestStartTime +
                 ", earliestEndTime=" + earliestEndTime +
                 ", latestEndTime=" + latestEndTime +
-                ", processTime=" + processTime +
+                ", deadline=" + deadline +
+                ", duration=" + duration +
                 ", preprocess=" + preprocess +
-                ", resourcesList='" + resourcesList + '\'' +
+                ", resourcesList=" + resourcesList +
                 '}';
     }
 }

@@ -20,11 +20,13 @@ public class GoalItem {
         this.duration = 0;
         this.importance = false;
         this.urgency = false;
+        this.taskList = new ArrayList<>();
     }
 
-    public GoalItem(String title, long deadline, boolean importance, boolean urgency, ArrayList<TaskItem> taskList) {
+    public GoalItem(String title, long deadline, long duration, boolean importance, boolean urgency, ArrayList<TaskItem> taskList) {
         this.title = title;
         this.deadline = deadline;
+        this.duration = duration;
         this.importance = importance;
         this.urgency = urgency;
         this.taskList = taskList;
@@ -84,9 +86,10 @@ public class GoalItem {
 
     @Override
     public String toString() {
-        return "Goal{" +
+        return "GoalItem{" +
                 "title='" + title + '\'' +
                 ", deadline=" + deadline +
+                ", duration=" + duration +
                 ", importance=" + importance +
                 ", urgency=" + urgency +
                 ", taskList=" + taskList +

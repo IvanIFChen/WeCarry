@@ -10,25 +10,29 @@ public class DBConstants {
     public static final String TABLE_NAME_TASK_LIST = "TASK_LIST";
 
     // Role
-    public static final String ROLE_ID = "role_id";
-    public static final String ROLE_NAME = "role_name";
+    public static final String ROLE_ID = "ROLE_ID";
+    public static final String ROLE_TITLE = "ROLE_TITLE";
+    public static final String ROLE_DEADLINE = "ROLE_DEADLINE";
+    public static final String ROLE_DURATION = "ROEL_DURATION";
 
     // Goal
     public static final String GOAL_ID = "GOAL_ID";
-    public static final String GOAL_NAME = "GOAL_NAME";
+    public static final String GOAL_TITLE = "GOAL_TITLE";
     public static final String GOAL_DEADLINE = "GOAL_DEADLINE";
+    public static final String GOAL_DURATION = "GOAL_DURATION";
     public static final String GOAL_IMPORTANCE = "GOAL_IMPORTANCE";
     public static final String GOAL_URGENCY = "GOAL_URGENCY";
     public static final String GOAL_ROLE_ID = "GOAL_ROLE_ID";
 
     // Task
     public static final String TASK_ID = "TASK_ID";
-    public static final String TASK_NAME = "TASK_NAME";
+    public static final String TASK_TITLE = "TASK_TITLE";
     public static final String TASK_EST = "TASK_EST";
     public static final String TASK_LST = "TASK_LST";
     public static final String TASK_EET = "TASK_EET";
     public static final String TASK_LET = "TASK_LET";
-    public static final String TASK_PROCESS_TIME = "TASK_PROCESS_TIME";
+    public static final String TASK_DEADLINE = "TASK_DEADLINE";
+    public static final String TASK_DURATION = "TASK_PROCESS_TIME";
     public static final String TASK_PREPROCESS = "TASK_PREPROCESS";
     public static final String TASK_RESOURCE = "TASK_RESOURCE";
     public static final String TASK_GOAL_ID = "TASK_GOAL_ID";
