@@ -1,9 +1,11 @@
 package space.wecarry.wecarryapp.item;
 
+import java.io.Serializable;
+
 /**
  * Created by Blair on 2016/8/9.
  */
-public class ResourceItem {
+public class ResourceItem implements Serializable {
     private String title;
     private String email;
 

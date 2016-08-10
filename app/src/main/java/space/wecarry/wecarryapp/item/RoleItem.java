@@ -1,12 +1,14 @@
 package space.wecarry.wecarryapp.item;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Blair on 2016/8/5.
  */
-public class RoleItem {
+public class RoleItem implements Serializable {
 
+    private static final long serialVersionUID = 7382351359868556980L;
     private String title;
     private long deadline;
     private long duration;

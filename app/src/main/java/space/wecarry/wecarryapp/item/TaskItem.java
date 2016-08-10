@@ -1,11 +1,12 @@
 package space.wecarry.wecarryapp.item;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Ivan IF Chen on 8/9/2016.
  */
-public class TaskItem {
+public class TaskItem implements Serializable {
     private String title;
     private long earliestStartTime;
     private long latestStartTime;

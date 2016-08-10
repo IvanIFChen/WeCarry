@@ -1,11 +1,12 @@
 package space.wecarry.wecarryapp.item;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Blair on 2016/8/5.
  */
-public class GoalItem {
+public class GoalItem implements Serializable {
 
     private String title;
     private long deadline;

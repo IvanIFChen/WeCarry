@@ -1,6 +1,7 @@
 package space.wecarry.wecarryapp.activity;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -31,10 +32,11 @@ public class RoleGoalActivity extends AppCompatActivity {
     private LinearLayout ll_in_sv;
     private ArrayList<HashMap> objectList;
     private View buttonView;
-    private ArrayList<RoleItem> mList;
+//    private ArrayList<RoleItem> mList;
+    private RoleItem mRole;
     private int mYear, mMonth, mDay;
     private Calendar today = null;
-    private int roleIndex = 0; // User select in RoleGoalFragment
+    private int roleUserSelected = -1; // -1 is new a role
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,34 +48,46 @@ public class RoleGoalActivity extends AppCompatActivity {
         btnConfirm = (Button)findViewById(R.id.info_dialog_confirm);
         btnCancel = (Button)findViewById(R.id.info_dialog_cancel);
         btnNewList = (Button)buttonView.findViewById(R.id.info_dialog_new);
-
         today = Calendar.getInstance();
 
-        roleIndex = 0; // User select in RoleGoalFragment   //Testing   //TODO: Get which user selected
-        getRoleGoal();  // Get data from DB, and save in mList
-        editRole.setText(mList.get(0).getTitle());
+        // Get what user selected
+        Intent intent = getIntent();
+        roleUserSelected = intent.getIntExtra("roleUserSelected", -1);
+        Log.i("roleUserSelected", String.valueOf(roleUserSelected));
+
+        if(roleUserSelected == -1) {
+            // User selected to add a new role
+            mRole = new RoleItem();
+        } else {
+            // User selected to edit the role
+            mRole = (RoleItem) intent.getSerializableExtra("roleItem");
+        }
+
+
+//        getRoleGoal();  // Get data from DB, and save in mList
+        editRole.setText(mRole.getTitle());
         addListView();
         setActions();
     }
 
-    private void getRoleGoal() {
-        mList = new ArrayList<>();
-        // TODO: Get data from DB
-        // Testing (Sample)
-        RoleItem roleItem = new RoleItem();
-        GoalItem goalItem = new GoalItem();
-        roleItem.setTitle("Student");
-        goalItem.setTitle("Read a book");
-        goalItem.setDeadline(Calendar.getInstance().getTimeInMillis()+2*60*60*1000);
-        goalItem.setDuration(2*60*60*1000);
-        goalItem.setImportance(true);
-        goalItem.setUrgency(true);
-        roleItem.addGoalItem(goalItem);
-        GoalItem goalItem2 = new GoalItem();
-        goalItem2.setTitle("Be the top one");
-        roleItem.addGoalItem(goalItem2);
-        mList.add(roleItem);
-    }
+//    private void getRoleGoal() {
+//        mList = new ArrayList<>();
+//        // TODO: Get data from DB
+//        // Testing (Sample)
+//        RoleItem roleItem = new RoleItem();
+//        GoalItem goalItem = new GoalItem();
+//        roleItem.setTitle("Student");
+//        goalItem.setTitle("Read a book");
+//        goalItem.setDeadline(Calendar.getInstance().getTimeInMillis()+2*60*60*1000);
+//        goalItem.setDuration(2*60*60*1000);
+//        goalItem.setImportance(true);
+//        goalItem.setUrgency(true);
+//        roleItem.addGoalItem(goalItem);
+//        GoalItem goalItem2 = new GoalItem();
+//        goalItem2.setTitle("Be the top one");
+//        roleItem.addGoalItem(goalItem2);
+//        mList.add(roleItem);
+//    }
 
     private void addListView() {
         objectList = new ArrayList<HashMap>();
@@ -81,17 +95,17 @@ public class RoleGoalActivity extends AppCompatActivity {
         ll_in_sv.removeAllViews();
 
         //資料來源
-        for (int i = 0; i < mList.get(0).getGoalList().size(); i++) {
+        for (int i = 0; i < mRole.getGoalList().size(); i++) {
 
             HashMap editMap = new HashMap();
             View view = LayoutInflater.from(RoleGoalActivity.this).inflate(R.layout.role_goal_object, null); //物件來源
             LinearLayout ll = (LinearLayout) view.findViewById(R.id.ll);
 
             editGoal = (EditText)ll.findViewById(R.id.editTextGoal);
-            editGoal.setText(mList.get(roleIndex).getGoalList().get(i).getTitle());
+            editGoal.setText(mRole.getGoalList().get(i).getTitle());
 
             editDeadline = (EditText)ll.findViewById(R.id.editTextDeadline);
-            long deadline = mList.get(roleIndex).getGoalList().get(i).getDeadline();
+            long deadline = mRole.getGoalList().get(i).getDeadline();
             if(deadline !=0) {
                 editDeadline.setText(millsecToDateConverter(deadline));
             }else {
@@ -102,10 +116,10 @@ public class RoleGoalActivity extends AppCompatActivity {
             editDeadline.setId(listViewId);
 
             switchImportance = (Switch)ll.findViewById(R.id.switchImportance);
-            switchImportance.setChecked(mList.get(roleIndex).getGoalList().get(i).isImportance());
+            switchImportance.setChecked(mRole.getGoalList().get(i).isImportance());
 
             switchUrgency = (Switch)ll.findViewById(R.id.switchUrgency);
-            switchUrgency.setChecked((mList.get(roleIndex)).getGoalList().get(i).isUrgency());
+            switchUrgency.setChecked((mRole).getGoalList().get(i).isUrgency());
 
             btnDelete = (Button)ll.findViewById(R.id.btn_del);
             btnDelete.setOnClickListener(deleteClickHandler);//設定監聽method
@@ -135,11 +149,11 @@ public class RoleGoalActivity extends AppCompatActivity {
                 if(!"".equals(editRole.getText().toString().trim())) {
                     // Pass
                     saveDataInBuffer();
-                    mList.get(roleIndex).setTitle(editRole.getText().toString());    // save Role
+                    mRole.setTitle(editRole.getText().toString());    // save Role
                     // Tasting
                     String goal ="";
                     int i = 1;
-                    for(GoalItem goalItem:mList.get(roleIndex).getGoalList()) {
+                    for(GoalItem goalItem:mRole.getGoalList()) {
                         // TODO: Clean empty goal
                         String g =goalItem.getTitle();
                         if(!"".equals(g.trim())) {
@@ -148,7 +162,7 @@ public class RoleGoalActivity extends AppCompatActivity {
                         }
                     }
                     Toast.makeText(getApplicationContext(),"" +
-                            "角色: " +mList.get(roleIndex).getTitle() +"\n"+
+                            "角色: " +mRole.getTitle() +"\n"+
                             "目標: " +"\n"+goal+
                             "",Toast.LENGTH_SHORT).show();
 //                    finish();
@@ -175,7 +189,7 @@ public class RoleGoalActivity extends AppCompatActivity {
                 // TODO: 數量限制?
                 // We need to store data before adding, or data will be missing
                 saveDataInBuffer();
-                mList.get(roleIndex).addGoalItem(new GoalItem());
+                mRole.addGoalItem(new GoalItem());
                 addListView(); //reload view
             }
         });
@@ -192,7 +206,7 @@ public class RoleGoalActivity extends AppCompatActivity {
             // We need to store data before delete, or data will be missing
             int i = 0;
             saveDataInBuffer();
-            mList.get(roleIndex).getGoalList().remove(id);
+            mRole.getGoalList().remove(id);
             addListView(); //reload view
         }
     };
@@ -203,7 +217,7 @@ public class RoleGoalActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             // Get the deadline(Long)
-            Long deadline = mList.get(roleIndex).getGoalList().get(v.getId()).getDeadline();
+            Long deadline = mRole.getGoalList().get(v.getId()).getDeadline();
             showDatePickerDialog(deadline, (EditText) v, v.getId());
         }
     };
@@ -215,21 +229,20 @@ public class RoleGoalActivity extends AppCompatActivity {
             String deadline = ((EditText)editMap.get("DEADLINE")).getText().toString();
             boolean importance = ((Switch)editMap.get("IMPORTANCE")).isChecked();
             boolean urgency = ((Switch)editMap.get("URGENCY")).isChecked();
-            mList.get(roleIndex).getGoalList().get(i).setTitle(goal);
-            try {mList.get(roleIndex).getGoalList().get(i).setDeadline(dateToMillsecConverter(deadline));
+            mRole.getGoalList().get(i).setTitle(goal);
+            try {mRole.getGoalList().get(i).setDeadline(dateToMillsecConverter(deadline));
             } catch (ParseException e) {
-                mList.get(roleIndex).getGoalList().get(i).setDeadline(0);
+                mRole.getGoalList().get(i).setDeadline(0);
                 e.printStackTrace();
             }
-            mList.get(roleIndex).getGoalList().get(i).setImportance(importance);
-            mList.get(roleIndex).getGoalList().get(i).setUrgency(urgency);
+            mRole.getGoalList().get(i).setImportance(importance);
+            mRole.getGoalList().get(i).setUrgency(urgency);
             i++;
         }
     }
 
     private void showDatePickerDialog(Long date, final EditText editText, final int id) {
-        //TODO: If the date is 0 ?
-        // If date is 0, it means user didn't set the deadline of goal
+        // If date is 0, it means user didn't set the deadline of goal (because the default of goal deadline is 0)
         if(date !=0) {
             mYear = Integer.parseInt(new SimpleDateFormat("yyyy").format(date));
             mMonth = Integer.parseInt(new SimpleDateFormat("MM").format(date)) - 1;
@@ -257,7 +270,7 @@ public class RoleGoalActivity extends AppCompatActivity {
                         // Why do we converted it twice(string > long > string)? Because we want the same format.
                         editText.setText(millsecToDateConverter(deadline));
                         // Store the date user picked into mList
-                        mList.get(roleIndex).getGoalList().get(id).setDeadline(deadline);
+                        mRole.getGoalList().get(id).setDeadline(deadline);
 
                     }
                 }, mYear, mMonth, mDay);

@@ -33,7 +33,7 @@ public class RoleGoalFragment extends Fragment {
     public RoleGoalFragment() { }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_role_goal, container, false);
         getActivity().setTitle(getString(R.string.navigation_drawer_role_goal));
@@ -45,7 +45,13 @@ public class RoleGoalFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), "#"+Long.toString(id)+ " Click",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                intent.setClass(getActivity(), RoleGoalActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("roleUserSelected", position);
+                bundle.putSerializable("roleItem", ((RoleItem)mList.get(position)));
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -63,7 +69,12 @@ public class RoleGoalFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), RoleGoalActivity.class));
+                Intent intent = new Intent();
+                intent.setClass(getActivity(), RoleGoalActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("roleUserSelected", -1);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
 
