@@ -25,9 +25,9 @@ public class DBHelper extends SQLiteOpenHelper{
                         " (" +
                         _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         ROLE_ID + " INTEGER, " +
-                        ROLE_TITLE + " TEXT " +
-                        ROLE_DEADLINE + "INTEGER" +
-                        ROLE_DURATION + "INTEGER" +
+                        ROLE_TITLE + " TEXT, " +
+                        ROLE_DEADLINE + " INTEGER, " +
+                        ROLE_DURATION + " INTEGER" +
                         ");";
         final String INIT_GOAL_TABLE =
                 "CREATE TABLE IF NOT EXISTS " +
@@ -37,9 +37,9 @@ public class DBHelper extends SQLiteOpenHelper{
                         GOAL_ID + " INTEGER, " +
                         GOAL_TITLE + " TEXT, " +
                         GOAL_DEADLINE + " INTEGER, " +
-                        GOAL_DURATION + "INTEGER" +
-                        GOAL_IMPORTANCE + " INTEGER, " +
-                        GOAL_URGENCY + " INTEGER, " +
+                        GOAL_DURATION + "INTEGER, " +
+                        GOAL_IMPORTANCE + " TEXT, " +
+                        GOAL_URGENCY + " TEXT, " +
                         GOAL_ROLE_ID + " INTEGER " +
                         ");";
         final String INIT_TASK_TABLE =
@@ -53,7 +53,7 @@ public class DBHelper extends SQLiteOpenHelper{
                         TASK_LST + " INTEGER, " +
                         TASK_EET + " INTEGER, " +
                         TASK_LET + " INTEGER, " +
-                        TASK_DEADLINE + "INTEGER" +
+                        TASK_DEADLINE + "INTEGER, " +
                         TASK_DURATION + " INTEGER, " +
                         TASK_PREPROCESS + " TEXT, " +
                         TASK_RESOURCE + " TEXT, " +
