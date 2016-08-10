@@ -23,6 +23,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
+                android:hint="@string/editGoalHint"
                 android:singleLine="true" />
         </LinearLayout>
 
@@ -45,6 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
                 android:focusable="false"
+                android:hint="@string/editDeadlineHint"
                 android:singleLine="true" />
         </LinearLayout>
 

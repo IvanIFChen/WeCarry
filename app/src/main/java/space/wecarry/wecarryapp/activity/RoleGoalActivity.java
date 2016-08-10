@@ -63,31 +63,10 @@ public class RoleGoalActivity extends AppCompatActivity {
             mRole = (RoleItem) intent.getSerializableExtra("roleItem");
         }
 
-
-//        getRoleGoal();  // Get data from DB, and save in mList
         editRole.setText(mRole.getTitle());
         addListView();
         setActions();
     }
-
-//    private void getRoleGoal() {
-//        mList = new ArrayList<>();
-//        // TODO: Get data from DB
-//        // Testing (Sample)
-//        RoleItem roleItem = new RoleItem();
-//        GoalItem goalItem = new GoalItem();
-//        roleItem.setTitle("Student");
-//        goalItem.setTitle("Read a book");
-//        goalItem.setDeadline(Calendar.getInstance().getTimeInMillis()+2*60*60*1000);
-//        goalItem.setDuration(2*60*60*1000);
-//        goalItem.setImportance(true);
-//        goalItem.setUrgency(true);
-//        roleItem.addGoalItem(goalItem);
-//        GoalItem goalItem2 = new GoalItem();
-//        goalItem2.setTitle("Be the top one");
-//        roleItem.addGoalItem(goalItem2);
-//        mList.add(roleItem);
-//    }
 
     private void addListView() {
         objectList = new ArrayList<HashMap>();
@@ -110,7 +89,7 @@ public class RoleGoalActivity extends AppCompatActivity {
                 editDeadline.setText(millsecToDateConverter(deadline));
             }else {
                 // If user didn't set any deadline
-                editDeadline.setText("未設定");    //TODO: English?
+//                editDeadline.setText("打算何時完成？");    //TODO: English?
             }
             editDeadline.setOnClickListener(deadlineClickHandler);
             editDeadline.setId(listViewId);
@@ -147,14 +126,15 @@ public class RoleGoalActivity extends AppCompatActivity {
                 Log.i("msg", "Confirmed");
                 // Check it
                 if(!"".equals(editRole.getText().toString().trim())) {
-                    // Pass
+                    // Pass (User has input role)
                     saveDataInBuffer();
-                    mRole.setTitle(editRole.getText().toString());    // save Role
-                    // Tasting
+                    mRole.setTitle(editRole.getText().toString());    // save Role (in buffer)
+
+                    // Tasting-------------------------------------------------------------------------------
                     String goal ="";
                     int i = 1;
                     for(GoalItem goalItem:mRole.getGoalList()) {
-                        // TODO: Clean empty goal
+                        // Clean empty goal
                         String g =goalItem.getTitle();
                         if(!"".equals(g.trim())) {
                             goal += Integer.toString(i) + ". " + g + "\n";
@@ -166,6 +146,8 @@ public class RoleGoalActivity extends AppCompatActivity {
                             "目標: " +"\n"+goal+
                             "",Toast.LENGTH_SHORT).show();
 //                    finish();
+                    // End tasting-----------------------------------------------------------------------------
+                    // TODO: Clean empty goal
                     // TODO: Save data in sqlite
                 }else {
                     Toast.makeText(getApplicationContext(),"尚未填寫「角色」",Toast.LENGTH_SHORT).show();   // TODO: English?

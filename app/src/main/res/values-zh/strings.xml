@@ -18,7 +18,9 @@
     <string name="delete">刪除</string>
     <string name="line">-------------------------</string>
     <string name="add">新增</string>
-    <string name="editHint">你的角色是什麼？</string>
+    <string name="editRoleHint">你的角色是什麼？</string>
     <string name="urgency">急迫性</string>
+    <string name="editGoalHint">想要完成什麼？</string>
+    <string name="editDeadlineHint">預計何時達成？</string>
 
 </resources>
