@@ -88,8 +88,7 @@ public class RoleGoalActivity extends AppCompatActivity {
             if(deadline !=0) {
                 editDeadline.setText(millsecToDateConverter(deadline));
             }else {
-                // If user didn't set any deadline
-//                editDeadline.setText("打算何時完成？");    //TODO: English?
+                // If user didn't set any deadline  //目前不用理它?
             }
             editDeadline.setOnClickListener(deadlineClickHandler);
             editDeadline.setId(listViewId);
