@@ -114,8 +114,8 @@ public class RoleGoalFragment extends Fragment {
                     goalItem.setTitle(cursorGoal.getString(2));
                     goalItem.setDeadline(cursorGoal.getLong(3));
                     goalItem.setDuration(cursorGoal.getLong(4));
-                    goalItem.setImportance(Boolean.valueOf(cursorGoal.getString(5)));   // SQLite can't use boolean type?
-                    goalItem.setUrgency(Boolean.valueOf(cursorGoal.getString(6)));
+                    goalItem.setImportant(Boolean.valueOf(cursorGoal.getString(5)));   // SQLite can't use boolean type?
+                    goalItem.setUrgent(Boolean.valueOf(cursorGoal.getString(6)));
                     roleItem.addGoalItem(goalItem);
                     cursorGoal.moveToNext();
                 }

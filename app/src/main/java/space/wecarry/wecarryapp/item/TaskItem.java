@@ -29,9 +29,17 @@ public class TaskItem implements Serializable {
     }
 
     public TaskItem(String title, long processTime) {
-
         this.title = title;
         this.duration = processTime;
+    }
+
+    public TaskItem(String title, long deadline, long processTime) {
+        this.title = title;
+        this.deadline = deadline;
+        this.duration = processTime;
+        this.latestEndTime = deadline;
+        this.latestStartTime = deadline - processTime;
+
     }
 
     public TaskItem(String title, long earliestStartTime, long latestStartTime,

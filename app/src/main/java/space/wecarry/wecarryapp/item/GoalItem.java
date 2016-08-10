@@ -30,6 +30,7 @@ public class GoalItem implements Serializable {
         this.isImportant = isImportant;
         this.isUrgent = isUrgent;
         this.taskList = taskList;
+        calculateTotalDuration();
     }
 
     public GoalItem(String title, long deadline, long duration, boolean isImportant, boolean isUrgent, ArrayList<TaskItem> taskList) {
@@ -67,10 +68,12 @@ public class GoalItem implements Serializable {
 
     public void setTaskList(ArrayList<TaskItem> taskList) {
         this.taskList = taskList;
+        calculateTotalDuration();
     }
 
     public void addTaskItem(TaskItem taskItem) {
         this.taskList.add(taskItem);
+        calculateTotalDuration();
     }
 
     public long getDeadline() {
@@ -91,6 +94,14 @@ public class GoalItem implements Serializable {
 
     public ArrayList<TaskItem> getTaskList() {
         return taskList;
+    }
+
+    private void calculateTotalDuration() {
+        long sum = 0;
+        for (TaskItem ti : this.taskList) {
+            sum = sum + ti.getDuration();
+        }
+        this.duration = sum;
     }
 
     @Override

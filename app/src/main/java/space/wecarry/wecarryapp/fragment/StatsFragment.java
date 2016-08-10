@@ -37,6 +37,7 @@ import space.wecarry.wecarryapp.listviewitems.ChartItem;
 import space.wecarry.wecarryapp.listviewitems.LineChartItem;
 import space.wecarry.wecarryapp.listviewitems.PieChartItem;
 import space.wecarry.wecarryapp.sqlite.DBHelper;
+import space.wecarry.wecarryapp.UserConstants.*;
 
 public class StatsFragment extends Fragment {
     private DBHelper dbHelper;
