@@ -66,8 +66,8 @@ public class PieChartItem extends ChartItem {
         holder.chart.setDrawHoleEnabled(false);
         holder.chart.setRotationEnabled(false);
 
-        holder.chart.setDrawEntryLabels(true);
-        holder.chart.setEntryLabelColor(Color.BLACK);
+        holder.chart.setDrawEntryLabels(false);
+//        holder.chart.setEntryLabelColor(Color.BLACK);
 
         mChartData.setValueFormatter(new PercentFormatter());
         mChartData.setValueTypeface(mTf);

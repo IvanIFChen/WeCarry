@@ -81,22 +81,22 @@ public class StatsFragment extends Fragment {
     private void getDataFromDB() {
         // TODO: load data from db
         // sample data
-        Calendar cal = new GregorianCalendar();
-        cal.add(Calendar.DATE, 10);
-        long g1Deadline = cal.getTimeInMillis();
-        Log.d("g1Deadline", Long.toString(g1Deadline));
-        cal.add(Calendar.DATE, 10);
-        long g2Deadline = cal.getTimeInMillis();
-        Log.d("g2Deadline", Long.toString(g2Deadline));
-        cal.add(Calendar.DATE, 10);
-        long g3Deadline = cal.getTimeInMillis();
-        Log.d("g3Deadline", Long.toString(g3Deadline));
-        cal.add(Calendar.DATE, 10);
-        long g4Deadline = cal.getTimeInMillis();
-        Log.d("g4Deadline", Long.toString(g4Deadline));
-        cal.add(Calendar.DATE, 10);
-        long g5Deadline = cal.getTimeInMillis();
-        Log.d("g5Deadline", Long.toString(g5Deadline));
+//        Calendar cal = new GregorianCalendar();
+//        cal.add(Calendar.DATE, 1);
+//        long g1Deadline = cal.getTimeInMillis();
+//        Log.d("g1Deadline", Long.toString(g1Deadline));
+//        cal.add(Calendar.DATE, 2);
+//        long g2Deadline = cal.getTimeInMillis();
+//        Log.d("g2Deadline", Long.toString(g2Deadline));
+//        cal.add(Calendar.DATE, 3);
+//        long g3Deadline = cal.getTimeInMillis();
+//        Log.d("g3Deadline", Long.toString(g3Deadline));
+//        cal.add(Calendar.DATE, 4);
+//        long g4Deadline = cal.getTimeInMillis();
+//        Log.d("g4Deadline", Long.toString(g4Deadline));
+//        cal.add(Calendar.DATE, 5);
+//        long g5Deadline = cal.getTimeInMillis();
+//        Log.d("g5Deadline", Long.toString(g5Deadline));
 
         // re-initialize
         roleList = new ArrayList<RoleItem>();
@@ -161,11 +161,11 @@ public class StatsFragment extends Fragment {
 //        g1Tasks.add(t2);
 //        g2Tasks.add(t3);
 //        g3Tasks.add(t4);
-        GoalItem g1 = new GoalItem("goal1", g1Deadline, true, true, g1Tasks);
-        GoalItem g2 = new GoalItem("goal2", g2Deadline, true, false, g2Tasks);
-        GoalItem g3 = new GoalItem("goal3", g3Deadline, false, true, g3Tasks);
-        GoalItem g4 = new GoalItem("goal4", g4Deadline, false, false, g4Tasks);
-        GoalItem g5 = new GoalItem("goal5", g5Deadline, true, false, g5Tasks);
+        GoalItem g1 = new GoalItem("goal1", 0, true, true, g1Tasks); // will add deadline later
+        GoalItem g2 = new GoalItem("goal2", 0, true, false, g2Tasks);
+        GoalItem g3 = new GoalItem("goal3", 0, false, true, g3Tasks);
+        GoalItem g4 = new GoalItem("goal4", 0, false, false, g4Tasks);
+        GoalItem g5 = new GoalItem("goal5", 0, true, false, g5Tasks);
         r1Goals.add(g1);
         r1Goals.add(g2);
         r1Goals.add(g3);
@@ -186,6 +186,24 @@ public class StatsFragment extends Fragment {
 //        taskList.add(t2);
 //        taskList.add(t3);
 //        taskList.add(t4);
+
+        // Adding deadline for goals and tasks
+        for (GoalItem gi : goalList) {
+            Calendar cal = new GregorianCalendar();
+            gi.setDeadline(cal.getTimeInMillis());
+            Log.d("Today", "   " + Long.toString(cal.getTimeInMillis()));
+            for (TaskItem ti : gi.getTaskList()) {
+                cal.add(cal.DATE, -1);
+                Log.d("Today -1", cal.toString());
+                ti.setDeadline(cal.getTimeInMillis());
+            }
+        }
+        Calendar cal = new GregorianCalendar();
+        cal.set(2016, 7, 10, 15, 0);
+        Log.e("specific time", Long.toString(cal.getTimeInMillis()));
+        cal.set(2016, 7, 10, 19, 32);
+        Log.e("specific time", Long.toString(cal.getTimeInMillis()));
+
 
         Log.d("Test: checkQuadrant", Long.toString(g1.checkQuadrant()));
         Log.d("Test: checkQuadrant", Long.toString(g2.checkQuadrant()));
