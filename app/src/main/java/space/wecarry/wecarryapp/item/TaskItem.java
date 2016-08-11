@@ -37,8 +37,8 @@ public class TaskItem implements Serializable {
         this.title = title;
         this.deadline = deadline;
         this.duration = processTime;
-        this.latestEndTime = deadline;
-        this.latestStartTime = deadline - processTime;
+//        this.latestEndTime = deadline;
+//        this.latestStartTime = deadline - processTime;
 
     }
 

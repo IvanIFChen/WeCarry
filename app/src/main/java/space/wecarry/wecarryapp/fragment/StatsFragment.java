@@ -30,6 +30,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import space.wecarry.wecarryapp.R;
+import space.wecarry.wecarryapp.UserConstants;
 import space.wecarry.wecarryapp.item.GoalItem;
 import space.wecarry.wecarryapp.item.RoleItem;
 import space.wecarry.wecarryapp.item.TaskItem;
@@ -44,7 +45,6 @@ public class StatsFragment extends Fragment {
     private ArrayList<RoleItem> roleList;
     private ArrayList<GoalItem> goalList;
     private ArrayList<TaskItem> taskList;
-    private long q1Size, q2Size, q3Size, q4Size, otherSize;
 
 
     @Override
@@ -56,6 +56,11 @@ public class StatsFragment extends Fragment {
         getActivity().setTitle(getString(R.string.navigation_drawer_stats));
 
         Utils.init(getActivity());
+
+        // Insert test data to db
+        Log.d("Start test data", "=============================================");
+        getDataFromDB();
+        Log.d("End test data", "===============================================");
 
         ListView lv = (ListView) rootView.findViewById(R.id.listView1);
 
@@ -69,36 +74,8 @@ public class StatsFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-        // Insert test data to db
-        Log.d("Start test data", "=============================================");
-        getDataFromDB();
-        Log.d("End test data", "===============================================");
 
         return rootView;
-    }
-
-    private long calculateTotalDurationFromGoal(GoalItem gi) {
-        long sum = 0;
-        ArrayList<TaskItem> tasks = gi.getTaskList();
-        for (TaskItem ti : tasks) {
-            sum = sum + ti.getDuration();
-        }
-        return sum;
-    }
-
-    private int checkQuadrant(GoalItem gi) {
-        if (gi.isImportant() && gi.isUrgent()) {
-            return 1;
-        }
-        else if (gi.isImportant() && !gi.isUrgent()) {
-            return 2;
-        }
-        else if (!gi.isImportant() && gi.isUrgent()) {
-            return 3;
-        }
-        else {
-            return 4;
-        }
     }
 
     private void getDataFromDB() {
@@ -114,7 +91,14 @@ public class StatsFragment extends Fragment {
         cal.add(Calendar.DATE, 10);
         long g3Deadline = cal.getTimeInMillis();
         Log.d("g3Deadline", Long.toString(g3Deadline));
+        cal.add(Calendar.DATE, 10);
+        long g4Deadline = cal.getTimeInMillis();
+        Log.d("g4Deadline", Long.toString(g4Deadline));
+        cal.add(Calendar.DATE, 10);
+        long g5Deadline = cal.getTimeInMillis();
+        Log.d("g5Deadline", Long.toString(g5Deadline));
 
+        // re-initialize
         roleList = new ArrayList<RoleItem>();
         goalList = new ArrayList<GoalItem>();
         taskList = new ArrayList<TaskItem>();
@@ -122,23 +106,71 @@ public class StatsFragment extends Fragment {
         ArrayList<TaskItem> g1Tasks = new ArrayList<TaskItem>();
         ArrayList<TaskItem> g2Tasks = new ArrayList<TaskItem>();
         ArrayList<TaskItem> g3Tasks = new ArrayList<TaskItem>();
+        ArrayList<TaskItem> g4Tasks = new ArrayList<TaskItem>();
+        ArrayList<TaskItem> g5Tasks = new ArrayList<TaskItem>();
         ArrayList<GoalItem> r1Goals = new ArrayList<GoalItem>();
         ArrayList<GoalItem> r2Goals = new ArrayList<GoalItem>();
 
-        TaskItem t1 = new TaskItem("task1", 10);
-        TaskItem t2 = new TaskItem("task2", 20);
-        TaskItem t3 = new TaskItem("task3", 30);
-        TaskItem t4 = new TaskItem("task4", 40);
-        g1Tasks.add(t1);
-        g1Tasks.add(t2);
-        g2Tasks.add(t3);
-        g3Tasks.add(t4);
+        // random value = (max ~1.5hr, min ~.5hr)
+        int nameCount = 1;
+        for (int i = 1; i <= 10; i++) {
+            TaskItem task;
+            task = new TaskItem("task" + nameCount, (long) (Math.random() * 70 + 30));
+//            Log.e("task", task.toString());
+            g1Tasks.add(task);
+            taskList.add(task);
+            nameCount = nameCount + 1;
+            task = new TaskItem("task" + nameCount, (long) (Math.random() * 70 + 30));
+//            Log.e("task", task.toString());
+            g2Tasks.add(task);
+            taskList.add(task);
+            nameCount = nameCount + 1;
+            task = new TaskItem("task" + nameCount, (long) (Math.random() * 70 + 30));
+//            Log.e("task", task.toString());
+            g3Tasks.add(task);
+            taskList.add(task);
+            nameCount = nameCount + 1;
+            task = new TaskItem("task" + nameCount, (long) (Math.random() * 70 + 30));
+//            Log.e("task", task.toString());
+            g4Tasks.add(task);
+            taskList.add(task);
+            nameCount = nameCount + 1;
+            task = new TaskItem("task" + nameCount, (long) (Math.random() * 70 + 30));
+//            Log.e("task", task.toString());
+            g5Tasks.add(task);
+            taskList.add(task);
+//            if (i <= 20) {
+//                g1Tasks.add(task);
+//            } else if (i > 20 && i<= 40) {
+//                g2Tasks.add(task);
+//            } else if (i > 40 && i<= 60) {
+//                g3Tasks.add(task);
+//            }else if (i > 60 && i<= 80) {
+//                g4Tasks.add(task);
+//            } else {
+//                g5Tasks.add(task);
+//            }
+//            // still add to the "contain all tasks" task list.
+//            taskList.add(task);
+        }
+//        TaskItem t1 = new TaskItem("task1", 10); // in minutes
+//        TaskItem t2 = new TaskItem("task2", 20);
+//        TaskItem t3 = new TaskItem("task3", 30);
+//        TaskItem t4 = new TaskItem("task4", 40);
+//        g1Tasks.add(t1);
+//        g1Tasks.add(t2);
+//        g2Tasks.add(t3);
+//        g3Tasks.add(t4);
         GoalItem g1 = new GoalItem("goal1", g1Deadline, true, true, g1Tasks);
-        GoalItem g2 = new GoalItem("goal2", g2Deadline, true, true, g2Tasks);
-        GoalItem g3 = new GoalItem("goal3", g3Deadline, false, false, g3Tasks);
+        GoalItem g2 = new GoalItem("goal2", g2Deadline, true, false, g2Tasks);
+        GoalItem g3 = new GoalItem("goal3", g3Deadline, false, true, g3Tasks);
+        GoalItem g4 = new GoalItem("goal4", g4Deadline, false, false, g4Tasks);
+        GoalItem g5 = new GoalItem("goal5", g5Deadline, true, false, g5Tasks);
         r1Goals.add(g1);
         r1Goals.add(g2);
-        r2Goals.add(g3);
+        r1Goals.add(g3);
+        r2Goals.add(g4);
+        r2Goals.add(g5);
         RoleItem r1 = new RoleItem("role1", r1Goals);
         RoleItem r2 = new RoleItem("role2", r2Goals);
 
@@ -148,19 +180,24 @@ public class StatsFragment extends Fragment {
         goalList.add(g1);
         goalList.add(g2);
         goalList.add(g3);
-        taskList.add(t1);
-        taskList.add(t2);
-        taskList.add(t3);
-        taskList.add(t4);
+        goalList.add(g4);
+        goalList.add(g5);
+//        taskList.add(t1);
+//        taskList.add(t2);
+//        taskList.add(t3);
+//        taskList.add(t4);
 
-        // output: 1 1 4
-        Log.d("Test: checkQuadrant", Long.toString(checkQuadrant(g1)));
-        Log.d("Test: checkQuadrant", Long.toString(checkQuadrant(g2)));
-        Log.d("Test: checkQuadrant", Long.toString(checkQuadrant(g3)));
-        // output: 30 30 40
-        Log.d("Test: totalDuration", Long.toString(calculateTotalDurationFromGoal(g1)));
-        Log.d("Test: totalDuration", Long.toString(calculateTotalDurationFromGoal(g2)));
-        Log.d("Test: totalDuration", Long.toString(calculateTotalDurationFromGoal(g3)));
+        Log.d("Test: checkQuadrant", Long.toString(g1.checkQuadrant()));
+        Log.d("Test: checkQuadrant", Long.toString(g2.checkQuadrant()));
+        Log.d("Test: checkQuadrant", Long.toString(g3.checkQuadrant()));
+        Log.d("Test: checkQuadrant", Long.toString(g4.checkQuadrant()));
+        Log.d("Test: checkQuadrant", Long.toString(g5.checkQuadrant()));
+
+        Log.d("Test: totalDuration", Long.toString(g1.getDuration()));
+        Log.d("Test: totalDuration", Long.toString(g2.getDuration()));
+        Log.d("Test: totalDuration", Long.toString(g3.getDuration()));
+        Log.d("Test: totalDuration", Long.toString(g4.getDuration()));
+        Log.d("Test: totalDuration", Long.toString(g5.getDuration()));
 
     }
 
@@ -289,19 +326,59 @@ public class StatsFragment extends Fragment {
      * @return
      */
     private PieData generateDataPie(int cnt) {
+        float q1 = 0; // in hours
+        float q2 = 0;
+        float q3 = 0;
+        float q4 = 0;
+        float other = 0;
+        float sleepDuration = UserConstants.sleepDuration;
+        float breakfastDuration = UserConstants.breakfastDuration;
+        float lunchDuration = UserConstants.lunchDuration;
+        float dinnerDuration = UserConstants.dinnerDuration;
+        float personalTime = (7 * (sleepDuration + (
+                                    breakfastDuration +
+                                    lunchDuration +
+                                    dinnerDuration) /60
+                                ));
+        Log.d("Personal Time", Float.toString(personalTime));
 
         ArrayList<PieEntry> entries = new ArrayList<PieEntry>();
 
-        // TODO: Insert data here.
 //        for (int i = 0; i < 5; i++) {
 //            entries.add(new PieEntry((float) ((Math.random() * 70) + 30), "Quadrant " + (i+1)));
 //        }
-        for (int i = 0; i < goalList.size(); i++) {
-            ArrayList<GoalItem> q1;
-            ArrayList<GoalItem> q2;
-            ArrayList<GoalItem> q3;
-            ArrayList<GoalItem> q4;
+
+        Log.d("goalList size", Integer.toString(goalList.size()) + " ");
+
+        for (GoalItem gi : goalList) {
+            switch (gi.checkQuadrant()) {
+                case 1:
+                    q1 = q1 + ((float) gi.getDuration() / 60);
+                    break;
+                case 2:
+                    q2 = q2 + ((float) gi.getDuration() / 60);
+                    break;
+                case 3:
+                    q3 = q3 + ((float) gi.getDuration() / 60);
+                    break;
+                case 4:
+                    q4 = q4 + ((float) gi.getDuration() / 60);
+                    break;
+            }
         }
+        other = (7 * 24) - (q1 + q2 + q3 + q4 + personalTime);
+        Log.d("q1 value", Float.toString(q1));
+        Log.d("q2 value", Float.toString(q2));
+        Log.d("q3 value", Float.toString(q3));
+        Log.d("q4 value", Float.toString(q4));
+        Log.d("other value", Float.toString(other));
+
+        entries.add(new PieEntry((float) q1, "Quadrant 1"));
+        entries.add(new PieEntry((float) q2, "Quadrant 2"));
+        entries.add(new PieEntry((float) q3, "Quadrant 3"));
+        entries.add(new PieEntry((float) q4, "Quadrant 4"));
+        entries.add(new PieEntry((float) other, "Others"));
+
 
         PieDataSet d = new PieDataSet(entries, "");
 

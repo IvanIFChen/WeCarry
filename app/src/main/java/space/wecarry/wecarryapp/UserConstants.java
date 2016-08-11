@@ -5,13 +5,14 @@ package space.wecarry.wecarryapp;
  */
 public class UserConstants {
 
-    public static int sleepTime = 0;
-    public static int wakeTime = 8;
-    public static int breakfast = 8;
-    public static int breakfastDuration = 30;
-    public static int lunch = 12;
-    public static int lunchDuration = 60;
-    public static int dinner = 19;
-    public static int dinnerDuration = 60;
+    public static int sleepTime = 24;                               // in hours
+    public static int wakeTime = 8;                                 // in hours
+    public static int sleepDuration = 24 - (sleepTime - wakeTime);  // in hours
+    public static int breakfast = 8;                                // in hours
+    public static int breakfastDuration = 30;                       // in minutes
+    public static int lunch = 12;                                   // in hours
+    public static int lunchDuration = 60;                           // in minutes
+    public static int dinner = 19;                                  // in hours
+    public static int dinnerDuration = 60;                          // in minutes
 
 }

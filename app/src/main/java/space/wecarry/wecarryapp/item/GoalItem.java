@@ -1,5 +1,7 @@
 package space.wecarry.wecarryapp.item;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -30,7 +32,8 @@ public class GoalItem implements Serializable {
         this.isImportant = isImportant;
         this.isUrgent = isUrgent;
         this.taskList = taskList;
-        calculateTotalDuration();
+        this.duration = 0;
+        updateDuration();
     }
 
 //    public GoalItem(String title, long deadline, long duration, boolean isImportant, boolean isUrgent, ArrayList<TaskItem> taskList) {
@@ -68,12 +71,12 @@ public class GoalItem implements Serializable {
 
     public void setTaskList(ArrayList<TaskItem> taskList) {
         this.taskList = taskList;
-        calculateTotalDuration();
+        updateDuration();
     }
 
     public void addTaskItem(TaskItem taskItem) {
         this.taskList.add(taskItem);
-        calculateTotalDuration();
+        updateDuration();
     }
 
     public long getDeadline() {
@@ -96,12 +99,27 @@ public class GoalItem implements Serializable {
         return taskList;
     }
 
-    private void calculateTotalDuration() {
+    private void updateDuration() {
         long sum = 0;
         for (TaskItem ti : this.taskList) {
             sum = sum + ti.getDuration();
         }
         this.duration = sum;
+    }
+
+    public int checkQuadrant() {
+        if (this.isImportant && this.isUrgent) {
+            return 1;
+        }
+        else if (this.isImportant && !this.isUrgent) {
+            return 2;
+        }
+        else if (!this.isImportant && this.isUrgent) {
+            return 3;
+        }
+        else {
+            return 4;
+        }
     }
 
     @Override

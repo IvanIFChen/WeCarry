@@ -57,16 +57,17 @@ public class PieChartItem extends ChartItem {
         holder.chart.setHoleRadius(52f);
         holder.chart.setTransparentCircleRadius(57f);
 //        holder.chart.setCenterText(mCenterText);
-        holder.chart.setCenterTextTypeface(mTf);
-        holder.chart.setCenterTextSize(9f);
+//        holder.chart.setCenterTextTypeface(mTf);
+//        holder.chart.setCenterTextSize(9f);
         holder.chart.setUsePercentValues(true);
 //        holder.chart.setExtraOffsets(5, 10, 50, 10);
         holder.chart.setScaleX((float) 0.9);
         holder.chart.setScaleY((float) 0.9);
         holder.chart.setDrawHoleEnabled(false);
         holder.chart.setRotationEnabled(false);
-        holder.chart.setEntryLabelColor(Color.BLACK);
 
+        holder.chart.setDrawEntryLabels(true);
+        holder.chart.setEntryLabelColor(Color.BLACK);
 
         mChartData.setValueFormatter(new PercentFormatter());
         mChartData.setValueTypeface(mTf);
@@ -77,7 +78,7 @@ public class PieChartItem extends ChartItem {
         holder.chart.setData((PieData) mChartData);
 
         Legend l = holder.chart.getLegend();
-        l.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
+        l.setPosition(Legend.LegendPosition.ABOVE_CHART_CENTER);
         l.setYEntrySpace(0f);
         l.setYOffset(0f);
 
