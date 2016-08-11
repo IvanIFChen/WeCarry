@@ -15,4 +15,5 @@ public class UserConstants {
     public static int dinner = 19;                                  // in hours
     public static int dinnerDuration = 60;                          // in minutes
 
+    // TODO: hours -> minutes
 }
