@@ -31,7 +31,7 @@ public class DBHelper extends SQLiteOpenHelper{
                         ");";
         final String INIT_GOAL_TABLE =
                 "CREATE TABLE IF NOT EXISTS " +
-                        TABLE_NAME_ROLE_LIST +
+                        TABLE_NAME_GOAL_LIST +
                         " (" +
                         _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         GOAL_ID + " INTEGER, " +

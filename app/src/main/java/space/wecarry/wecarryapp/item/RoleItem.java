@@ -9,28 +9,41 @@ import java.util.ArrayList;
 public class RoleItem implements Serializable {
 
     private static final long serialVersionUID = 7382351359868556980L;
+
+    private int id; // We use it to make determine whether to modify or add data in DB. // Default: -1 , It means "add".
+
     private String title;
     private long deadline;
     private long duration;
     private ArrayList<GoalItem> goalList;
-
-    public RoleItem(String title, ArrayList<GoalItem> goalList) {
-        this.title = title;
-        this.goalList = goalList;
-    }
-
     public RoleItem() {
+        this.id = -1;
         this.title = "";
         this.deadline = 0;
         this.duration = 0;
         this.goalList = new ArrayList<>();
     }
 
-    public RoleItem(String title, long deadline, long duration, ArrayList<GoalItem> goalList) {
+    public RoleItem(String title, ArrayList<GoalItem> goalList) {
+//        this.id = id;
+        this.title = title;
+        this.goalList = goalList;
+    }
+
+    public RoleItem(int id, String title, long deadline, long duration, ArrayList<GoalItem> goalList) {
+        this.id = id;
         this.title = title;
         this.deadline = deadline;
         this.duration = duration;
         this.goalList = goalList;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setTitle(String title) {

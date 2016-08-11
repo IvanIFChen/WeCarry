@@ -10,6 +10,7 @@ import java.util.ArrayList;
  */
 public class GoalItem implements Serializable {
 
+    private int id; // We use it to make determine whether to modify or add data in DB. // Default: -1 , It means "add".
     private String title;
     private long deadline;
     private long duration;
@@ -18,6 +19,7 @@ public class GoalItem implements Serializable {
     private ArrayList<TaskItem> taskList;
 
     public GoalItem() {
+        this.id = -1;   // We use it to make determine whether to modify or add data in DB. // Default: -1 , It means "add".
         this.title = "";
         this.deadline = 0;
         this.duration = 0;
@@ -27,6 +29,7 @@ public class GoalItem implements Serializable {
     }
 
     public GoalItem(String title, long deadline, boolean isImportant, boolean isUrgent, ArrayList<TaskItem> taskList) {
+//        this.id = id;
         this.title = title;
         this.deadline = deadline;
         this.isImportant = isImportant;
@@ -37,13 +40,22 @@ public class GoalItem implements Serializable {
     }
 
 //    public GoalItem(String title, long deadline, long duration, boolean isImportant, boolean isUrgent, ArrayList<TaskItem> taskList) {
-//        this.title = title;
-//        this.deadline = deadline;
-//        this.duration = duration;
-//        this.isImportant = isImportant;
-//        this.isUrgent = isUrgent;
+
+    //    }
 //        this.taskList = taskList;
-//    }
+//        this.isUrgent = isUrgent;
+//        this.isImportant = isImportant;
+//        this.duration = duration;
+//        this.deadline = deadline;
+//        this.title = title;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public void setTitle(String title) {
         this.title = title;

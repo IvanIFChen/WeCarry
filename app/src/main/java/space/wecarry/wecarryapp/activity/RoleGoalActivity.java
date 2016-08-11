@@ -1,7 +1,10 @@
 package space.wecarry.wecarryapp.activity;
 
 import android.app.DatePickerDialog;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -24,6 +27,20 @@ import java.util.HashMap;
 import space.wecarry.wecarryapp.R;
 import space.wecarry.wecarryapp.item.GoalItem;
 import space.wecarry.wecarryapp.item.RoleItem;
+import space.wecarry.wecarryapp.sqlite.DBHelper;
+
+import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_DEADLINE;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_DURATION;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_IMPORTANCE;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_ROLE_ID;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_TITLE;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_URGENCY;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_DEADLINE;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_DURATION;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_ID;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_TITLE;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_GOAL_LIST;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_ROLE_LIST;
 
 public class RoleGoalActivity extends AppCompatActivity {
     private EditText editRole, editGoal, editDeadline;
@@ -32,10 +49,12 @@ public class RoleGoalActivity extends AppCompatActivity {
     private LinearLayout ll_in_sv;
     private ArrayList<HashMap> objectList;
     private View buttonView;
-    private RoleItem mRole;
+    private RoleItem mRole, old_mRole;
     private int mYear, mMonth, mDay;
     private Calendar today = null;
     private int roleUserSelected = -1; // -1 is new a role
+    private DBHelper dbHelper = null;
+    private SQLiteDatabase db = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +78,16 @@ public class RoleGoalActivity extends AppCompatActivity {
             mRole = new RoleItem();
         } else {
             // User selected to edit the role
-            mRole = (RoleItem) intent.getSerializableExtra("roleItem");
+            old_mRole = new RoleItem();
+            mRole = new RoleItem();
+            old_mRole = (RoleItem) intent.getSerializableExtra("roleItem");
+            for(GoalItem goalItem: old_mRole.getGoalList()) {
+                mRole.getGoalList().add(goalItem);
+            }
+            mRole.setTitle(old_mRole.getTitle());
+            mRole.setDeadline(old_mRole.getDeadline());
+            mRole.setDuration(old_mRole.getDuration());
+            mRole.setId(old_mRole.getId());
         }
 
         editRole.setText(mRole.getTitle());
@@ -127,26 +155,40 @@ public class RoleGoalActivity extends AppCompatActivity {
                     // Pass (User has input role)
                     saveDataInBuffer();
                     mRole.setTitle(editRole.getText().toString());    // save Role (in buffer)
+//                    // Tasting-------------------------------------------------------------------------------
+//                    String goal ="";
+//                    int i = 1;
+//                    for(GoalItem goalItem:mRole.getGoalList()) {
+//                        // Clean empty goal
+//                        String g =goalItem.getTitle();
+//                        if(!"".equals(g.trim())) {
+//                            goal += Integer.toString(i) + ". " + g + "\n";
+//                            i++;
+//                        }
+//                    }
+//                    Toast.makeText(getApplicationContext(),"" +
+//                            "角色: " +mRole.getTitle() +"\n"+
+//                            "目標: " +"\n"+goal+
+//                            "",Toast.LENGTH_SHORT).show();
+////                    finish();
+//                    // End tasting-----------------------------------------------------------------------------
+                    // Save data in sqlite
+                    // Open db
+                    dbHelper = new DBHelper(getApplicationContext());
+                    db = dbHelper.getReadableDatabase();
 
-                    // Tasting-------------------------------------------------------------------------------
-                    String goal ="";
-                    int i = 1;
-                    for(GoalItem goalItem:mRole.getGoalList()) {
-                        // Clean empty goal
-                        String g =goalItem.getTitle();
-                        if(!"".equals(g.trim())) {
-                            goal += Integer.toString(i) + ". " + g + "\n";
-                            i++;
-                        }
+                    if(roleUserSelected == -1) {
+                        // User selected to add a new role
+                        long rowId = dbRole();
+                        mRole.setId((int)rowId);    // We need to know the Role Id, and save it in Goal
+                        cleanEmptyGoal();
+                    } else {
+                        // User selected to edit the role
+                        cleanEmptyGoal();
+//                        checkGoal();    // Check if user delete any goal
+                        dbRole();
                     }
-                    Toast.makeText(getApplicationContext(),"" +
-                            "角色: " +mRole.getTitle() +"\n"+
-                            "目標: " +"\n"+goal+
-                            "",Toast.LENGTH_SHORT).show();
-//                    finish();
-                    // End tasting-----------------------------------------------------------------------------
-                    // TODO: Clean empty goal
-                    // TODO: Save data in sqlite
+                    finish();
                 }else {
                     Toast.makeText(getApplicationContext(),"尚未填寫「角色」",Toast.LENGTH_SHORT).show();   // TODO: English?
                 }
@@ -209,6 +251,8 @@ public class RoleGoalActivity extends AppCompatActivity {
             String deadline = ((EditText)editMap.get("DEADLINE")).getText().toString();
             boolean importance = ((Switch)editMap.get("IMPORTANCE")).isChecked();
             boolean urgency = ((Switch)editMap.get("URGENCY")).isChecked();
+            int t =mRole.getGoalList().get(i).getId(); // It is important to identify each goal
+            System.out.print(t);
             mRole.getGoalList().get(i).setTitle(goal);
             try {mRole.getGoalList().get(i).setDeadline(dateToMillsecConverter(deadline));
             } catch (ParseException e) {
@@ -249,7 +293,7 @@ public class RoleGoalActivity extends AppCompatActivity {
                         }
                         // Why do we converted it twice(string > long > string)? Because we want the same format.
                         editText.setText(millsecToDateConverter(deadline));
-                        // Store the date user picked into mList
+                        // Store the date user picked into mRole
                         mRole.getGoalList().get(id).setDeadline(deadline);
 
                     }
@@ -267,5 +311,81 @@ public class RoleGoalActivity extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String s = sdf.format(date);
         return s;
+    }
+
+    // Function for DB-------------------------------------------------------------------------------------------
+    private long dbRole() {
+        // Role
+        long rowId = -1;
+        ContentValues cvr = new ContentValues(3);
+        cvr.put(ROLE_TITLE, mRole.getTitle());
+        cvr.put(ROLE_DEADLINE, mRole.getDeadline());
+        cvr.put(ROLE_DURATION, mRole.getDuration());
+        if(mRole.getId() == -1  && roleUserSelected == -1) {
+            // Double check: User is adding a new role
+            rowId = db.insert(TABLE_NAME_ROLE_LIST, null, cvr);
+        }else if(mRole.getId() != -1  && roleUserSelected != -1) {
+            // User is modifying the role
+            db.update(TABLE_NAME_ROLE_LIST, cvr,"_ID=" + String.valueOf(mRole.getId()), null);
+        }else {
+            // Something wrong?!
+            Log.i("DB bug: ", " The role id may be modified? ");
+        }
+        return rowId;
+    }
+
+    private void checkGoal() {
+        // Check if user delete any goal
+        if(roleUserSelected != -1) {
+            // It means old_mRole isn't empty
+            ArrayList<GoalItem> deleteList = old_mRole.getGoalList();
+            for(int z=0; z < old_mRole.getGoalList().size(); z++) {
+                for(int j=0; j<mRole.getGoalList().size(); j++) {
+                    if(old_mRole.getGoalList().get(z).getId() == mRole.getGoalList().get(j).getId()) {
+                        // This goal was not be deleted by user
+                        deleteList.remove(old_mRole.getGoalList().get(z));
+                        break;
+                    }
+                }
+            }
+            // Delete goal
+            for(GoalItem goalItem: deleteList) {
+                db.delete(TABLE_NAME_GOAL_LIST,"_ID=" + String.valueOf(goalItem.getId()), null);
+            }
+        }
+    }
+
+    private void cleanEmptyGoal() {
+        // Goal
+        // Clean empty goal ,and insert it or update it
+        int index = 0;
+        for(GoalItem goalItem:mRole.getGoalList()) {
+            String title =goalItem.getTitle();
+            if(!"".equals(title.trim())) {
+//                goalItem = new GoalItem();      // It is important to default goalItem, or it can't insert in DB
+//                mRole.addGoalItem(goalItem);    // It is for updating the data in GoalItem (for example, the duration need to be updated)
+                ContentValues cvg = new ContentValues(6);
+                cvg.put(GOAL_TITLE, goalItem.getTitle());
+                cvg.put(GOAL_DEADLINE, goalItem.getDeadline());
+//                cvg.put(GOAL_DURATION, goalItem.getDuration());  // I don't know why it has a bug????????????????????????????????????????????????
+                cvg.put(GOAL_IMPORTANCE, String.valueOf(goalItem.isImportant()));
+                cvg.put(GOAL_URGENCY, String.valueOf(goalItem.isUrgent()));
+
+                // insert or update
+                if(goalItem.getId() == -1) {
+                    // Double check: User is adding a new goal
+                    cvg.put(GOAL_ROLE_ID, mRole.getId());   // Give it Role Id
+                    long rowGoal =db.insert(TABLE_NAME_GOAL_LIST, null, cvg);
+                    mRole.getGoalList().get(index).setId((int)rowGoal);
+                }else {
+                    // User is modifying the goal
+                    db.update(TABLE_NAME_GOAL_LIST, cvg,"_ID=" + String.valueOf(goalItem.getId()), null);
+                }
+            }else {
+                // if the goal is empty
+                mRole.getGoalList().remove(index);
+            }
+            index++;
+        }
     }
 }

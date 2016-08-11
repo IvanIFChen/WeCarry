@@ -99,25 +99,31 @@ public class RoleGoalFragment extends Fragment {
         int roleDataRow = cursorRole.getCount();
         if(roleDataRow != 0) {
             cursorRole.moveToFirst();
-            RoleItem roleItem = new RoleItem();
-            GoalItem goalItem = new GoalItem();
             for(int i=0; i<roleDataRow; i++) {
                 // Get role
+                RoleItem roleItem = new RoleItem();
+                roleItem.setId(cursorRole.getInt(0));   //  TODO: Now our role id is at column 1, but (in local) SQLite we use column 0 to be the key.
                 roleItem.setTitle(cursorRole.getString(2));
                 roleItem.setDeadline(cursorRole.getLong(3));
                 roleItem.setDuration(cursorRole.getLong(4));
                 cursorGoal = db.rawQuery("SELECT * FROM " + TABLE_NAME_GOAL_LIST +
-                        " WHERE "+GOAL_ROLE_ID+" = "+cursorRole.getString(0), null);    //  TODO: Now our role id is at column 1, but (in local) SQLite we use column 0 to be the key.
+                        " WHERE " + GOAL_ROLE_ID + " = " + roleItem.getId()
+                        , null);
                 // Get goal
-                cursorGoal.moveToFirst();
-                for(int j=0; j<cursorGoal.getCount(); j++) {
-                    goalItem.setTitle(cursorGoal.getString(2));
-                    goalItem.setDeadline(cursorGoal.getLong(3));
-                    goalItem.setDuration(cursorGoal.getLong(4));
-                    goalItem.setImportant(Boolean.valueOf(cursorGoal.getString(5)));   // SQLite can't use boolean type?
-                    goalItem.setUrgent(Boolean.valueOf(cursorGoal.getString(6)));
-                    roleItem.addGoalItem(goalItem);
-                    cursorGoal.moveToNext();
+                int goalDataRow = cursorGoal.getCount();
+                if(goalDataRow != 0) {
+                    cursorGoal.moveToFirst();
+                    for(int j=0; j<goalDataRow; j++) {
+                        GoalItem goalItem = new GoalItem();
+                        goalItem.setId(cursorGoal.getInt(0));
+                        goalItem.setTitle(cursorGoal.getString(2));
+                        goalItem.setDeadline(cursorGoal.getLong(3));
+                        goalItem.setDuration(cursorGoal.getLong(4));
+                        goalItem.setImportant(Boolean.valueOf(cursorGoal.getString(5)));   // SQLite can't use boolean type?
+                        goalItem.setUrgent(Boolean.valueOf(cursorGoal.getString(6)));
+                        roleItem.addGoalItem(goalItem);
+                        cursorGoal.moveToNext();
+                    }
                 }
                 mList.add(roleItem);
                 cursorRole.moveToNext();
