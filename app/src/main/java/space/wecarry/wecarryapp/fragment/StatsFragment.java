@@ -1,6 +1,7 @@
 package space.wecarry.wecarryapp.fragment;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -45,6 +47,7 @@ public class StatsFragment extends Fragment {
     private ArrayList<RoleItem> roleList;
     private ArrayList<GoalItem> goalList;
     private ArrayList<TaskItem> taskList;
+    private boolean showInWeek = true;
 
 
     @Override
@@ -77,27 +80,34 @@ public class StatsFragment extends Fragment {
 
         return rootView;
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Fragment frg;
+        frg = getFragmentManager().findFragmentById(R.id.mainContainer);
+        final FragmentTransaction ft = getFragmentManager().beginTransaction();
+
+        switch (item.getItemId()) {
+            case R.id.action_week :
+                this.showInWeek = true;
+                // refresh the fragment
+                ft.detach(frg);
+                ft.attach(frg);
+                ft.commit();
+                break;
+            case R.id.action_month :
+                this.showInWeek = false;
+                // refresh the fragment
+                ft.detach(frg);
+                ft.attach(frg);
+                ft.commit();
+                break;
+        }
+        return true;
+    }
 
     private void getDataFromDB() {
         // TODO: load data from db
         // sample data
-//        Calendar cal = new GregorianCalendar();
-//        cal.add(Calendar.DATE, 1);
-//        long g1Deadline = cal.getTimeInMillis();
-//        Log.d("g1Deadline", Long.toString(g1Deadline));
-//        cal.add(Calendar.DATE, 2);
-//        long g2Deadline = cal.getTimeInMillis();
-//        Log.d("g2Deadline", Long.toString(g2Deadline));
-//        cal.add(Calendar.DATE, 3);
-//        long g3Deadline = cal.getTimeInMillis();
-//        Log.d("g3Deadline", Long.toString(g3Deadline));
-//        cal.add(Calendar.DATE, 4);
-//        long g4Deadline = cal.getTimeInMillis();
-//        Log.d("g4Deadline", Long.toString(g4Deadline));
-//        cal.add(Calendar.DATE, 5);
-//        long g5Deadline = cal.getTimeInMillis();
-//        Log.d("g5Deadline", Long.toString(g5Deadline));
-
         // re-initialize
         roleList = new ArrayList<RoleItem>();
         goalList = new ArrayList<GoalItem>();
@@ -139,28 +149,8 @@ public class StatsFragment extends Fragment {
 //            Log.e("task", task.toString());
             g5Tasks.add(task);
             taskList.add(task);
-//            if (i <= 20) {
-//                g1Tasks.add(task);
-//            } else if (i > 20 && i<= 40) {
-//                g2Tasks.add(task);
-//            } else if (i > 40 && i<= 60) {
-//                g3Tasks.add(task);
-//            }else if (i > 60 && i<= 80) {
-//                g4Tasks.add(task);
-//            } else {
-//                g5Tasks.add(task);
-//            }
-//            // still add to the "contain all tasks" task list.
-//            taskList.add(task);
         }
-//        TaskItem t1 = new TaskItem("task1", 10); // in minutes
-//        TaskItem t2 = new TaskItem("task2", 20);
-//        TaskItem t3 = new TaskItem("task3", 30);
-//        TaskItem t4 = new TaskItem("task4", 40);
-//        g1Tasks.add(t1);
-//        g1Tasks.add(t2);
-//        g2Tasks.add(t3);
-//        g3Tasks.add(t4);
+
         GoalItem g1 = new GoalItem("goal1", 0, true, true, g1Tasks); // will add deadline later
         GoalItem g2 = new GoalItem("goal2", 0, true, false, g2Tasks);
         GoalItem g3 = new GoalItem("goal3", 0, false, true, g3Tasks);
@@ -182,27 +172,23 @@ public class StatsFragment extends Fragment {
         goalList.add(g3);
         goalList.add(g4);
         goalList.add(g5);
-//        taskList.add(t1);
-//        taskList.add(t2);
-//        taskList.add(t3);
-//        taskList.add(t4);
 
         // Adding deadline for goals and tasks
         for (GoalItem gi : goalList) {
             Calendar cal = new GregorianCalendar();
             gi.setDeadline(cal.getTimeInMillis());
-            Log.d("Today", "   " + Long.toString(cal.getTimeInMillis()));
+//            Log.d("Today", "   " + Long.toString(cal.getTimeInMillis()));
             for (TaskItem ti : gi.getTaskList()) {
                 cal.add(cal.DATE, -1);
-                Log.d("Today -1", cal.toString());
+//                Log.d("Today -1", cal.toString());
                 ti.setDeadline(cal.getTimeInMillis());
             }
         }
-        Calendar cal = new GregorianCalendar();
-        cal.set(2016, 7, 10, 15, 0);
-        Log.e("specific time", Long.toString(cal.getTimeInMillis()));
-        cal.set(2016, 7, 10, 19, 32);
-        Log.e("specific time", Long.toString(cal.getTimeInMillis()));
+//        Calendar cal = new GregorianCalendar();
+//        cal.set(2016, 7, 10, 15, 0);
+//        Log.e("specific time", Long.toString(cal.getTimeInMillis()));
+//        cal.set(2016, 7, 10, 19, 32);
+//        Log.e("specific time", Long.toString(cal.getTimeInMillis()));
 
 
         Log.d("Test: checkQuadrant", Long.toString(g1.checkQuadrant()));
@@ -353,11 +339,15 @@ public class StatsFragment extends Fragment {
         float breakfastDuration = UserConstants.breakfastDuration;
         float lunchDuration = UserConstants.lunchDuration;
         float dinnerDuration = UserConstants.dinnerDuration;
-        float personalTime = (7 * (sleepDuration + (
+        float personalTime = (sleepDuration +
                                     breakfastDuration +
                                     lunchDuration +
-                                    dinnerDuration) /60
-                                ));
+                                    dinnerDuration) /60;
+        if (showInWeek) {
+            personalTime = personalTime * 7;
+        } else {
+            personalTime = personalTime * 30;
+        }
         Log.d("Personal Time", Float.toString(personalTime));
 
         ArrayList<PieEntry> entries = new ArrayList<PieEntry>();

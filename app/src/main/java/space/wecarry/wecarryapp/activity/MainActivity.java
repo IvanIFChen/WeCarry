@@ -55,10 +55,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // testing dbHelper by upgrading to same version.
-//        DBHelper dbHelper = new DBHelper(this);
-//        SQLiteDatabase db = dbHelper.getWritableDatabase();
-//        dbHelper.onUpgrade(db,1,1);
+        // clear db test tables
+        DBHelper dbHelper = new DBHelper(this);
+        dbHelper.clearTestTables();
     }
 
     @Override

@@ -14,7 +14,7 @@ public class TaskItem implements Serializable {
     private long latestEndTime;
     private long deadline;
     private long duration;
-    private TaskItem preprocess;
+    private ArrayList<TaskItem> preprocess;
     private ArrayList<ResourceItem> resourcesList;
 
     public TaskItem() {
@@ -24,7 +24,7 @@ public class TaskItem implements Serializable {
         this.earliestEndTime = 0;
         this.latestEndTime = 0;
         this.duration = 0;
-        this.preprocess = new TaskItem();
+        this.preprocess = new ArrayList<TaskItem>();
         this.resourcesList = new ArrayList<>();
     }
 
@@ -44,7 +44,7 @@ public class TaskItem implements Serializable {
 
     public TaskItem(String title, long earliestStartTime, long latestStartTime,
                     long earliestEndTime, long latestEndTime, long processTime,
-                    TaskItem preprocess, ArrayList<ResourceItem> resourcesList) {
+                    ArrayList<TaskItem> preprocess, ArrayList<ResourceItem> resourcesList) {
         this.title = title;
         this.earliestStartTime = earliestStartTime;
         this.latestStartTime = latestStartTime;
@@ -56,7 +56,6 @@ public class TaskItem implements Serializable {
     }
 
     public String getTitle() {
-
         return title;
     }
 
@@ -112,16 +111,20 @@ public class TaskItem implements Serializable {
         this.duration = duration;
     }
 
+    public ArrayList<TaskItem> getPreprocess() {
+        return preprocess;
+    }
+
+    public void setPreprocess(ArrayList<TaskItem> preprocess) {
+        this.preprocess = preprocess;
+    }
+
     public ArrayList<ResourceItem> getResourcesList() {
         return resourcesList;
     }
 
     public void setResourcesList(ArrayList<ResourceItem> resourcesList) {
         this.resourcesList = resourcesList;
-    }
-
-    public void addResourcesItem(ResourceItem resourceItem) {
-        this.resourcesList.add(resourceItem);
     }
 
     @Override
