@@ -11,6 +11,7 @@ import android.util.Log;
 import java.util.ArrayList;
 
 import space.wecarry.wecarryapp.item.GoalItem;
+import space.wecarry.wecarryapp.item.ResourceItem;
 import space.wecarry.wecarryapp.item.TaskItem;
 
 import static android.provider.BaseColumns._ID;
@@ -119,9 +120,9 @@ public class DBHelper extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getWritableDatabase();
         ArrayList<TaskItem> taskList = new ArrayList<TaskItem>();
         // insert all the tasks into task table first.
-//        for (TaskItem ti : gi.getTaskList()) {
-//
-//        }
+        for (TaskItem ti : gi.getTaskList()) {
+            insertTask(ti, goalID);
+        }
 
         ContentValues cv = new ContentValues();
         cv.put(GOAL_ID, goalID);
@@ -132,8 +133,6 @@ public class DBHelper extends SQLiteOpenHelper{
         cv.put(GOAL_URGENCY, String.valueOf(gi.isUrgent()));
         cv.put(GOAL_ROLE_ID, goalRoleID);
         db.insert(TEST_GOAL_TABLE, null, cv);
-
-        db.close();
     }
 
     public void insertTask(TaskItem ti, int taskGoalID) {
@@ -154,9 +153,9 @@ public class DBHelper extends SQLiteOpenHelper{
         cv.put(TASK_GOAL_ID, taskGoalID);
 
         db.insert(TEST_TASK_TABLE, null, cv);
-        db.close();
     }
-    // TODO: goal should have some kind of unique id to identify, not just title.
+
+    // TODO: goal should have some kind of unique identifier, not just title.
     public GoalItem getGoal(String title) {
         SQLiteDatabase db = this.getReadableDatabase();
         GoalItem gi = new GoalItem();
@@ -174,11 +173,32 @@ public class DBHelper extends SQLiteOpenHelper{
                     new ArrayList<TaskItem>()); // TODO: get task data.
 //                    cursor.getString(7));
         }
-        db.close();
         return gi;
     }
 
-//    public TaskItem getTask()
+    public TaskItem getTask(String title) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        TaskItem ti = new TaskItem();
+        Cursor cursor = db.query(TEST_TASK_TABLE, new String[] {_ID,
+                        TASK_ID, TASK_TITLE, TASK_EST, TASK_LST, TASK_EET, TASK_LET,
+                        TASK_DEADLINE, TASK_DURATION, TASK_PREPROCESS, TASK_RESOURCE,
+                        TASK_GOAL_ID}, TASK_TITLE + "=?",
+                new String[] { title }, null, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+            ti = new TaskItem(
+                    cursor.getString(2),
+                    cursor.getLong(3),
+                    cursor.getLong(4),
+                    cursor.getLong(5),
+                    cursor.getLong(6),
+                    cursor.getLong(7),
+                    cursor.getLong(8),
+                    new ArrayList<TaskItem>(),      // TODO: parse data
+                    new ArrayList<ResourceItem>()); // TODO: parse data
+        }
+        return ti;
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

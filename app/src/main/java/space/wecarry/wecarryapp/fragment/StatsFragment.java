@@ -123,7 +123,12 @@ public class StatsFragment extends Fragment {
 
         // random value = (max ~1.5hr, min ~.5hr)
         int nameCount = 1;
-        for (int i = 1; i <= 10; i++) {
+        int sampleSize;
+        if (showInWeek)
+            sampleSize = 10;
+        else
+            sampleSize = 40;
+        for (int i = 1; i <= sampleSize; i++) {
             TaskItem task;
             task = new TaskItem("task" + nameCount, (long) (Math.random() * 70 + 30));
 //            Log.e("task", task.toString());
@@ -209,7 +214,9 @@ public class StatsFragment extends Fragment {
         dbHelper.insertTask(g1.getTaskList().get(0), 1);
         // load from db
         Log.e("load db test", dbHelper.getGoal("goal1").toString());
-//        Log.e("load db test", dbHelper.getTask(getActivity(), "goal1").toString());
+        Log.e("load db test", dbHelper.getTask("task1").toString());
+
+        dbHelper.close();
 
     }
 
@@ -249,12 +256,25 @@ public class StatsFragment extends Fragment {
      * @return
      */
     private LineData generateDataLine(int cnt) {
-        // TODO: Insert data here.
-
+        int numEntries;
         ArrayList<Entry> e1 = new ArrayList<Entry>();
+        ArrayList<Entry> e2 = new ArrayList<Entry>();
+        ArrayList<Entry> e3 = new ArrayList<Entry>();
+        ArrayList<Entry> e4 = new ArrayList<Entry>();
+        ArrayList<Entry> e5 = new ArrayList<Entry>();
 
-        for (int i = 0; i < 12; i++) {
-            e1.add(new Entry(i, (int) (Math.random() * 65) + 40));
+        if (showInWeek)
+            numEntries = 7;
+        else
+            numEntries = 30;
+
+        for (int i = 0; i < numEntries; i++) {
+            int n = (int) (Math.random() * 65) + 40;
+            e1.add(new Entry(i, n));
+            e2.add(new Entry(i, n - 10));
+            e3.add(new Entry(i, n - 20));
+            e4.add(new Entry(i, n - 30));
+            e5.add(new Entry(i, n - 40));
         }
 
         LineDataSet d1 = new LineDataSet(e1, "New DataSet " + cnt + ", (1)");
@@ -265,12 +285,6 @@ public class StatsFragment extends Fragment {
         d1.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[0]);
         d1.setDrawValues(false);
 
-        ArrayList<Entry> e2 = new ArrayList<Entry>();
-
-        for (int i = 0; i < 12; i++) {
-            e2.add(new Entry(i, e1.get(i).getY() - 10));
-        }
-
         LineDataSet d2 = new LineDataSet(e2, "New DataSet " + cnt + ", (2)");
         d2.setLineWidth(2.5f);
         d2.setCircleRadius(4.5f);
@@ -278,12 +292,6 @@ public class StatsFragment extends Fragment {
         d2.setColor(ColorTemplate.VORDIPLOM_COLORS[1]);
         d2.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[1]);
         d2.setDrawValues(false);
-
-        ArrayList<Entry> e3 = new ArrayList<Entry>();
-
-        for (int i = 0; i < 12; i++) {
-            e3.add(new Entry(i, e1.get(i).getY() - 20));
-        }
 
         LineDataSet d3 = new LineDataSet(e3, "New DataSet " + cnt + ", (3)");
         d3.setLineWidth(2.5f);
@@ -293,12 +301,6 @@ public class StatsFragment extends Fragment {
         d3.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[2]);
         d3.setDrawValues(false);
 
-        ArrayList<Entry> e4 = new ArrayList<Entry>();
-
-        for (int i = 0; i < 12; i++) {
-            e4.add(new Entry(i, e1.get(i).getY() - 30));
-        }
-
         LineDataSet d4 = new LineDataSet(e4, "New DataSet " + cnt + ", (4)");
         d4.setLineWidth(2.5f);
         d4.setCircleRadius(4.5f);
@@ -306,12 +308,6 @@ public class StatsFragment extends Fragment {
         d4.setColor(ColorTemplate.VORDIPLOM_COLORS[3]);
         d4.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[3]);
         d4.setDrawValues(false);
-
-        ArrayList<Entry> e5 = new ArrayList<Entry>();
-
-        for (int i = 0; i < 12; i++) {
-            e5.add(new Entry(i, e1.get(i).getY() - 40));
-        }
 
         LineDataSet d5 = new LineDataSet(e5, "New DataSet " + cnt + ", (5)");
         d5.setLineWidth(2.5f);
@@ -382,7 +378,11 @@ public class StatsFragment extends Fragment {
                     break;
             }
         }
-        other = (7 * 24) - (q1 + q2 + q3 + q4 + personalTime);
+        if (showInWeek)
+            other = (7 * 24) - (q1 + q2 + q3 + q4 + personalTime);
+        else
+            other = (30 * 24) - (q1 + q2 + q3 + q4 + personalTime);
+
         Log.i("q1 value", Float.toString(q1));
         Log.i("q2 value", Float.toString(q2));
         Log.i("q3 value", Float.toString(q3));
