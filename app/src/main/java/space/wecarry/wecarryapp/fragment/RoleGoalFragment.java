@@ -1,6 +1,9 @@
 package space.wecarry.wecarryapp.fragment;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -47,9 +51,12 @@ public class RoleGoalFragment extends Fragment {
         getActivity().setTitle(getString(R.string.navigation_drawer_role_goal));
         listView = (ListView) rootView.findViewById(R.id.listView);
 
+        // Get date and print-----------------------------------------------------------------------
         getRoleGoalData();
+        adapter = new RoleGoalAdapter(getActivity(), mList);
+        listView.setAdapter(adapter);
 
-
+        // Click------------------------------------------------------------------------------------
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -59,20 +66,20 @@ public class RoleGoalFragment extends Fragment {
                 bundle.putInt("roleUserSelected", position);
                 bundle.putSerializable("roleItem", ((RoleItem)mList.get(position)));
                 intent.putExtras(bundle);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
             }
         });
+        // Long Click-------------------------------------------------------------------------------
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Snackbar.make(view, "#"+Long.toString(id)+" Long Click", Snackbar.LENGTH_SHORT)
-                        .setAction("Action", null).show();
-                return false;
+                RoleItem roleItem = (RoleItem) mList.get(position);
+                deleteRoleDialog(roleItem.getTitle(), roleItem.getId(), view);
+                return true;
             }
         });
-        adapter = new RoleGoalAdapter(getActivity(), mList);
-        listView.setAdapter(adapter);
 
+        // FAB--------------------------------------------------------------------------------------
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,7 +89,7 @@ public class RoleGoalFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putInt("roleUserSelected", -1);
                 intent.putExtras(bundle);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
             }
         });
 
@@ -134,4 +141,37 @@ public class RoleGoalFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            getRoleGoalData();
+            adapter = new RoleGoalAdapter(getActivity(), mList);
+            listView.setAdapter(adapter);
+            Toast.makeText(getActivity(),"Update",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void deleteRoleDialog(String roleTitle, final int roleId, final View view) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+        dialog.setTitle("提示");
+        dialog.setMessage("您要刪除"+roleTitle+"這個角色？");
+        dialog.setPositiveButton("刪除",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                db.delete(TABLE_NAME_ROLE_LIST,"_ID=" + String.valueOf(roleId), null);
+                // TODO: Goal也該一起刪嗎？
+                Snackbar.make(view, "已刪除", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                getRoleGoalData();
+                adapter = new RoleGoalAdapter(getActivity(), mList);
+                listView.setAdapter(adapter);
+            }
+        });
+        dialog.setNeutralButton("取消",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+//                Toast.makeText(getActivity(), "取消",Toast.LENGTH_SHORT).show();
+            }
+        });
+        dialog.show();
+    }
 }

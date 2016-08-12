@@ -174,20 +174,9 @@ public class RoleGoalActivity extends AppCompatActivity {
                         deleteGoal();
                         saveRole();
                     }
-                    // TESTING----------------------------------------------------------------------
-                    //建立包裹，放入回傳值。
-                    Bundle argument = new Bundle();
-                    argument.putInt("returnValueName", 1);
-
-                    //取出上一個Activity傳過來的 Intent 物件。
-                    Intent intent = getIntent();
-                    //放入要回傳的包裹。
-                    intent.putExtras(argument);
-
-                    //設定回傳狀態。
+                    // Return to update the date of RoleGoalFragment ----------------------------------------------------------------------
+                    Intent intent = getIntent();    //取出上一個Activity傳過來的 Intent 物件。
                     setResult(Activity.RESULT_OK, intent);
-                    finish();
-                    //----------------------------------------------------------------------
                     finish();
                 }else {
                     Toast.makeText(getApplicationContext(),"尚未填寫「角色」",Toast.LENGTH_SHORT).show();   // TODO: English?
