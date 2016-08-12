@@ -31,6 +31,12 @@ public class TaskItem implements Serializable {
     public TaskItem(String title, long processTime) {
         this.title = title;
         this.duration = processTime;
+        this.earliestStartTime = 0;
+        this.latestStartTime = 0;
+        this.earliestEndTime = 0;
+        this.latestEndTime = 0;
+        this.preprocessList = new ArrayList<TaskItem>();
+        this.resourcesList = new ArrayList<>();
     }
 
     public TaskItem(String title, long deadline, long processTime) {

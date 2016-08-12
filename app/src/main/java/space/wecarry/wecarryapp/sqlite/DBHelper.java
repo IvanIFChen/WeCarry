@@ -97,7 +97,7 @@ public class DBHelper extends SQLiteOpenHelper{
                         TASK_LST + " INTEGER, " +
                         TASK_EET + " INTEGER, " +
                         TASK_LET + " INTEGER, " +
-                        TASK_DEADLINE + "INTEGER, " +
+                        TASK_DEADLINE + " INTEGER, " +
                         TASK_DURATION + " INTEGER, " +
                         TASK_PREPROCESS + " TEXT, " +
                         TASK_RESOURCE + " TEXT, " +
@@ -114,12 +114,17 @@ public class DBHelper extends SQLiteOpenHelper{
     }
 
 
-    public void insertGoal(GoalItem gi, int goalRoleID) {
+    public void insertGoalWithTasks(GoalItem gi, int goalID, int goalRoleID) {
         Log.d("inserting goal", gi.toString());
         SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<TaskItem> taskList = new ArrayList<TaskItem>();
+        // insert all the tasks into task table first.
+//        for (TaskItem ti : gi.getTaskList()) {
+//
+//        }
 
         ContentValues cv = new ContentValues();
-        cv.put(GOAL_ID, -1);
+        cv.put(GOAL_ID, goalID);
         cv.put(GOAL_TITLE, gi.getTitle());
         cv.put(GOAL_DEADLINE, gi.getDeadline());
         cv.put(GOAL_DURATION, gi.getDuration());
@@ -136,23 +141,24 @@ public class DBHelper extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
+        cv.put(TASK_ID, -1); // Fixme: unknown purpose field.
         cv.put(TASK_TITLE, ti.getTitle());
-        cv.put(TASK_EST, 0); // just a place holder value
+        cv.put(TASK_EST, 0); // Fixme: just a place holder value
         cv.put(TASK_LST, 0);
         cv.put(TASK_EET, 0);
         cv.put(TASK_LET, 0);
         cv.put(TASK_DEADLINE, ti.getDeadline());
         cv.put(TASK_DURATION, ti.getDuration());
-        cv.put(TASK_PREPROCESS, ti.getPreprocessList().toString());
-        cv.put(TASK_RESOURCE, ti.getResourcesList().toString());
-        db.insert(TEST_GOAL_TABLE, null, cv);
+        cv.put(TASK_PREPROCESS, ""); // TODO: think of a way to save this data.
+        cv.put(TASK_RESOURCE, "");   // TODO: same^.
+        cv.put(TASK_GOAL_ID, taskGoalID);
 
+        db.insert(TEST_TASK_TABLE, null, cv);
         db.close();
     }
     // TODO: goal should have some kind of unique id to identify, not just title.
-    public GoalItem getGoal(Context context, String title) {
-        DBHelper dbHelper = new DBHelper(context);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
+    public GoalItem getGoal(String title) {
+        SQLiteDatabase db = this.getReadableDatabase();
         GoalItem gi = new GoalItem();
         Cursor cursor = db.query(TEST_GOAL_TABLE, new String[] {_ID,
                         GOAL_ID, GOAL_TITLE, GOAL_DEADLINE, GOAL_DURATION,
@@ -171,6 +177,8 @@ public class DBHelper extends SQLiteOpenHelper{
         db.close();
         return gi;
     }
+
+//    public TaskItem getTask()
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

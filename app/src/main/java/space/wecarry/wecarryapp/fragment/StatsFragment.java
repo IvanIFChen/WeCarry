@@ -205,9 +205,11 @@ public class StatsFragment extends Fragment {
 
         // insert to db
         dbHelper = new DBHelper(getActivity());
-        dbHelper.insertGoal(g1, 0);
+        dbHelper.insertGoalWithTasks(g1, 1, -1);
+        dbHelper.insertTask(g1.getTaskList().get(0), 1);
         // load from db
-        Log.e("load db test", dbHelper.getGoal(getActivity(), "goal1").toString());
+        Log.e("load db test", dbHelper.getGoal("goal1").toString());
+//        Log.e("load db test", dbHelper.getTask(getActivity(), "goal1").toString());
 
     }
 
@@ -381,11 +383,11 @@ public class StatsFragment extends Fragment {
             }
         }
         other = (7 * 24) - (q1 + q2 + q3 + q4 + personalTime);
-        Log.d("q1 value", Float.toString(q1));
-        Log.d("q2 value", Float.toString(q2));
-        Log.d("q3 value", Float.toString(q3));
-        Log.d("q4 value", Float.toString(q4));
-        Log.d("other value", Float.toString(other));
+        Log.i("q1 value", Float.toString(q1));
+        Log.i("q2 value", Float.toString(q2));
+        Log.i("q3 value", Float.toString(q3));
+        Log.i("q4 value", Float.toString(q4));
+        Log.i("other value", Float.toString(other));
 
         entries.add(new PieEntry((float) q1, "Quadrant 1"));
         entries.add(new PieEntry((float) q2, "Quadrant 2"));
