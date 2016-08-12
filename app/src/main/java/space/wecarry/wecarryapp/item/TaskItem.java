@@ -14,7 +14,7 @@ public class TaskItem implements Serializable {
     private long latestEndTime;
     private long deadline;
     private long duration;
-    private ArrayList<TaskItem> preprocess;
+    private ArrayList<TaskItem> preprocessList;
     private ArrayList<ResourceItem> resourcesList;
 
     public TaskItem() {
@@ -24,7 +24,7 @@ public class TaskItem implements Serializable {
         this.earliestEndTime = 0;
         this.latestEndTime = 0;
         this.duration = 0;
-        this.preprocess = new ArrayList<TaskItem>();
+        this.preprocessList = new ArrayList<TaskItem>();
         this.resourcesList = new ArrayList<>();
     }
 
@@ -44,14 +44,14 @@ public class TaskItem implements Serializable {
 
     public TaskItem(String title, long earliestStartTime, long latestStartTime,
                     long earliestEndTime, long latestEndTime, long processTime,
-                    ArrayList<TaskItem> preprocess, ArrayList<ResourceItem> resourcesList) {
+                    ArrayList<TaskItem> preprocessList, ArrayList<ResourceItem> resourcesList) {
         this.title = title;
         this.earliestStartTime = earliestStartTime;
         this.latestStartTime = latestStartTime;
         this.earliestEndTime = earliestEndTime;
         this.latestEndTime = latestEndTime;
         this.duration = processTime;
-        this.preprocess = preprocess;
+        this.preprocessList = preprocessList;
         this.resourcesList = resourcesList;
     }
 
@@ -111,12 +111,12 @@ public class TaskItem implements Serializable {
         this.duration = duration;
     }
 
-    public ArrayList<TaskItem> getPreprocess() {
-        return preprocess;
+    public ArrayList<TaskItem> getPreprocessList() {
+        return preprocessList;
     }
 
-    public void setPreprocess(ArrayList<TaskItem> preprocess) {
-        this.preprocess = preprocess;
+    public void setPreprocessList(ArrayList<TaskItem> preprocessList) {
+        this.preprocessList = preprocessList;
     }
 
     public ArrayList<ResourceItem> getResourcesList() {
@@ -137,7 +137,7 @@ public class TaskItem implements Serializable {
                 ", latestEndTime=" + latestEndTime +
                 ", deadline=" + deadline +
                 ", duration=" + duration +
-                ", preprocess=" + preprocess +
+                ", preprocessList=" + preprocessList +
                 ", resourcesList=" + resourcesList +
                 '}';
     }

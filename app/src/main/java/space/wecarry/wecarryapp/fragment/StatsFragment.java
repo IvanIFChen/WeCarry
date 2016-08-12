@@ -203,6 +203,12 @@ public class StatsFragment extends Fragment {
         Log.d("Test: totalDuration", Long.toString(g4.getDuration()));
         Log.d("Test: totalDuration", Long.toString(g5.getDuration()));
 
+        // insert to db
+        dbHelper = new DBHelper(getActivity());
+        dbHelper.insertGoal(g1, 0);
+        // load from db
+        Log.e("load db test", dbHelper.getGoal(getActivity(), "goal1").toString());
+
     }
 
     @Override

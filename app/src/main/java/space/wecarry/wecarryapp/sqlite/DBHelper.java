@@ -2,9 +2,13 @@ package space.wecarry.wecarryapp.sqlite;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import java.util.ArrayList;
 
 import space.wecarry.wecarryapp.item.GoalItem;
 import space.wecarry.wecarryapp.item.TaskItem;
@@ -15,6 +19,7 @@ import static space.wecarry.wecarryapp.sqlite.DBConstants.*;
 public class DBHelper extends SQLiteOpenHelper{
     private static final int DATABASE_VERSION = 1;
     private static String DATABASE_NAME = "DB";
+    private DBHelper mHelper;
     // for testing
     private static final String TEST_GOAL_TABLE = "test_goal_table";
     private static final String TEST_TASK_TABLE = "test_task_table";
@@ -44,7 +49,7 @@ public class DBHelper extends SQLiteOpenHelper{
                         GOAL_ID + " INTEGER, " +
                         GOAL_TITLE + " TEXT, " +
                         GOAL_DEADLINE + " INTEGER, " +
-                        GOAL_DURATION + "INTEGER, " +
+                        GOAL_DURATION + " INTEGER, " +
                         GOAL_IMPORTANCE + " TEXT, " +
                         GOAL_URGENCY + " TEXT, " +
                         GOAL_ROLE_ID + " INTEGER " +
@@ -75,7 +80,7 @@ public class DBHelper extends SQLiteOpenHelper{
                         GOAL_ID + " INTEGER, " +
                         GOAL_TITLE + " TEXT, " +
                         GOAL_DEADLINE + " INTEGER, " +
-                        GOAL_DURATION + "INTEGER, " +
+                        GOAL_DURATION + " INTEGER, " +
                         GOAL_IMPORTANCE + " TEXT, " +
                         GOAL_URGENCY + " TEXT, " +
                         GOAL_ROLE_ID + " INTEGER " +
@@ -110,7 +115,7 @@ public class DBHelper extends SQLiteOpenHelper{
 
 
     public void insertGoal(GoalItem gi, int goalRoleID) {
-        Log.d("insertGoal", gi.toString());
+        Log.d("inserting goal", gi.toString());
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
@@ -118,29 +123,54 @@ public class DBHelper extends SQLiteOpenHelper{
         cv.put(GOAL_TITLE, gi.getTitle());
         cv.put(GOAL_DEADLINE, gi.getDeadline());
         cv.put(GOAL_DURATION, gi.getDuration());
-        cv.put(GOAL_IMPORTANCE, Boolean.valueOf(gi.isImportant()));
-        cv.put(GOAL_URGENCY, Boolean.valueOf(gi.isUrgent()));
+        cv.put(GOAL_IMPORTANCE, String.valueOf(gi.isImportant()));
+        cv.put(GOAL_URGENCY, String.valueOf(gi.isUrgent()));
         cv.put(GOAL_ROLE_ID, goalRoleID);
         db.insert(TEST_GOAL_TABLE, null, cv);
+
+        db.close();
     }
 
-//    public void insertTask(TaskItem ti, int tastGoalID) {
-//        Log.d("insertTask", ti.toString());
-//        SQLiteDatabase db = this.getWritableDatabase();
-//
-//        ContentValues cv = new ContentValues();
-//        cv.put(TASK_TITLE, ti.getTitle());
-//        cv.put(TASK_EST, 0); // just a place holder value
-//        cv.put(TASK_LST, 0);
-//        cv.put(TASK_EET, 0);
-//        cv.put(TASK_LET, 0);
-//        cv.put(TASK_DEADLINE, ti.getDeadline());
-//        cv.put(TASK_DURATION, ti.getDuration());
-//        cv.put(TASK_PREPROCESS, ti.get);
-//        cv.put(TASK_RESOURCE, goalRoleID);
-//        db.insert(TEST_GOAL_TABLE, null, cv);
-//    }
+    public void insertTask(TaskItem ti, int taskGoalID) {
+        Log.d("insertTask", ti.toString());
+        SQLiteDatabase db = this.getWritableDatabase();
 
+        ContentValues cv = new ContentValues();
+        cv.put(TASK_TITLE, ti.getTitle());
+        cv.put(TASK_EST, 0); // just a place holder value
+        cv.put(TASK_LST, 0);
+        cv.put(TASK_EET, 0);
+        cv.put(TASK_LET, 0);
+        cv.put(TASK_DEADLINE, ti.getDeadline());
+        cv.put(TASK_DURATION, ti.getDuration());
+        cv.put(TASK_PREPROCESS, ti.getPreprocessList().toString());
+        cv.put(TASK_RESOURCE, ti.getResourcesList().toString());
+        db.insert(TEST_GOAL_TABLE, null, cv);
+
+        db.close();
+    }
+    // TODO: goal should have some kind of unique id to identify, not just title.
+    public GoalItem getGoal(Context context, String title) {
+        DBHelper dbHelper = new DBHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        GoalItem gi = new GoalItem();
+        Cursor cursor = db.query(TEST_GOAL_TABLE, new String[] {_ID,
+                        GOAL_ID, GOAL_TITLE, GOAL_DEADLINE, GOAL_DURATION,
+                GOAL_IMPORTANCE, GOAL_URGENCY, GOAL_ROLE_ID}, GOAL_TITLE + "=?",
+                new String[] { title }, null, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+            gi = new GoalItem(
+                    cursor.getString(2),
+                    cursor.getLong(3),
+                    Boolean.parseBoolean(cursor.getString(5)),
+                    Boolean.parseBoolean(cursor.getString(6)),
+                    new ArrayList<TaskItem>()); // TODO: get task data.
+//                    cursor.getString(7));
+        }
+        db.close();
+        return gi;
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
