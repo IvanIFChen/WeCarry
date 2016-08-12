@@ -147,7 +147,6 @@ public class RoleGoalActivity extends AppCompatActivity {
 
     private void setActions() {
         btnConfirm.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 Log.i("msg", "Confirmed");
@@ -306,7 +305,7 @@ public class RoleGoalActivity extends AppCompatActivity {
     // Function for DB-------------------------------------------------------------------------------------------
     private long saveRole() {
         long rowId = mRole.getId();    // If it is -1, it means user is adding a new role
-        ContentValues cvr = new ContentValues(3);
+        ContentValues cvr = new ContentValues();
         cvr.put(ROLE_TITLE, mRole.getTitle());
         cvr.put(ROLE_DEADLINE, mRole.getDeadline());
         cvr.put(ROLE_DURATION, mRole.getDuration());
@@ -353,10 +352,10 @@ public class RoleGoalActivity extends AppCompatActivity {
             if(!"".equals(title.trim())) {
                 // Title is not empty
                 // Get data
-                ContentValues cvg = new ContentValues(6);
+                ContentValues cvg = new ContentValues();
                 cvg.put(GOAL_TITLE, goalItem.getTitle());
                 cvg.put(GOAL_DEADLINE, goalItem.getDeadline());
-//                cvg.put(GOAL_DURATION, goalItem.getDuration());
+                cvg.put(GOAL_DEADLINE, goalItem.getDuration());
                 cvg.put(GOAL_IMPORTANCE, String.valueOf(goalItem.isImportant()));
                 cvg.put(GOAL_URGENCY, String.valueOf(goalItem.isUrgent()));
 

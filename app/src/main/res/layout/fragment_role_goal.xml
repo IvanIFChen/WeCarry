@@ -7,6 +7,15 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".activity.MainActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="請點選右下方的「+」來新增"
+        android:id="@+id/view_empty"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
@@ -19,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:src="@android:drawable/ic_dialog_email"
+        android:src="@android:drawable/ic_input_add"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="20dp"
         android:layout_alignParentBottom="true"

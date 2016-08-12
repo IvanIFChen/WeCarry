@@ -55,6 +55,8 @@ public class RoleGoalFragment extends Fragment {
         getRoleGoalData();
         adapter = new RoleGoalAdapter(getActivity(), mList);
         listView.setAdapter(adapter);
+        View emptyView = rootView.findViewById(R.id.view_empty);
+        listView.setEmptyView(emptyView);
 
         // Click------------------------------------------------------------------------------------
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
