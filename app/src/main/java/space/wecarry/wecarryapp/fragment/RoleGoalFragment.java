@@ -51,6 +51,7 @@ public class RoleGoalFragment extends Fragment {
         getActivity().setTitle(getString(R.string.navigation_drawer_role_goal));
         listView = (ListView) rootView.findViewById(R.id.listView);
 
+        // Get date and print-----------------------------------------------------------------------
         getRoleGoalData();
         adapter = new RoleGoalAdapter(getActivity(), mList);
         listView.setAdapter(adapter);
@@ -74,7 +75,7 @@ public class RoleGoalFragment extends Fragment {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 RoleItem roleItem = (RoleItem) mList.get(position);
                 deleteRoleDialog(roleItem.getTitle(), roleItem.getId(), view);
-                return false;
+                return true;
             }
         });
 
