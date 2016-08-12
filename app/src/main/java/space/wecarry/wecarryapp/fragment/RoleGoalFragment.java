@@ -73,7 +73,7 @@ public class RoleGoalFragment extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 RoleItem roleItem = (RoleItem) mList.get(position);
-                deleteRole(roleItem.getTitle(), roleItem.getId(), view);
+                deleteRoleDialog(roleItem.getTitle(), roleItem.getId(), view);
                 return false;
             }
         });
@@ -150,7 +150,7 @@ public class RoleGoalFragment extends Fragment {
         }
     }
 
-    private void deleteRole(String roleTitle, final int roleId, final View view) {
+    private void deleteRoleDialog(String roleTitle, final int roleId, final View view) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
         dialog.setTitle("提示");
         dialog.setMessage("您要刪除"+roleTitle+"這個角色？");
@@ -164,7 +164,6 @@ public class RoleGoalFragment extends Fragment {
                 adapter = new RoleGoalAdapter(getActivity(), mList);
                 listView.setAdapter(adapter);
             }
-
         });
         dialog.setNeutralButton("取消",new DialogInterface.OnClickListener() {
             @Override
