@@ -1,9 +1,9 @@
 package space.wecarry.wecarryapp.activity;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,11 +18,13 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 import space.wecarry.wecarryapp.R;
 import space.wecarry.wecarryapp.item.GoalItem;
@@ -30,14 +32,12 @@ import space.wecarry.wecarryapp.item.RoleItem;
 import space.wecarry.wecarryapp.sqlite.DBHelper;
 
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_DEADLINE;
-import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_DURATION;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_IMPORTANCE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_ROLE_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_TITLE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_URGENCY;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_DEADLINE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_DURATION;
-import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_TITLE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_GOAL_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_ROLE_LIST;
@@ -78,6 +78,7 @@ public class RoleGoalActivity extends AppCompatActivity {
             mRole = new RoleItem();
         } else {
             // User selected to edit the role
+            // Backup role for analyzing the differences of before and after
             old_mRole = new RoleItem();
             mRole = new RoleItem();
             old_mRole = (RoleItem) intent.getSerializableExtra("roleItem");
@@ -113,7 +114,7 @@ public class RoleGoalActivity extends AppCompatActivity {
             editDeadline = (EditText)ll.findViewById(R.id.editTextDeadline);
             long deadline = mRole.getGoalList().get(i).getDeadline();
             if(deadline !=0) {
-                editDeadline.setText(millsecToDateConverter(deadline));
+                editDeadline.setText(millSecToDateConverter(deadline));
             }else {
                 // If user didn't set any deadline  //目前不用理它?
             }
@@ -150,44 +151,43 @@ public class RoleGoalActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.i("msg", "Confirmed");
-                // Check it
+                // Check the role text. It should not be empty.
                 if(!"".equals(editRole.getText().toString().trim())) {
-                    // Pass (User has input role)
-                    saveDataInBuffer();
+                    // Save data to buffer------------------------------------------------------------------------------------
+                    saveDataInBuffer(); // save Goal (in buffer)
                     mRole.setTitle(editRole.getText().toString());    // save Role (in buffer)
-//                    // Tasting-------------------------------------------------------------------------------
-//                    String goal ="";
-//                    int i = 1;
-//                    for(GoalItem goalItem:mRole.getGoalList()) {
-//                        // Clean empty goal
-//                        String g =goalItem.getTitle();
-//                        if(!"".equals(g.trim())) {
-//                            goal += Integer.toString(i) + ". " + g + "\n";
-//                            i++;
-//                        }
-//                    }
-//                    Toast.makeText(getApplicationContext(),"" +
-//                            "角色: " +mRole.getTitle() +"\n"+
-//                            "目標: " +"\n"+goal+
-//                            "",Toast.LENGTH_SHORT).show();
-////                    finish();
-//                    // End tasting-----------------------------------------------------------------------------
-                    // Save data in sqlite
+
+                    // Save buffer to SQLite------------------------------------------------------------------------------------
                     // Open db
                     dbHelper = new DBHelper(getApplicationContext());
                     db = dbHelper.getReadableDatabase();
 
+                    // Did user add a role or update a role?
                     if(roleUserSelected == -1) {
                         // User selected to add a new role
-                        long rowId = dbRole();
+                        long rowId = saveRole();
                         mRole.setId((int)rowId);    // We need to know the Role Id, and save it in Goal
-                        cleanEmptyGoal();
+                        saveGoal();
                     } else {
                         // User selected to edit the role
-                        cleanEmptyGoal();
-//                        checkGoal();    // Check if user delete any goal
-                        dbRole();
+                        saveGoal();
+                        deleteGoal();
+                        saveRole();
                     }
+                    // TESTING----------------------------------------------------------------------
+                    //建立包裹，放入回傳值。
+                    Bundle argument = new Bundle();
+                    argument.putInt("returnValueName", 1);
+
+                    //取出上一個Activity傳過來的 Intent 物件。
+                    Intent intent = getIntent();
+                    //放入要回傳的包裹。
+                    intent.putExtras(argument);
+
+                    //設定回傳狀態。
+                    setResult(Activity.RESULT_OK, intent);
+                    finish();
+                    //----------------------------------------------------------------------
                     finish();
                 }else {
                     Toast.makeText(getApplicationContext(),"尚未填寫「角色」",Toast.LENGTH_SHORT).show();   // TODO: English?
@@ -195,6 +195,7 @@ public class RoleGoalActivity extends AppCompatActivity {
             }
         });
 
+        // Cancel
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -204,6 +205,7 @@ public class RoleGoalActivity extends AppCompatActivity {
             }
         });
 
+        // New list
         btnNewList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -217,23 +219,21 @@ public class RoleGoalActivity extends AppCompatActivity {
         });
     }
 
-    //Delete
+    // Delete
     private View.OnClickListener deleteClickHandler = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
             Button delBtn =  (Button)v;
             int id = delBtn.getId();// Get the id which user click
-//            objectList.get(id);//從 objectList得到此筆資料
             // We need to store data before delete, or data will be missing
-            int i = 0;
             saveDataInBuffer();
             mRole.getGoalList().remove(id);
             addListView(); //reload view
         }
     };
 
-    //DeadlineClick
+    // DeadlineEdit button click
     private View.OnClickListener deadlineClickHandler = new View.OnClickListener() {
 
         @Override
@@ -244,6 +244,7 @@ public class RoleGoalActivity extends AppCompatActivity {
         }
     };
 
+    // Function for buffer---------------------------------------------------------------------------------------
     private void saveDataInBuffer() {
         int i = 0;
         for(HashMap editMap:objectList){
@@ -251,10 +252,9 @@ public class RoleGoalActivity extends AppCompatActivity {
             String deadline = ((EditText)editMap.get("DEADLINE")).getText().toString();
             boolean importance = ((Switch)editMap.get("IMPORTANCE")).isChecked();
             boolean urgency = ((Switch)editMap.get("URGENCY")).isChecked();
-            int t =mRole.getGoalList().get(i).getId(); // It is important to identify each goal
-            System.out.print(t);
+            mRole.getGoalList().get(i).getId(); // It is important to identify each goal    // If id is -1, it means the goal is new
             mRole.getGoalList().get(i).setTitle(goal);
-            try {mRole.getGoalList().get(i).setDeadline(dateToMillsecConverter(deadline));
+            try {mRole.getGoalList().get(i).setDeadline(dateToMillSecConverter(deadline));
             } catch (ParseException e) {
                 mRole.getGoalList().get(i).setDeadline(0);
                 e.printStackTrace();
@@ -286,13 +286,13 @@ public class RoleGoalActivity extends AppCompatActivity {
                         SpannableString content = new SpannableString(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
                         Long deadline;
                         try {
-                            deadline = dateToMillsecConverter(content.toString());
+                            deadline = dateToMillSecConverter(content.toString());
                         } catch (ParseException e) {
                             deadline = Long.valueOf(0);
                             e.printStackTrace();
                         }
                         // Why do we converted it twice(string > long > string)? Because we want the same format.
-                        editText.setText(millsecToDateConverter(deadline));
+                        editText.setText(millSecToDateConverter(deadline));
                         // Store the date user picked into mRole
                         mRole.getGoalList().get(id).setDeadline(deadline);
 
@@ -301,22 +301,22 @@ public class RoleGoalActivity extends AppCompatActivity {
         dpd.show();
     }
 
-    private Long dateToMillsecConverter(String date) throws ParseException {
+    //Function for Converter-------------------------------------------------------------------------------------
+    private Long dateToMillSecConverter(String date) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Long m = sdf.parse(date).getTime();
         return m;
     }
 
-    private String millsecToDateConverter(Long date) {
+    private String millSecToDateConverter(Long date) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String s = sdf.format(date);
         return s;
     }
 
     // Function for DB-------------------------------------------------------------------------------------------
-    private long dbRole() {
-        // Role
-        long rowId = -1;
+    private long saveRole() {
+        long rowId = mRole.getId();    // If it is -1, it means user is adding a new role
         ContentValues cvr = new ContentValues(3);
         cvr.put(ROLE_TITLE, mRole.getTitle());
         cvr.put(ROLE_DEADLINE, mRole.getDeadline());
@@ -334,18 +334,18 @@ public class RoleGoalActivity extends AppCompatActivity {
         return rowId;
     }
 
-    private void checkGoal() {
-        // Check if user delete any goal
+    private void deleteGoal() {
+        // Analyze the differences of before and after
+        // If we don't find the old_goal after user editing, the old_goal should be deleted by user
         if(roleUserSelected != -1) {
-            // It means old_mRole isn't empty
-            ArrayList<GoalItem> deleteList = old_mRole.getGoalList();
+            ArrayList<GoalItem> deleteList = new ArrayList<>();
             for(int z=0; z < old_mRole.getGoalList().size(); z++) {
                 for(int j=0; j<mRole.getGoalList().size(); j++) {
                     if(old_mRole.getGoalList().get(z).getId() == mRole.getGoalList().get(j).getId()) {
                         // This goal was not be deleted by user
-                        deleteList.remove(old_mRole.getGoalList().get(z));
                         break;
                     }
+                    deleteList.add(old_mRole.getGoalList().get(z));
                 }
             }
             // Delete goal
@@ -355,26 +355,26 @@ public class RoleGoalActivity extends AppCompatActivity {
         }
     }
 
-    private void cleanEmptyGoal() {
-        // Goal
-        // Clean empty goal ,and insert it or update it
+    private void saveGoal() {
+        // Clean empty goals in buffer, get them, and insert or update to SQLite
         int index = 0;
         for(GoalItem goalItem:mRole.getGoalList()) {
             String title =goalItem.getTitle();
+            //Clean empty goal in buffer
             if(!"".equals(title.trim())) {
-//                goalItem = new GoalItem();      // It is important to default goalItem, or it can't insert in DB
-//                mRole.addGoalItem(goalItem);    // It is for updating the data in GoalItem (for example, the duration need to be updated)
+                // Title is not empty
+                // Get data
                 ContentValues cvg = new ContentValues(6);
                 cvg.put(GOAL_TITLE, goalItem.getTitle());
                 cvg.put(GOAL_DEADLINE, goalItem.getDeadline());
-//                cvg.put(GOAL_DURATION, goalItem.getDuration());  // I don't know why it has a bug????????????????????????????????????????????????
+//                cvg.put(GOAL_DURATION, goalItem.getDuration());
                 cvg.put(GOAL_IMPORTANCE, String.valueOf(goalItem.isImportant()));
                 cvg.put(GOAL_URGENCY, String.valueOf(goalItem.isUrgent()));
 
                 // insert or update
                 if(goalItem.getId() == -1) {
-                    // Double check: User is adding a new goal
-                    cvg.put(GOAL_ROLE_ID, mRole.getId());   // Give it Role Id
+                    // User is adding a new goal
+                    cvg.put(GOAL_ROLE_ID, mRole.getId());   // Give goal the RoleId
                     long rowGoal =db.insert(TABLE_NAME_GOAL_LIST, null, cvg);
                     mRole.getGoalList().get(index).setId((int)rowGoal);
                 }else {

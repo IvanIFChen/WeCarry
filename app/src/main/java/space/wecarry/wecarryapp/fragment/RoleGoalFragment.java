@@ -119,7 +119,7 @@ public class RoleGoalFragment extends Fragment {
                         goalItem.setTitle(cursorGoal.getString(2));
                         goalItem.setDeadline(cursorGoal.getLong(3));
                         goalItem.setDuration(cursorGoal.getLong(4));
-                        goalItem.setImportant(Boolean.valueOf(cursorGoal.getString(5)));   // SQLite can't use boolean type?
+                        goalItem.setImportant(Boolean.valueOf(cursorGoal.getString(5)));
                         goalItem.setUrgent(Boolean.valueOf(cursorGoal.getString(6)));
                         roleItem.addGoalItem(goalItem);
                         cursorGoal.moveToNext();
@@ -132,42 +132,6 @@ public class RoleGoalFragment extends Fragment {
             // There are no role data in DB
             // TODO:  show a view for empty
         }
-
-//        // Testing (Sample)
-//        RoleItem roleItem = new RoleItem();
-//        GoalItem goalItem = new GoalItem();
-//        roleItem.setTitle("Student");
-//        goalItem.setTitle("Read a book");
-//        goalItem.setDeadline(Calendar.getInstance().getTimeInMillis()+2*60*60*1000);
-//        goalItem.setDuration(2*60*60*1000);
-//        goalItem.setImportance(true);
-//        goalItem.setUrgency(true);
-//        roleItem.addGoalItem(goalItem);
-//        GoalItem goalItem2 = new GoalItem();
-//        goalItem2.setTitle("Be the top one");
-//        roleItem.addGoalItem(goalItem2);
-//        mList.add(roleItem);
-//
-//        roleItem = new RoleItem();
-//        roleItem.setTitle("Programmer");
-//        mList.add(roleItem);
-//
-//        roleItem = new RoleItem();
-//        goalItem = new GoalItem();
-//        roleItem.setTitle("TA");
-//        goalItem.setTitle("Teach a student");
-//        roleItem.addGoalItem(goalItem);
-//        goalItem = new GoalItem();
-//        goalItem.setTitle("Teach a student");
-//        roleItem.addGoalItem(goalItem);
-//        goalItem = new GoalItem();
-//        goalItem.setTitle("Teach a studenttttttttt");
-//        roleItem.addGoalItem(goalItem);
-//        goalItem = new GoalItem();
-//        goalItem.setTitle("Teach a student");
-//        roleItem.addGoalItem(goalItem);
-//        mList.add(roleItem);
-
     }
 
 }

@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_role_goal:
-                Log.d("Clicked", "role");
+                Log.d("Clicked", "role_goal");
                 // update the main content by replacing fragments
                 fragment = new RoleGoalFragment();
                 fragmentManager.beginTransaction().replace(R.id.mainContainer, fragment).commit();
