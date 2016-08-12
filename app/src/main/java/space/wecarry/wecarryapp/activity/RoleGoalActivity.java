@@ -175,18 +175,11 @@ public class RoleGoalActivity extends AppCompatActivity {
                         saveRole();
                     }
                     // TESTING----------------------------------------------------------------------
-                    //建立包裹，放入回傳值。
-                    Bundle argument = new Bundle();
-                    argument.putInt("returnValueName", 1);
-
                     //取出上一個Activity傳過來的 Intent 物件。
                     Intent intent = getIntent();
                     //放入要回傳的包裹。
-                    intent.putExtras(argument);
-
-                    //設定回傳狀態。
+                    intent.putExtras(new Bundle());
                     setResult(Activity.RESULT_OK, intent);
-                    finish();
                     //----------------------------------------------------------------------
                     finish();
                 }else {

@@ -1,5 +1,6 @@
 package space.wecarry.wecarryapp.fragment;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.database.Cursor;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -49,6 +51,8 @@ public class RoleGoalFragment extends Fragment {
 
         getRoleGoalData();
 
+        adapter = new RoleGoalAdapter(getActivity(), mList);
+        listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -59,7 +63,7 @@ public class RoleGoalFragment extends Fragment {
                 bundle.putInt("roleUserSelected", position);
                 bundle.putSerializable("roleItem", ((RoleItem)mList.get(position)));
                 intent.putExtras(bundle);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
             }
         });
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -70,8 +74,6 @@ public class RoleGoalFragment extends Fragment {
                 return false;
             }
         });
-        adapter = new RoleGoalAdapter(getActivity(), mList);
-        listView.setAdapter(adapter);
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -82,7 +84,7 @@ public class RoleGoalFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putInt("roleUserSelected", -1);
                 intent.putExtras(bundle);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
             }
         });
 
@@ -134,4 +136,13 @@ public class RoleGoalFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            getRoleGoalData();
+            adapter = new RoleGoalAdapter(getActivity(), mList);
+            listView.setAdapter(adapter);
+            Toast.makeText(getActivity(),"Update",Toast.LENGTH_LONG).show();
+        }
+    }
 }
