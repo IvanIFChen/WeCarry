@@ -65,7 +65,7 @@ public class DBHelper extends SQLiteOpenHelper{
                         TASK_LST + " INTEGER, " +
                         TASK_EET + " INTEGER, " +
                         TASK_LET + " INTEGER, " +
-                        TASK_DEADLINE + "INTEGER, " +
+                        TASK_DEADLINE + " INTEGER, " +
                         TASK_DURATION + " INTEGER, " +
                         TASK_PREPROCESS + " TEXT, " +
                         TASK_RESOURCE + " TEXT, " +

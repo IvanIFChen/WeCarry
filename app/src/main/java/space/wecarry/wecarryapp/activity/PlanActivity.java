@@ -37,7 +37,10 @@ import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_TITLE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_GOAL_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_ROLE_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_TASK_LIST;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_DEADLINE;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_DURATION;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_GOAL_ID;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_TITLE;
 
 public class PlanActivity extends AppCompatActivity {
     private EditText editGoal, editTask, editDeadline, editDuration;
@@ -345,16 +348,15 @@ public class PlanActivity extends AppCompatActivity {
         // Clean empty goals in buffer, get them, and insert or update to SQLite
         int index = 0;
         for(TaskItem taskItem: mGoal.getTaskList()) {
-            String title =taskItem.getTitle();
+            String title = taskItem.getTitle();
             //Clean empty goal in buffer
             if(!"".equals(title.trim())) {
                 // Title is not empty
                 // Get data
                 ContentValues cvg = new ContentValues();
-                cvg.put(GOAL_TITLE, taskItem.getTitle());
-                cvg.put(GOAL_DEADLINE, taskItem.getDeadline());
-                cvg.put(GOAL_DURATION, taskItem.getDuration());
-
+                cvg.put(TASK_TITLE, taskItem.getTitle());
+                cvg.put(TASK_DEADLINE, taskItem.getDeadline());
+                cvg.put(TASK_DURATION, taskItem.getDuration());
                 // insert or update
                 if(taskItem.getId() == -1) {
                     // User is adding a new task
