@@ -19,7 +19,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.PieChartActivity_old" />
-        <activity android:name=".activity.RoleGoalActivity"></activity>
+        <activity android:name=".activity.RoleGoalActivity" />
+        <activity android:name=".activity.PlanActivity"></activity>
     </application>
 
 </manifest>

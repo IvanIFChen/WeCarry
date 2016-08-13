@@ -11,32 +11,31 @@ import java.util.ArrayList;
 
 import space.wecarry.wecarryapp.R;
 import space.wecarry.wecarryapp.item.GoalItem;
-import space.wecarry.wecarryapp.item.RoleItem;
+import space.wecarry.wecarryapp.item.TaskItem;
 
 /**
- * Created by Blair on 2016/8/6.
+ * Created by Blair on 2016/8/13.
  */
-public class RoleGoalAdapter extends BaseAdapter {
+public class PlanAdapter extends BaseAdapter {
 
-    private ArrayList<RoleItem> roleList;
+    private ArrayList<GoalItem> goalList;
     private LayoutInflater layoutInflater;
     public Context context;
 
-    public RoleGoalAdapter(Context context, ArrayList roleList) {
+    public PlanAdapter(Context context, ArrayList goalList) {
         this.context = context;
-        this.roleList = roleList;
+        this.goalList = goalList;
         this.layoutInflater = layoutInflater.from(context);
     }
 
-
     @Override
     public int getCount() {
-        return roleList.size();
+        return goalList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return roleList.get(position);
+        return goalList.get(position);
     }
 
     @Override
@@ -48,37 +47,36 @@ public class RoleGoalAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.listview_item_role_goal, null);
+            convertView = layoutInflater.inflate(R.layout.listview_item_plan, null);
 
             holder = new ViewHolder();
-            holder.textRole = (TextView) convertView.findViewById(R.id.textViewRole);
             holder.textGoal = (TextView) convertView.findViewById(R.id.textViewGoal);
+            holder.textTask = (TextView) convertView.findViewById(R.id.textViewTask);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
         //We set the tag to the TaskItem, so we can find it in callbacks
-        holder.textRole.setTag(roleList.get(position));
-        holder.textGoal.setTag(roleList.get(position));
+        holder.textGoal.setTag(goalList.get(position));
+        holder.textTask.setTag(goalList.get(position));
 
         //Set the text of the listview
-        holder.textRole.setText(roleList.get(position).getTitle());
-        //Get the all of goal
+        holder.textGoal.setText(goalList.get(position).getTitle());
+        //Get the all of task
         String temp = "";
         int index = 1;
-        for(GoalItem gi : roleList.get(position).getGoalList()) {
-            temp += Integer.toString(index)+". " + gi.getTitle() + "\n";
+        for(TaskItem taskItem : goalList.get(position).getTaskList()) {
+            temp += Integer.toString(index)+". " + taskItem.getTitle() + "\n";
             index++;
         }
-        holder.textGoal.setText(temp);
+        holder.textTask.setText(temp);
 
         return convertView;
     }
 
-    static class ViewHolder {
-        TextView textRole;
+    static class ViewHolder{
         TextView textGoal;
+        TextView textTask;
     }
-    //
 }

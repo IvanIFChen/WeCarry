@@ -22,6 +22,10 @@
     <string name="urgent">急迫性</string>
     <string name="editGoalHint">想要完成什麼？</string>
     <string name="editDeadlineHint">預計何時達成？</string>
+    <string name="task">任務</string>
+    <string name="editTaskHint">得做什麼事情？</string>
+    <string name="duration">為期多久</string>
+    <string name="editDurationHint">花費多少時間？</string>
 
     <!--Menu-->
     <string name="action_show_week">過去7天</string>

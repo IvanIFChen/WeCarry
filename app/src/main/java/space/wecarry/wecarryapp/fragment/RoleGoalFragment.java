@@ -100,7 +100,6 @@ public class RoleGoalFragment extends Fragment {
 
     private void getRoleGoalData() {
         mList = new ArrayList<>();
-        // TODO: Get data from DB
         // Open db
         dbHelper = new DBHelper(getActivity());
         db = dbHelper.getReadableDatabase();
@@ -137,9 +136,6 @@ public class RoleGoalFragment extends Fragment {
                 mList.add(roleItem);
                 cursorRole.moveToNext();
             }
-        }else {
-            // There are no role data in DB
-            // TODO:  show a view for empty
         }
     }
 
@@ -161,7 +157,7 @@ public class RoleGoalFragment extends Fragment {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
                 db.delete(TABLE_NAME_ROLE_LIST,"_ID=" + String.valueOf(roleId), null);
-                // TODO: Goal也該一起刪嗎？
+                db.delete(TABLE_NAME_GOAL_LIST, GOAL_ROLE_ID + "=" + String.valueOf(roleId), null);
                 Snackbar.make(view, "已刪除", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 getRoleGoalData();
                 adapter = new RoleGoalAdapter(getActivity(), mList);
@@ -171,7 +167,7 @@ public class RoleGoalFragment extends Fragment {
         dialog.setNeutralButton("取消",new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
-//                Toast.makeText(getActivity(), "取消",Toast.LENGTH_SHORT).show();
+            // Cancel
             }
         });
         dialog.show();

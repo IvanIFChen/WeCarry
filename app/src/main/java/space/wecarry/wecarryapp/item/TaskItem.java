@@ -7,6 +7,7 @@ import java.util.ArrayList;
  * Created by Ivan IF Chen on 8/9/2016.
  */
 public class TaskItem implements Serializable {
+    private int id;
     private String title;
     private long earliestStartTime;
     private long latestStartTime;
@@ -18,6 +19,7 @@ public class TaskItem implements Serializable {
     private ArrayList<ResourceItem> resourcesList;
 
     public TaskItem() {
+        this.id = -1;
         this.title = "";
         this.earliestStartTime = 0;
         this.latestStartTime = 0;
@@ -58,6 +60,15 @@ public class TaskItem implements Serializable {
         this.duration = duration;
         this.preprocessList = preprocessList;
         this.resourcesList = resourcesList;
+    }
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {
