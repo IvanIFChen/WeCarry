@@ -32,6 +32,7 @@ import space.wecarry.wecarryapp.item.RoleItem;
 import space.wecarry.wecarryapp.sqlite.DBHelper;
 
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_DEADLINE;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_DURATION;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_IMPORTANCE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_ROLE_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_TITLE;
@@ -146,6 +147,8 @@ public class RoleGoalActivity extends AppCompatActivity {
     }
 
     private void setActions() {
+
+        // Confirm
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -327,13 +330,15 @@ public class RoleGoalActivity extends AppCompatActivity {
         // If we don't find the old_goal after user editing, the old_goal should be deleted by user
         if(roleUserSelected != -1) {
             ArrayList<GoalItem> deleteList = new ArrayList<>();
+
             for(int z=0; z < old_mRole.getGoalList().size(); z++) {
+                deleteList.add(old_mRole.getGoalList().get(z));
                 for(int j=0; j<mRole.getGoalList().size(); j++) {
                     if(old_mRole.getGoalList().get(z).getId() == mRole.getGoalList().get(j).getId()) {
                         // This goal was not be deleted by user
+                        deleteList.remove(old_mRole.getGoalList().get(z));
                         break;
                     }
-                    deleteList.add(old_mRole.getGoalList().get(z));
                 }
             }
             // Delete goal
@@ -355,14 +360,14 @@ public class RoleGoalActivity extends AppCompatActivity {
                 ContentValues cvg = new ContentValues();
                 cvg.put(GOAL_TITLE, goalItem.getTitle());
                 cvg.put(GOAL_DEADLINE, goalItem.getDeadline());
-                cvg.put(GOAL_DEADLINE, goalItem.getDuration());
+                cvg.put(GOAL_DURATION, goalItem.getDuration());
                 cvg.put(GOAL_IMPORTANCE, String.valueOf(goalItem.isImportant()));
                 cvg.put(GOAL_URGENCY, String.valueOf(goalItem.isUrgent()));
 
                 // insert or update
                 if(goalItem.getId() == -1) {
                     // User is adding a new goal
-                    cvg.put(GOAL_ROLE_ID, mRole.getId());   // Give goal the RoleId
+                    cvg.put(GOAL_ROLE_ID, mRole.getId());   // Give goal the Role Id
                     long rowGoal =db.insert(TABLE_NAME_GOAL_LIST, null, cvg);
                     mRole.getGoalList().get(index).setId((int)rowGoal);
                 }else {
