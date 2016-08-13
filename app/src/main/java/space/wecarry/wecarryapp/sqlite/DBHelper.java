@@ -110,14 +110,14 @@ public class DBHelper extends SQLiteOpenHelper{
 
         db.execSQL((INIT_TEST_GOAL_TABLE));
         db.execSQL((INIT_TEST_TASK_TABLE));
-
     }
 
 
-    public void insertGoalWithTasks(GoalItem gi, int goalID, int goalRoleID) {
+    public void insertGoal(GoalItem gi, int goalID, int goalRoleID) {
         Log.d("inserting goal", gi.toString());
         SQLiteDatabase db = this.getWritableDatabase();
         ArrayList<TaskItem> taskList = new ArrayList<TaskItem>();
+
         // insert all the tasks into task table first.
         for (TaskItem ti : gi.getTaskList()) {
             insertTask(ti, goalID);
@@ -134,22 +134,22 @@ public class DBHelper extends SQLiteOpenHelper{
         db.insert(TEST_GOAL_TABLE, null, cv);
     }
 
-    public void insertTask(TaskItem ti, int taskGoalID) {
+    public void insertTask(TaskItem ti, int goalID) {
         Log.d("insertTask", ti.toString());
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
-        cv.put(TASK_ID, -1); // Fixme: unknown purpose field.
+        cv.put(TASK_ID, -1); // Fixme: field for unknown purpose.
         cv.put(TASK_TITLE, ti.getTitle());
-        cv.put(TASK_EST, 0); // Fixme: just a place holder value
-        cv.put(TASK_LST, 0);
-        cv.put(TASK_EET, 0);
-        cv.put(TASK_LET, 0);
+        cv.put(TASK_EST, ti.getEarliestStartTime());
+        cv.put(TASK_LST, ti.getLatestStartTime());
+        cv.put(TASK_EET, ti.getEarliestEndTime());
+        cv.put(TASK_LET, ti.getEarliestEndTime());
         cv.put(TASK_DEADLINE, ti.getDeadline());
         cv.put(TASK_DURATION, ti.getDuration());
         cv.put(TASK_PREPROCESS, ""); // TODO: think of a way to save this data.
         cv.put(TASK_RESOURCE, "");   // TODO: same^.
-        cv.put(TASK_GOAL_ID, taskGoalID);
+        cv.put(TASK_GOAL_ID, goalID);
 
         db.insert(TEST_TASK_TABLE, null, cv);
     }
@@ -158,10 +158,13 @@ public class DBHelper extends SQLiteOpenHelper{
     public GoalItem getGoal(String title) {
         SQLiteDatabase db = this.getReadableDatabase();
         GoalItem gi = new GoalItem();
+        int goalID = -1;
+
         Cursor cursor = db.query(TEST_GOAL_TABLE, new String[] {_ID,
                         GOAL_ID, GOAL_TITLE, GOAL_DEADLINE, GOAL_DURATION,
                 GOAL_IMPORTANCE, GOAL_URGENCY, GOAL_ROLE_ID}, GOAL_TITLE + "=?",
                 new String[] { title }, null, null, null, null);
+        // get goal item and its data (without task items).
         if (cursor != null) {
             cursor.moveToFirst();
             gi = new GoalItem(
@@ -169,10 +172,42 @@ public class DBHelper extends SQLiteOpenHelper{
                     cursor.getLong(3),
                     Boolean.parseBoolean(cursor.getString(5)),
                     Boolean.parseBoolean(cursor.getString(6)),
-                    new ArrayList<TaskItem>()); // TODO: get task data.
-//                    cursor.getString(7));
+                    new ArrayList<TaskItem>());
+            // get goalID in order to find its task items
+            goalID = cursor.getInt(1);
         }
+        // getting task items
+        ArrayList<TaskItem> tasks = getTasksByGoalID(goalID);
+        gi.setTaskList(tasks);
+
         return gi;
+    }
+
+    public ArrayList<TaskItem> getTasksByGoalID(int goalID) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<TaskItem> tasks = new ArrayList<TaskItem>();
+        Cursor c = db.rawQuery("SELECT * FROM " + TEST_TASK_TABLE, null);
+
+        if (c.getCount() > 0) {
+            for (int i = 0; i < c.getCount(); i++) {
+                c.moveToPosition(i);
+                // if this current cursor item is belong to this goalID
+                if (c.getInt(c.getColumnIndex(TASK_GOAL_ID)) == goalID) {
+                    TaskItem ti = new TaskItem(
+                            c.getString(2),
+                            c.getLong(3),
+                            c.getLong(4),
+                            c.getLong(5),
+                            c.getLong(6),
+                            c.getLong(7),
+                            c.getLong(8),
+                            new ArrayList<TaskItem>(),      // TODO: parse data
+                            new ArrayList<ResourceItem>()); // TODO: parse data
+                    tasks.add(ti);
+                }
+            }
+        }
+        return tasks;
     }
 
     public TaskItem getTask(String title) {
@@ -182,7 +217,7 @@ public class DBHelper extends SQLiteOpenHelper{
                         TASK_ID, TASK_TITLE, TASK_EST, TASK_LST, TASK_EET, TASK_LET,
                         TASK_DEADLINE, TASK_DURATION, TASK_PREPROCESS, TASK_RESOURCE,
                         TASK_GOAL_ID}, TASK_TITLE + "=?",
-                new String[] { title }, null, null, null, null);
+                        new String[] { title }, null, null, null, null);
         if (cursor != null) {
             cursor.moveToFirst();
             ti = new TaskItem(

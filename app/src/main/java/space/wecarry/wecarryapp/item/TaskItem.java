@@ -14,7 +14,7 @@ public class TaskItem implements Serializable {
     private long earliestEndTime;
     private long latestEndTime;
     private long deadline;
-    private long duration;
+    private long duration; /// in milliseconds
     private ArrayList<TaskItem> preprocessList;
     private ArrayList<ResourceItem> resourcesList;
 

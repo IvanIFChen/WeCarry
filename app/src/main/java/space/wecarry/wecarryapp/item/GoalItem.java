@@ -66,6 +66,11 @@ public class GoalItem implements Serializable {
     }
 
     public void setDuration(long duration) {
+        /**
+         * this should never be used since we automatically
+         * calculate the duration value by adding up each task's
+         * value from taskList.
+         */
         this.duration = duration;
     }
 
@@ -96,6 +101,7 @@ public class GoalItem implements Serializable {
     }
 
     public long getDuration() {
+        updateDuration();
         return duration;
     }
 
