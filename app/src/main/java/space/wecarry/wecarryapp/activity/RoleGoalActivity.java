@@ -374,9 +374,6 @@ public class RoleGoalActivity extends AppCompatActivity {
                     // User is modifying the goal
                     db.update(TABLE_NAME_GOAL_LIST, cvg,"_ID=" + String.valueOf(goalItem.getId()), null);
                 }
-            }else {
-                // if the goal is empty
-                mRole.getGoalList().remove(index);
             }
             index++;
         }
