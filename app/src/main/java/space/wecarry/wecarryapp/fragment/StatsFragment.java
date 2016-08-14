@@ -30,6 +30,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import space.wecarry.wecarryapp.DemoData;
 import space.wecarry.wecarryapp.R;
 import space.wecarry.wecarryapp.UserConstants;
 import space.wecarry.wecarryapp.item.GoalItem;
@@ -61,27 +62,30 @@ public class StatsFragment extends Fragment {
     private float q3Pie = 0;
     private float q4Pie = 0;
     private float othersPie;
-    // line data
-    private float q1Line; // in hours;
-    private float q2Line;
-    private float q3Line;
-    private float q4Line;
-    private float othersLine;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("Enter", "stats");
         View rootView = inflater.inflate(R.layout.fragment_stats, container, false);
         getActivity().setTitle(getString(R.string.navigation_drawer_stats));
 
+        // initialize chart library.
         Utils.init(getActivity());
 
-        // Insert test data to db
-        Log.d("Start test data", "=============================================");
-        getDataFromDB();
-        Log.d("End test data", "===============================================");
+        // TODO: change this to false to show real data.
+        boolean showDemo = true;
+
+        if(showDemo) {
+            // generate demo data
+            DemoData dd = new DemoData(showInWeek);
+            roleList = dd.getGeneratedRoleList();
+            goalList = dd.getGeneratedGoalList();
+            taskList = dd.getGeneratedTaskList();
+        } else {
+            // get real data
+            getDataFromDB();
+        }
 
         ListView lv = (ListView) rootView.findViewById(R.id.listView1);
 
@@ -123,117 +127,13 @@ public class StatsFragment extends Fragment {
     }
 
     private void getDataFromDB() {
-        // TODO: load data from db
-        // sample data
         // clear
         roleList = new ArrayList<RoleItem>();
         goalList = new ArrayList<GoalItem>();
         taskList = new ArrayList<TaskItem>();
-
-        ArrayList<TaskItem> g1Tasks = new ArrayList<TaskItem>();
-        ArrayList<TaskItem> g2Tasks = new ArrayList<TaskItem>();
-        ArrayList<TaskItem> g3Tasks = new ArrayList<TaskItem>();
-        ArrayList<TaskItem> g4Tasks = new ArrayList<TaskItem>();
-        ArrayList<TaskItem> g5Tasks = new ArrayList<TaskItem>();
-        ArrayList<GoalItem> r1Goals = new ArrayList<GoalItem>();
-        ArrayList<GoalItem> r2Goals = new ArrayList<GoalItem>();
-
-        // random value = (max ~1.5hr, min ~.5hr)
-        int nameCount = 1;
-        int sampleSize;
-        if (showInWeek)
-            sampleSize = 10;
-        else
-            sampleSize = 40;
-        for (int i = 1; i <= sampleSize; i++) {
-            TaskItem task;
-            task = new TaskItem("task" + nameCount,
-                    60 * 100 * (long) (Math.random() * 70 + 30));
-//            Log.e("task", task.toString());
-            g1Tasks.add(task);
-            taskList.add(task);
-            nameCount = nameCount + 1;
-            task = new TaskItem("task" + nameCount,
-                    60 * 100 * (long) (Math.random() * 70 + 30));
-//            Log.e("task", task.toString());
-            g2Tasks.add(task);
-            taskList.add(task);
-            nameCount = nameCount + 1;
-            task = new TaskItem("task" + nameCount,
-                    60 * 100 * (long) (Math.random() * 70 + 30));
-//            Log.e("task", task.toString());
-            g3Tasks.add(task);
-            taskList.add(task);
-            nameCount = nameCount + 1;
-            task = new TaskItem("task" + nameCount,
-                    60 * 100 * (long) (Math.random() * 70 + 30));
-//            Log.e("task", task.toString());
-            g4Tasks.add(task);
-            taskList.add(task);
-            nameCount = nameCount + 1;
-            task = new TaskItem("task" + nameCount,
-                    60 * 100 * (long) (Math.random() * 70 + 30));
-//            Log.e("task", task.toString());
-            g5Tasks.add(task);
-            taskList.add(task);
-        }
-
-        GoalItem g1 = new GoalItem("goal1", 0, true, true, g1Tasks); // will add deadline later
-        GoalItem g2 = new GoalItem("goal2", 0, true, false, g2Tasks);
-        GoalItem g3 = new GoalItem("goal3", 0, false, true, g3Tasks);
-        GoalItem g4 = new GoalItem("goal4", 0, false, false, g4Tasks);
-        GoalItem g5 = new GoalItem("goal5", 0, true, false, g5Tasks);
-        r1Goals.add(g1);
-        r1Goals.add(g2);
-        r1Goals.add(g3);
-        r2Goals.add(g4);
-        r2Goals.add(g5);
-        RoleItem r1 = new RoleItem("role1", r1Goals);
-        RoleItem r2 = new RoleItem("role2", r2Goals);
-
-        // adding sample data to lists.
-        roleList.add(r1);
-        roleList.add(r2);
-        goalList.add(g1);
-        goalList.add(g2);
-        goalList.add(g3);
-        goalList.add(g4);
-        goalList.add(g5);
-
-        // Adding deadline for goals and tasks
-        for (GoalItem gi : goalList) {
-            Calendar cal = new GregorianCalendar();
-            gi.setDeadline(cal.getTimeInMillis());
-//            Log.d("Today", "   " + Long.toString(cal.getTimeInMillis()));
-            for (TaskItem ti : gi.getTaskList()) {
-                cal.add(cal.DATE, -1);
-//                Log.d("Today -1", cal.toString());
-                ti.setDeadline(cal.getTimeInMillis());
-            }
-        }
-
-        Log.d("Test: checkQuadrant", Long.toString(g1.checkQuadrant()));
-        Log.d("Test: checkQuadrant", Long.toString(g2.checkQuadrant()));
-        Log.d("Test: checkQuadrant", Long.toString(g3.checkQuadrant()));
-        Log.d("Test: checkQuadrant", Long.toString(g4.checkQuadrant()));
-        Log.d("Test: checkQuadrant", Long.toString(g5.checkQuadrant()));
-
-        Log.d("Test: totalDuration", Long.toString(g1.getDuration()));
-        Log.d("Test: totalDuration", Long.toString(g2.getDuration()));
-        Log.d("Test: totalDuration", Long.toString(g3.getDuration()));
-        Log.d("Test: totalDuration", Long.toString(g4.getDuration()));
-        Log.d("Test: totalDuration", Long.toString(g5.getDuration()));
-
-        // insert to db
-        dbHelper = new DBHelper(getActivity());
-        dbHelper.insertGoal(g1, 1, -1);
-        dbHelper.insertTask(g1.getTaskList().get(0), 1);
-        // load from db
-        Log.e("load db test", dbHelper.getGoal("goal1").toString());
-        Log.e("load db test", dbHelper.getTask("task1").toString());
-
-        dbHelper.close();
-
+        // this part of code is not tested
+        DBHelper dbHelper = new DBHelper(getActivity());
+        goalList = dbHelper.getAllGoal();
     }
 
     @Override
@@ -352,11 +252,21 @@ public class StatsFragment extends Fragment {
         Log.i("othersPie value", Float.toString(othersPie));
     }
 
-    /**
-     * generates a random ChartData object with just one DataSet
-     *
-     * @return
-     */
+    private void logMillisecondToDate(String title, Long ms) {
+        Calendar day = new GregorianCalendar();
+        day.setTimeInMillis(ms);
+        Log.d(title,
+                Integer.toString(day.get(Calendar.MONTH) + 1) +
+                        "/" +
+                        Integer.toString(day.get(Calendar.DAY_OF_MONTH)) +
+                        " " +
+                        Integer.toString(day.get(Calendar.HOUR_OF_DAY)) +
+                        ":" +
+                        Integer.toString(day.get(Calendar.MINUTE)) +
+                        ":" +
+                        Integer.toString(day.get(Calendar.SECOND)));
+    }
+
     private LineData generateDataLine(int cnt) {
         int numEntries;
         ArrayList<Entry> e1 = new ArrayList<Entry>();
@@ -387,7 +297,8 @@ public class StatsFragment extends Fragment {
             numEntries = 30;
 
         Calendar cal = new GregorianCalendar();
-//        int today = cal.get(Calendar.DAY_OF_YEAR);
+        // set date back numEntries days and start from there to now
+        cal.add(Calendar.DATE, -numEntries);
         for (int i = 0; i < numEntries; i++) {
             float e1Size = 0;
             float e2Size = 0;
@@ -398,49 +309,53 @@ public class StatsFragment extends Fragment {
             int month = cal.get(Calendar.MONTH);
             int day = cal.get(Calendar.DAY_OF_MONTH);
             Log.d("Iteration " + Integer.toString(i), "-----------------------------");
-            Log.d("year", Integer.toString(year));
-            Log.d("month", Integer.toString(month));
-            Log.d("day", Integer.toString(day));
+            Log.d("Date", Integer.toString(year) + "/" +
+                    Integer.toString(month + 1) + "/" +
+                    Integer.toString(day));
 
             Calendar thisDay = new GregorianCalendar();
             thisDay.set(year, month, day, 0, 0, 0);
             long dayAt0000 = thisDay.getTimeInMillis(); // in millisecond
-            thisDay.set(year, month, day, 11, 59, 59);
-            long dayAt1159 = thisDay.getTimeInMillis(); // in millisecond
-            Log.d("time 0000", Long.toString(dayAt0000));
-            Log.d("time 1159", Long.toString(dayAt1159));
+            thisDay.set(year, month, day, 23, 59, 59);
+            long dayAt2359 = thisDay.getTimeInMillis(); // in millisecond
+            logMillisecondToDate("0000", dayAt0000);
+            logMillisecondToDate("2359", dayAt2359);
 
             // check if task is within the day's range,
             // if so, add to according size in hours.
             for (TaskItem ti : q1) {
                 // Fixme: timeCompeted should not be deadline.
                 long timeCompleted = ti.getDeadline();
-                if (timeCompleted >= dayAt0000 && timeCompleted <= dayAt1159) {
-                    Log.d("add to e1", Long.toString(timeCompleted));
+//                logMillisecondToDate(timeCompleted);
+                if (timeCompleted >= dayAt0000 && timeCompleted <= dayAt2359) {
+                    Log.d("add to e1", ti.getTitle());
                     e1Size = e1Size + (float) ti.getDuration() / 100 / 60 / 60;
                 }
             }
             for (TaskItem ti : q2) {
                 // Fixme: timeCompeted should not be deadline.
                 long timeCompleted = ti.getDeadline();
-                if (timeCompleted >= dayAt0000 && timeCompleted <= dayAt1159) {
-                    Log.d("add to e2", Long.toString(timeCompleted));
+//                logMillisecondToDate(timeCompleted);
+                if (timeCompleted >= dayAt0000 && timeCompleted <= dayAt2359) {
+                    Log.d("add to e2", ti.getTitle());
                     e2Size = e2Size + (float) ti.getDuration() / 100 / 60 / 60;
                 }
             }
             for (TaskItem ti : q3) {
                 // Fixme: timeCompeted should not be deadline.
                 long timeCompleted = ti.getDeadline();
-                if (timeCompleted >= dayAt0000 && timeCompleted <= dayAt1159) {
-                    Log.d("add to e3", Long.toString(timeCompleted));
+//                logMillisecondToDate(timeCompleted);
+                if (timeCompleted >= dayAt0000 && timeCompleted <= dayAt2359) {
+                    Log.d("add to e3", ti.getTitle());
                     e3Size = e3Size + (float) ti.getDuration() / 100 / 60 / 60;
                 }
             }
             for (TaskItem ti : q4) {
                 // Fixme: timeCompeted should not be deadline.
                 long timeCompleted = ti.getDeadline();
-                if (timeCompleted >= dayAt0000 && timeCompleted <= dayAt1159) {
-                    Log.d("add to e4", Long.toString(timeCompleted));
+//                logMillisecondToDate(timeCompleted);
+                if (timeCompleted >= dayAt0000 && timeCompleted <= dayAt2359) {
+                    Log.d("add to e4", ti.getTitle());
                     e4Size = e4Size + (float) ti.getDuration() / 100 / 60 / 60;
                 }
             }
@@ -462,7 +377,7 @@ public class StatsFragment extends Fragment {
 
             // subtract date by 1 so it will get the next (previous) day's
             // 0000 and 1159 in milliseconds.
-            cal.add(Calendar.DATE, -1);
+            cal.add(Calendar.DATE, 1);
         }
 
         // for randomly generated data (demo).
@@ -479,7 +394,7 @@ public class StatsFragment extends Fragment {
         d1.setLineWidth(2.5f);
         d1.setCircleRadius(4.5f);
         d1.setHighLightColor(Color.rgb(244, 117, 117));
-        d1.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+        d1.setColor(ColorTemplate.VORDIPLOM_COLORS[0]); // green
         d1.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[0]);
         d1.setDrawValues(false);
 
@@ -487,7 +402,7 @@ public class StatsFragment extends Fragment {
         d2.setLineWidth(2.5f);
         d2.setCircleRadius(4.5f);
         d2.setHighLightColor(Color.rgb(244, 117, 117));
-        d2.setColor(ColorTemplate.VORDIPLOM_COLORS[1]);
+        d2.setColor(ColorTemplate.VORDIPLOM_COLORS[1]); // yellow
         d2.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[1]);
         d2.setDrawValues(false);
 
@@ -495,7 +410,7 @@ public class StatsFragment extends Fragment {
         d3.setLineWidth(2.5f);
         d3.setCircleRadius(4.5f);
         d3.setHighLightColor(Color.rgb(244, 117, 117));
-        d3.setColor(ColorTemplate.VORDIPLOM_COLORS[2]);
+        d3.setColor(ColorTemplate.VORDIPLOM_COLORS[2]); // orange
         d3.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[2]);
         d3.setDrawValues(false);
 
@@ -503,7 +418,7 @@ public class StatsFragment extends Fragment {
         d4.setLineWidth(2.5f);
         d4.setCircleRadius(4.5f);
         d4.setHighLightColor(Color.rgb(244, 117, 117));
-        d4.setColor(ColorTemplate.VORDIPLOM_COLORS[3]);
+        d4.setColor(ColorTemplate.VORDIPLOM_COLORS[3]); // blue
         d4.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[3]);
         d4.setDrawValues(false);
 
@@ -511,7 +426,7 @@ public class StatsFragment extends Fragment {
         d5.setLineWidth(2.5f);
         d5.setCircleRadius(4.5f);
         d5.setHighLightColor(Color.rgb(244, 117, 117));
-        d5.setColor(ColorTemplate.VORDIPLOM_COLORS[4]);
+        d5.setColor(ColorTemplate.VORDIPLOM_COLORS[4]); // red
         d5.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[4]);
         d5.setDrawValues(false);
 
@@ -526,11 +441,6 @@ public class StatsFragment extends Fragment {
         return cd;
     }
 
-    /**
-     * generates a random ChartData object with just one DataSet
-     *
-     * @return
-     */
     private PieData generateDataPie(int cnt) {
 
         calcQuadrantsForPie();
