@@ -18,8 +18,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import space.wecarry.wecarryapp.R;
-import space.wecarry.wecarryapp.activity.TaskActivity;
-import space.wecarry.wecarryapp.adapter.TaskAdapter;
+import space.wecarry.wecarryapp.activity.DelegateActivty;
+import space.wecarry.wecarryapp.adapter.DelegateAdapter;
 import space.wecarry.wecarryapp.item.TaskItem;
 import space.wecarry.wecarryapp.sqlite.DBHelper;
 
@@ -32,7 +32,7 @@ public class DelegateFragment extends Fragment {
 
     private ListView listView;
     private ArrayList<TaskItem> taskList;
-    private TaskAdapter adapter;
+    private DelegateAdapter adapter;
     public DelegateFragment() { }
 
     @Override
@@ -46,7 +46,7 @@ public class DelegateFragment extends Fragment {
         getTaskData();
 
         // setting up adapter
-        adapter = new TaskAdapter(getActivity(), taskList);
+        adapter = new DelegateAdapter(getActivity(), taskList);
         listView.setAdapter(adapter);
         View emptyView = rootView.findViewById(R.id.view_empty);
         listView.setEmptyView(emptyView);
@@ -55,9 +55,9 @@ public class DelegateFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Intent intent = new Intent();
-                intent.setClass(getActivity(), TaskActivity.class);
+                intent.setClass(getActivity(), DelegateActivty.class);
                 Bundle bundle = new Bundle();
-                bundle.putInt("taskItemSelected", position);
+                bundle.putInt("taskUserSelected", position);
                 bundle.putSerializable("taskItem", taskList.get(position));
                 intent.putExtras(bundle);
                 startActivityForResult(intent, 0);
@@ -84,7 +84,7 @@ public class DelegateFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             getTaskData();
-            adapter = new TaskAdapter(getActivity(), taskList);
+            adapter = new DelegateAdapter(getActivity(), taskList);
             listView.setAdapter(adapter);
             Toast.makeText(getActivity(),"Update",Toast.LENGTH_SHORT).show();
         }
@@ -102,7 +102,7 @@ public class DelegateFragment extends Fragment {
                 db.delete(TABLE_NAME_TASK_LIST,"_ID=" + String.valueOf(taskID), null);
                 Snackbar.make(view, "已刪除", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 getTaskData();
-                adapter = new TaskAdapter(getActivity(), taskList);
+                adapter = new DelegateAdapter(getActivity(), taskList);
                 listView.setAdapter(adapter);
             }
         });

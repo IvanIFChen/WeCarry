@@ -15,13 +15,13 @@ import space.wecarry.wecarryapp.item.TaskItem;
 /**
  * Created by Blair on 2016/8/13.
  */
-public class TaskAdapter extends BaseAdapter {
+public class DelegateAdapter extends BaseAdapter {
 
     private ArrayList<TaskItem> taskList;
     private LayoutInflater layoutInflater;
     public Context context;
 
-    public TaskAdapter(Context context, ArrayList taskList) {
+    public DelegateAdapter(Context context, ArrayList taskList) {
         this.context = context;
         this.taskList = taskList;
         this.layoutInflater = layoutInflater.from(context);
