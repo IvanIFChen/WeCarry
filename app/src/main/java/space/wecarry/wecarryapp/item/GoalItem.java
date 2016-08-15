@@ -1,7 +1,5 @@
 package space.wecarry.wecarryapp.item;
 
-import android.util.Log;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -9,8 +7,8 @@ import java.util.ArrayList;
  * Created by Blair on 2016/8/5.
  */
 public class GoalItem implements Serializable {
-
-    private int id; // We use it to make determine whether to modify or add data in DB. // Default: -1 , It means "add".
+    private int goalId; // We use it to make determine whether to modify or add data in DB. // Default: -1 , It means "add".
+    private int roleId;
     private String title;
     private long deadline;
     private long duration;
@@ -19,7 +17,8 @@ public class GoalItem implements Serializable {
     private ArrayList<TaskItem> taskList;
 
     public GoalItem() {
-        this.id = -1;   // We use it to make determine whether to modify or add data in DB. // Default: -1 , It means "add".
+        this.goalId = -1;   // We use it to make determine whether to modify or add data in DB. // Default: -1 , It means "add".
+        this.roleId = -1;
         this.title = "";
         this.deadline = 0;
         this.duration = 0;
@@ -29,7 +28,6 @@ public class GoalItem implements Serializable {
     }
 
     public GoalItem(String title, long deadline, boolean isImportant, boolean isUrgent, ArrayList<TaskItem> taskList) {
-//        this.id = id;
         this.title = title;
         this.deadline = deadline;
         this.isImportant = isImportant;
@@ -49,12 +47,20 @@ public class GoalItem implements Serializable {
 //        this.deadline = deadline;
 //        this.title = title;
 
-    public int getId() {
-        return id;
+    public int getGoalId() {
+        return goalId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setGoalId(int id) {
+        this.goalId = id;
+    }
+
+    public int getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
     }
 
     public void setTitle(String title) {
@@ -143,7 +149,9 @@ public class GoalItem implements Serializable {
     @Override
     public String toString() {
         return "GoalItem{" +
-                "title='" + title + '\'' +
+                "goalId=" + goalId +
+                ", roleId=" + roleId +
+                ", title='" + title + '\'' +
                 ", deadline=" + deadline +
                 ", duration=" + duration +
                 ", isImportant=" + isImportant +

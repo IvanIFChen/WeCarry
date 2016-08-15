@@ -25,8 +25,9 @@ import space.wecarry.wecarryapp.item.GoalItem;
 import space.wecarry.wecarryapp.item.TaskItem;
 import space.wecarry.wecarryapp.sqlite.DBHelper;
 
-import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_ROLE_ID;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.RESOURCE_GOAL_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_GOAL_LIST;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_RESOURCE_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_TASK_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_GOAL_ID;
 
@@ -76,7 +77,7 @@ public class PlanFragment extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 GoalItem goalItem = (GoalItem) mList.get(position);
-                deleteGoalDialog(goalItem.getTitle(), goalItem.getId(), view);
+                deleteGoalDialog(goalItem.getTitle(), goalItem.getGoalId(), view);
                 return true;
             }
         });
@@ -96,28 +97,32 @@ public class PlanFragment extends Fragment {
             for(int i=0; i<goalDataRow; i++) {
                 // Get goal
                 GoalItem goalItem = new GoalItem();
-                goalItem.setId(cursorGoal.getInt(0));   //  TODO: Now our goal id is at column 1, but (in local) SQLite we use column 0 to be the key.
+                goalItem.setGoalId(cursorGoal.getInt(0));   //  TODO: Now our goal id is at column 1, but (in local) SQLite we use column 0 to be the key.
                 goalItem.setTitle(cursorGoal.getString(2));
                 goalItem.setDeadline(cursorGoal.getLong(3));
                 goalItem.setDuration(cursorGoal.getLong(4));
                 goalItem.setImportant(Boolean.valueOf(cursorGoal.getString(5)));
                 goalItem.setUrgent(Boolean.valueOf(cursorGoal.getString(6)));
+                goalItem.setRoleId(cursorGoal.getInt(7));
                 cursorTask = db.rawQuery("SELECT * FROM " + TABLE_NAME_TASK_LIST +
-                                " WHERE " + TASK_GOAL_ID + " = " + goalItem.getId(), null);
+                                " WHERE " + TASK_GOAL_ID + " = " + goalItem.getGoalId(), null);
                 // Get task
                 int taskDataRow = cursorTask.getCount();
                 if(taskDataRow != 0) {
                     cursorTask.moveToFirst();
                     for(int j=0; j<taskDataRow; j++) {
                         TaskItem taskItem = new TaskItem();
-                        taskItem.setId(cursorTask.getInt(0));
+                        taskItem.setTaskId(cursorTask.getInt(0));
                         taskItem.setTitle(cursorTask.getString(2));
-                        taskItem.setEarliestStartTime(cursorTask.getInt(3));
-                        taskItem.setLatestStartTime(cursorTask.getInt(4));
-                        taskItem.setEarliestStartTime(cursorTask.getInt(5));
-                        taskItem.setEarliestEndTime(cursorTask.getInt(6));
-                        taskItem.setDeadline(cursorTask.getLong(7));
-                        taskItem.setDuration(cursorTask.getLong(8));
+                        taskItem.setMilestone(Boolean.parseBoolean(cursorTask.getString(3)));
+                        taskItem.setEarliestStartTime(cursorTask.getInt(4));
+                        taskItem.setLatestStartTime(cursorTask.getInt(5));
+                        taskItem.setEarliestStartTime(cursorTask.getInt(6));
+                        taskItem.setEarliestEndTime(cursorTask.getInt(7));
+                        taskItem.setDeadline(cursorTask.getLong(8));
+                        taskItem.setDuration(cursorTask.getLong(9));
+                        taskItem.setGoalId(cursorTask.getInt(12));
+                        taskItem.setRoleId(cursorTask.getInt(13));
                         // TODO: Get preprocessList
                         // TODO: Get resourcesList
                         goalItem.addTaskItem(taskItem);
@@ -149,6 +154,8 @@ public class PlanFragment extends Fragment {
             public void onClick(DialogInterface arg0, int arg1) {
                 db.delete(TABLE_NAME_GOAL_LIST,"_ID=" + String.valueOf(goalId), null);
                 db.delete(TABLE_NAME_TASK_LIST, TASK_GOAL_ID + "=" + String.valueOf(goalId), null);
+                db.delete(TABLE_NAME_RESOURCE_LIST, RESOURCE_GOAL_ID + "=" + String.valueOf(goalId), null);
+                // TODO: Delete Event ??
                 Snackbar.make(view, "已刪除", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 getGoalTaskData();
                 adapter = new PlanAdapter(getActivity(), mList);

@@ -35,11 +35,17 @@ import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_IMPORTANCE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_ROLE_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_TITLE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_URGENCY;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.RESOURCE_GOAL_ID;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.RESOURCE_ROLE_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_DEADLINE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_DURATION;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_TITLE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_GOAL_LIST;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_RESOURCE_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_ROLE_LIST;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_TASK_LIST;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_GOAL_ID;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_ROLE_ID;
 
 public class RoleGoalActivity extends AppCompatActivity {
     private EditText editRole, editGoal, editDeadline;
@@ -84,10 +90,10 @@ public class RoleGoalActivity extends AppCompatActivity {
             for(GoalItem goalItem: old_mRole.getGoalList()) {
                 mRole.getGoalList().add(goalItem);
             }
+            mRole.setId(old_mRole.getId());
             mRole.setTitle(old_mRole.getTitle());
             mRole.setDeadline(old_mRole.getDeadline());
             mRole.setDuration(old_mRole.getDuration());
-            mRole.setId(old_mRole.getId());
         }
 
         editRole.setText(mRole.getTitle());
@@ -241,13 +247,11 @@ public class RoleGoalActivity extends AppCompatActivity {
             String deadline = ((EditText)editMap.get("DEADLINE")).getText().toString();
             boolean importance = ((Switch)editMap.get("IMPORTANCE")).isChecked();
             boolean urgency = ((Switch)editMap.get("URGENCY")).isChecked();
-            mRole.getGoalList().get(i).getId(); // It is important to identify each goal    // If id is -1, it means the goal is new
+            mRole.getGoalList().get(i).getGoalId(); // It is important to identify each goal    // If id is -1, it means the goal is new
             mRole.getGoalList().get(i).setTitle(goal);
-            try {mRole.getGoalList().get(i).setDeadline(dateToMillSecConverter(deadline));
-            } catch (ParseException e) {
-                mRole.getGoalList().get(i).setDeadline(0);
-                e.printStackTrace();
-            }
+
+            // We already save deadline to buffer in the function "showDatePickerDialog"
+
             mRole.getGoalList().get(i).setImportant(importance);
             mRole.getGoalList().get(i).setUrgent(urgency);
             i++;
@@ -332,7 +336,7 @@ public class RoleGoalActivity extends AppCompatActivity {
             for(int z=0; z < old_mRole.getGoalList().size(); z++) {
                 deleteList.add(old_mRole.getGoalList().get(z));
                 for(int j=0; j<mRole.getGoalList().size(); j++) {
-                    if(old_mRole.getGoalList().get(z).getId() == mRole.getGoalList().get(j).getId()) {
+                    if(old_mRole.getGoalList().get(z).getGoalId() == mRole.getGoalList().get(j).getGoalId()) {
                         // This goal was not be deleted by user
                         deleteList.remove(old_mRole.getGoalList().get(z));
                         break;
@@ -341,7 +345,9 @@ public class RoleGoalActivity extends AppCompatActivity {
             }
             // Delete goal
             for(GoalItem goalItem: deleteList) {
-                db.delete(TABLE_NAME_GOAL_LIST,"_ID=" + String.valueOf(goalItem.getId()), null);
+                db.delete(TABLE_NAME_GOAL_LIST,"_ID=" + String.valueOf(goalItem.getGoalId()), null);
+                db.delete(TABLE_NAME_TASK_LIST, TASK_GOAL_ID + "=" + String.valueOf(goalItem.getGoalId()), null);
+                db.delete(TABLE_NAME_RESOURCE_LIST, RESOURCE_GOAL_ID + "=" + String.valueOf(goalItem.getGoalId()), null);
             }
         }
     }
@@ -363,14 +369,14 @@ public class RoleGoalActivity extends AppCompatActivity {
                 cvg.put(GOAL_URGENCY, String.valueOf(goalItem.isUrgent()));
 
                 // insert or update
-                if(goalItem.getId() == -1) {
+                if(goalItem.getGoalId() == -1) {
                     // User is adding a new goal
                     cvg.put(GOAL_ROLE_ID, mRole.getId());   // Give goal the Role Id
                     long rowGoal =db.insert(TABLE_NAME_GOAL_LIST, null, cvg);
-                    mRole.getGoalList().get(index).setId((int)rowGoal);
+                    mRole.getGoalList().get(index).setGoalId((int)rowGoal);
                 }else {
                     // User is modifying the goal
-                    db.update(TABLE_NAME_GOAL_LIST, cvg,"_ID=" + String.valueOf(goalItem.getId()), null);
+                    db.update(TABLE_NAME_GOAL_LIST, cvg,"_ID=" + String.valueOf(goalItem.getGoalId()), null);
                 }
             }
             index++;

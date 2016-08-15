@@ -7,8 +7,11 @@ import java.util.ArrayList;
  * Created by Ivan IF Chen on 8/9/2016.
  */
 public class TaskItem implements Serializable {
-    private int id;
+    private int taskId;
+    private int goalId;
+    private int roleId;
     private String title;
+    private boolean isMilestone;
     private long earliestStartTime;
     private long latestStartTime;
     private long earliestEndTime;
@@ -19,7 +22,10 @@ public class TaskItem implements Serializable {
     private ArrayList<ResourceItem> resourcesList;
 
     public TaskItem() {
-        this.id = -1;
+        this.taskId = -1;
+        this.goalId = -1;
+        this.roleId = -1;
+        this.isMilestone = false;
         this.title = "";
         this.earliestStartTime = 0;
         this.latestStartTime = 0;
@@ -63,7 +69,7 @@ public class TaskItem implements Serializable {
     }
 
     public TaskItem(int id, String title, long earliestStartTime, long latestStartTime, long earliestEndTime, long latestEndTime, long deadline, long duration, ArrayList<TaskItem> preprocessList, ArrayList<ResourceItem> resourcesList) {
-        this.id = id;
+        this.taskId = id;
         this.title = title;
         this.earliestStartTime = earliestStartTime;
         this.latestStartTime = latestStartTime;
@@ -75,12 +81,36 @@ public class TaskItem implements Serializable {
         this.resourcesList = resourcesList;
     }
 
-    public int getId() {
-        return id;
+    public int getTaskId() {
+        return taskId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setTaskId(int taskId) {
+        this.taskId = taskId;
+    }
+
+    public int getGoalId() {
+        return goalId;
+    }
+
+    public void setGoalId(int goalId) {
+        this.goalId = goalId;
+    }
+
+    public int getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
+    }
+
+    public boolean isMilestone() {
+        return isMilestone;
+    }
+
+    public void setMilestone(boolean milestone) {
+        isMilestone = milestone;
     }
 
     public String getTitle() {
@@ -158,7 +188,11 @@ public class TaskItem implements Serializable {
     @Override
     public String toString() {
         return "TaskItem{" +
-                "title='" + title + '\'' +
+                "taskId=" + taskId +
+                ", goalId=" + goalId +
+                ", roleId=" + roleId +
+                ", title='" + title + '\'' +
+                ", isMilestone=" + isMilestone +
                 ", earliestStartTime=" + earliestStartTime +
                 ", latestStartTime=" + latestStartTime +
                 ", earliestEndTime=" + earliestEndTime +
@@ -169,4 +203,5 @@ public class TaskItem implements Serializable {
                 ", resourcesList=" + resourcesList +
                 '}';
     }
+
 }
