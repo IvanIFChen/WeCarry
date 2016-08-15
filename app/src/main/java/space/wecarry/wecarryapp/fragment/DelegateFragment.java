@@ -67,7 +67,7 @@ public class DelegateFragment extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 TaskItem ti = (TaskItem) taskList.get(position);
-                deleteTaskDialog(ti.getTitle(), ti.getId(), view);
+                deleteTaskDialog(ti.getTitle(), ti.getTaskId(), view);
                 return true;
             }
         });

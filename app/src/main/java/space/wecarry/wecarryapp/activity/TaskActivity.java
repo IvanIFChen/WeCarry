@@ -82,7 +82,7 @@ public class TaskActivity extends AppCompatActivity {
             // receive all object's data from fragment.
             old_mTask = (TaskItem) intent.getSerializableExtra("taskItem");
             // add old_mTask to mTask.
-            mTask.setId(old_mTask.getId());
+            mTask.setTaskId(old_mTask.getTaskId());
             mTask.setTitle(old_mTask.getTitle());
             mTask.setEarliestStartTime(old_mTask.getEarliestStartTime());
             mTask.setLatestStartTime(old_mTask.getLatestStartTime());
@@ -190,7 +190,7 @@ public class TaskActivity extends AppCompatActivity {
                     if(taskItemSelected == -1) {
                         // User selected to add a new role
 
-//                        mTask.setId((int)rowId);    // We need to know the Role Id, and save it in Goal
+//                        mTask.setGoalId((int)rowId);    // We need to know the Role Id, and save it in Goal
 
                     } else {
                         // User selected to edit the role
@@ -262,7 +262,7 @@ public class TaskActivity extends AppCompatActivity {
             String task = ((EditText)editMap.get("TASK")).getText().toString();
             String deadline = ((EditText)editMap.get("DEADLINE")).getText().toString();
             String duration = ((EditText)editMap.get("DURATION")).getText().toString();
-            taskList.get(i).getId(); // It is important to identify each task    // If id is -1, it means the task is new
+            taskList.get(i).getTaskId(); // It is important to identify each task    // If id is -1, it means the task is new
             taskList.get(i).setTitle(task);
             try {
                 taskList.get(i).setDeadline(dateToMillSecConverter(deadline));
@@ -326,17 +326,17 @@ public class TaskActivity extends AppCompatActivity {
 
     // Function for DB-------------------------------------------------------------------------------------------
     private long saveGoal() {
-        long rowId = mTask.getId();
+        long rowId = mTask.getTaskId();
         ContentValues cvr = new ContentValues();
         cvr.put(GOAL_TITLE, mTask.getTitle());
         cvr.put(GOAL_DEADLINE, mTask.getDeadline());
         cvr.put(GOAL_DURATION, mTask.getDuration());
-        if(mTask.getId() == -1  && taskItemSelected == -1) {
+        if(mTask.getTaskId() == -1  && taskItemSelected == -1) {
             // Double check: User is adding a new role
 //            rowId = db.insert(TABLE_NAME_ROLE_LIST, null, cvr);
-        }else if(mTask.getId() != -1  && taskItemSelected != -1) {
+        }else if(mTask.getTaskId() != -1  && taskItemSelected != -1) {
             // User is modifying the role
-            db.update(TABLE_NAME_GOAL_LIST, cvr,"_ID=" + String.valueOf(mTask.getId()), null);
+            db.update(TABLE_NAME_GOAL_LIST, cvr,"_ID=" + String.valueOf(mTask.getTaskId()), null);
         }else {
             // Something wrong?!
             Log.i("DB bug: ", " The role id may be modified? ");
@@ -353,7 +353,7 @@ public class TaskActivity extends AppCompatActivity {
 //            for(int z = 0; z < old_mTask.getTaskList().size(); z++) {
 //                deleteList.add(old_mTask.getTaskList().get(z));
 //                for(int j = 0; j< mTask.getTaskList().size(); j++) {
-//                    if(old_mTask.getTaskList().get(z).getId() == mTask.getTaskList().get(j).getId()) {
+//                    if(old_mTask.getTaskList().get(z).getGoalId() == mTask.getTaskList().get(j).getGoalId()) {
 //                        // This goal was not be deleted by user
 //                        deleteList.remove(old_mTask.getTaskList().get(z));
 //                        break;
@@ -362,7 +362,7 @@ public class TaskActivity extends AppCompatActivity {
 //            }
             // Delete goal
             for(TaskItem taskItem: deleteList) {
-                db.delete(TABLE_NAME_TASK_LIST,"_ID=" + String.valueOf(taskItem.getId()), null);
+                db.delete(TABLE_NAME_TASK_LIST,"_ID=" + String.valueOf(taskItem.getTaskId()), null);
             }
         }
     }
@@ -382,14 +382,14 @@ public class TaskActivity extends AppCompatActivity {
                 cvg.put(TASK_DEADLINE, taskItem.getDeadline());
                 cvg.put(TASK_DURATION, taskItem.getDuration());
                 // insert or update
-                if(taskItem.getId() == -1) {
+                if(taskItem.getTaskId() == -1) {
                     // User is adding a new task
-                    cvg.put(TASK_GOAL_ID, mTask.getId());   // Give goal the Goal Id
+                    cvg.put(TASK_GOAL_ID, mTask.getTaskId());   // Give goal the Goal Id
                     long rowTask =db.insert(TABLE_NAME_TASK_LIST, null, cvg);
-//                    mTask.getTaskList().get(index).setId((int)rowTask);
+//                    mTask.getTaskList().get(index).setGoalId((int)rowTask);
                 }else {
                     // User is modifying the task
-                    db.update(TABLE_NAME_TASK_LIST, cvg,"_ID=" + String.valueOf(taskItem.getId()), null);
+                    db.update(TABLE_NAME_TASK_LIST, cvg,"_ID=" + String.valueOf(taskItem.getTaskId()), null);
                 }
             }
             index = index + 1;

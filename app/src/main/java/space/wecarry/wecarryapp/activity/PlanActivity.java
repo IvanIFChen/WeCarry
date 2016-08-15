@@ -3,8 +3,10 @@ package space.wecarry.wecarryapp.activity;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -31,15 +33,12 @@ import space.wecarry.wecarryapp.sqlite.DBHelper;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_DEADLINE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_DURATION;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_TITLE;
-import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_DEADLINE;
-import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_DURATION;
-import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_TITLE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_GOAL_LIST;
-import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_ROLE_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_TASK_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_DEADLINE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_DURATION;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_GOAL_ID;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_ROLE_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_TITLE;
 
 public class PlanActivity extends AppCompatActivity {
@@ -72,10 +71,7 @@ public class PlanActivity extends AppCompatActivity {
         goalUserSelected = intent.getIntExtra("goalUserSelected", -1);
         Log.i("goalUserSelected", String.valueOf(goalUserSelected));
 
-        if(goalUserSelected == -1) {
-//            // User selected to add a new goal
-//            mGoal = new GoalItem();
-        } else {
+        if(goalUserSelected != -1) {
             // User selected to edit the goal
             // Backup goal for analyzing the differences of before and after
             old_mGoal = new GoalItem();
@@ -84,7 +80,7 @@ public class PlanActivity extends AppCompatActivity {
             for(TaskItem taskItem: old_mGoal.getTaskList()) {
                 mGoal.getTaskList().add(taskItem);
             }
-            mGoal.setId(old_mGoal.getId());
+            mGoal.setGoalId(old_mGoal.getGoalId());
             mGoal.setTitle(old_mGoal.getTitle());
             mGoal.setDeadline(old_mGoal.getDeadline());
             mGoal.setDuration(old_mGoal.getDuration());
@@ -114,18 +110,34 @@ public class PlanActivity extends AppCompatActivity {
 
             editDeadline = (EditText)ll.findViewById(R.id.editTextDeadline);
             long deadline = mGoal.getTaskList().get(i).getDeadline();
-            if(deadline !=0) {
+            if(deadline != 0) {
                 editDeadline.setText(millSecToDateConverter(deadline));
             }else {
                 // If user didn't set any deadline  //目前不用理它?
             }
 
             editDuration = (EditText)ll.findViewById(R.id.editTextDuration);
-            editDuration.setText(Long.toString(mGoal.getTaskList().get(i).getDuration()));  // TODO: format
+            long duration = mGoal.getTaskList().get(i).getDuration();
+            // 偷懶----------------------------------------------------------------------------------------------
+            final CharSequence[] items = {"15 分鐘", "30 分鐘", "1 小時", "2 小時", "4 小時", "8 小時"};    // TODO: To use better method to set resource, maybe we use .xml or cursor
+            final long[] time = {15, 30 ,60 ,120, 240, 480}; // 這邊先偷懶
+            int position =0;
+            for(int j =0; j< time.length; j++) {
+                if(duration == time[j]*60*1000L) {
+                    position = j;
+                    break;
+                }
+            }
+            // ----------------------------------------------------------------------------------------------
+            if(duration != 0) {
+                editDuration.setText(items[position].toString());
+            }else {
+                // If user didn't set any deadline  //目前不用理它?
+            }
 
             editDeadline.setOnClickListener(deadlineClickHandler);
             editDeadline.setId(listViewId);
-            editDuration.setOnClickListener(deadlineClickHandler);  //TODO: durationClickHandler
+            editDuration.setOnClickListener(durationClickHandler);
             editDuration.setId(listViewId);
 
             btnDelete = (Button)ll.findViewById(R.id.btn_del);
@@ -164,12 +176,7 @@ public class PlanActivity extends AppCompatActivity {
                     db = dbHelper.getReadableDatabase();
 
                     // Did user add a goal or update a goal?
-                    if(goalUserSelected == -1) {
-                        // User selected to add a new role
-
-//                        mGoal.setId((int)rowId);    // We need to know the Role Id, and save it in Goal
-
-                    } else {
+                    if(goalUserSelected != -1) {
                         // User selected to edit the role
                         saveTask();
                         deleteTask();
@@ -232,22 +239,45 @@ public class PlanActivity extends AppCompatActivity {
         }
     };
 
+    // DurationEdit button click
+    private View.OnClickListener durationClickHandler = new View.OnClickListener() {
+        final CharSequence[] items = {"15 分鐘", "30 分鐘", "1 小時", "2 小時", "4 小時", "8 小時"};    // TODO: To use better method to set resource, maybe we use .xml or cursor
+        final long[] time = {15, 30 ,60 ,120, 240, 480}; // 這邊先偷懶
+        @Override
+        public void onClick(final View v) {
+            Long duration = mGoal.getTaskList().get(v.getId()).getDuration();
+            final int[] position = {0};
+            for(int i =0; i< time.length; i++) {
+                if(duration == time[i]*60*1000L) {
+                    position[0] = i;
+                    break;
+                }
+            }
+            new AlertDialog.Builder(PlanActivity.this)
+                    .setTitle("選擇時間")   // TODO: English
+                    .setSingleChoiceItems(items, position[0], new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            position[0] = which;
+                        }
+                    }).setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ((EditText) v).setText(items[position[0]].toString());
+                            mGoal.getTaskList().get(v.getId()).setDuration(time[position[0]]*60*1000L);
+                        }
+                    }).setNegativeButton("返回", null).show();
+        }
+    };
+
     // Function for buffer---------------------------------------------------------------------------------------
     private void saveDataInBuffer() {
         int i = 0;
         for(HashMap editMap:objectList){
             String task = ((EditText)editMap.get("TASK")).getText().toString();
-            String deadline = ((EditText)editMap.get("DEADLINE")).getText().toString();
-            String duration = ((EditText)editMap.get("DURATION")).getText().toString();
-            mGoal.getTaskList().get(i).getId(); // It is important to identify each task    // If id is -1, it means the task is new
             mGoal.getTaskList().get(i).setTitle(task);
-            try {
-                mGoal.getTaskList().get(i).setDeadline(dateToMillSecConverter(deadline));
-            } catch (ParseException e) {
-                mGoal.getTaskList().get(i).setDeadline(0);
-                e.printStackTrace();
-            }
-            mGoal.getTaskList().get(i).setDuration(Long.valueOf(duration)); // TODO: format
+            // We already save deadline to buffer in the function "showDatePickerDialog"
+            // We already save duration to buffer in the ClickListener "durationClickHandler"
             i++;
         }
     }
@@ -282,7 +312,6 @@ public class PlanActivity extends AppCompatActivity {
                         editText.setText(millSecToDateConverter(deadline));
                         // Store the date user picked into mGoal
                         mGoal.getTaskList().get(id).setDeadline(deadline);
-
                     }
                 }, mYear, mMonth, mDay);
         dpd.show();
@@ -303,17 +332,14 @@ public class PlanActivity extends AppCompatActivity {
 
     // Function for DB-------------------------------------------------------------------------------------------
     private long saveGoal() {
-        long rowId = mGoal.getId();
+        long rowId = mGoal.getGoalId();
         ContentValues cvr = new ContentValues();
         cvr.put(GOAL_TITLE, mGoal.getTitle());
         cvr.put(GOAL_DEADLINE, mGoal.getDeadline());
         cvr.put(GOAL_DURATION, mGoal.getDuration());
-        if(mGoal.getId() == -1  && goalUserSelected == -1) {
-            // Double check: User is adding a new role
-//            rowId = db.insert(TABLE_NAME_ROLE_LIST, null, cvr);
-        }else if(mGoal.getId() != -1  && goalUserSelected != -1) {
+        if(mGoal.getGoalId() != -1  && goalUserSelected != -1) {
             // User is modifying the role
-            db.update(TABLE_NAME_GOAL_LIST, cvr,"_ID=" + String.valueOf(mGoal.getId()), null);
+            db.update(TABLE_NAME_GOAL_LIST, cvr,"_ID=" + String.valueOf(mGoal.getGoalId()), null);
         }else {
             // Something wrong?!
             Log.i("DB bug: ", " The role id may be modified? ");
@@ -330,7 +356,7 @@ public class PlanActivity extends AppCompatActivity {
             for(int z = 0; z < old_mGoal.getTaskList().size(); z++) {
                 deleteList.add(old_mGoal.getTaskList().get(z));
                 for(int j = 0; j< mGoal.getTaskList().size(); j++) {
-                    if(old_mGoal.getTaskList().get(z).getId() == mGoal.getTaskList().get(j).getId()) {
+                    if(old_mGoal.getTaskList().get(z).getTaskId() == mGoal.getTaskList().get(j).getTaskId()) {
                         // This goal was not be deleted by user
                         deleteList.remove(old_mGoal.getTaskList().get(z));
                         break;
@@ -339,7 +365,7 @@ public class PlanActivity extends AppCompatActivity {
             }
             // Delete goal
             for(TaskItem taskItem: deleteList) {
-                db.delete(TABLE_NAME_TASK_LIST,"_ID=" + String.valueOf(taskItem.getId()), null);
+                db.delete(TABLE_NAME_TASK_LIST,"_ID=" + String.valueOf(taskItem.getTaskId()), null);
             }
         }
     }
@@ -358,14 +384,15 @@ public class PlanActivity extends AppCompatActivity {
                 cvg.put(TASK_DEADLINE, taskItem.getDeadline());
                 cvg.put(TASK_DURATION, taskItem.getDuration());
                 // insert or update
-                if(taskItem.getId() == -1) {
+                if(taskItem.getTaskId() == -1) {
                     // User is adding a new task
-                    cvg.put(TASK_GOAL_ID, mGoal.getId());   // Give goal the Goal Id
+                    cvg.put(TASK_GOAL_ID, mGoal.getGoalId());   // Give goal the Goal Id
+                    cvg.put(TASK_ROLE_ID, mGoal.getRoleId());
                     long rowTask =db.insert(TABLE_NAME_TASK_LIST, null, cvg);
-                    mGoal.getTaskList().get(index).setId((int)rowTask);
+                    mGoal.getTaskList().get(index).setTaskId((int)rowTask);
                 }else {
                     // User is modifying the task
-                    db.update(TABLE_NAME_TASK_LIST, cvg,"_ID=" + String.valueOf(taskItem.getId()), null);
+                    db.update(TABLE_NAME_TASK_LIST, cvg,"_ID=" + String.valueOf(taskItem.getTaskId()), null);
                 }
             }
             index++;

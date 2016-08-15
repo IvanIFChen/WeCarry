@@ -27,8 +27,12 @@ import space.wecarry.wecarryapp.item.RoleItem;
 import space.wecarry.wecarryapp.sqlite.DBHelper;
 
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_ROLE_ID;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.RESOURCE_ROLE_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_GOAL_LIST;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_RESOURCE_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_ROLE_LIST;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_TASK_LIST;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_GOAL_ID;
 
 /**
  * Created by Ivan IF Chen on 8/2/2016.
@@ -123,7 +127,7 @@ public class RoleGoalFragment extends Fragment {
                     cursorGoal.moveToFirst();
                     for(int j=0; j<goalDataRow; j++) {
                         GoalItem goalItem = new GoalItem();
-                        goalItem.setId(cursorGoal.getInt(0));
+                        goalItem.setGoalId(cursorGoal.getInt(0));
                         goalItem.setTitle(cursorGoal.getString(2));
                         goalItem.setDeadline(cursorGoal.getLong(3));
                         goalItem.setDuration(cursorGoal.getLong(4));
@@ -158,6 +162,9 @@ public class RoleGoalFragment extends Fragment {
             public void onClick(DialogInterface arg0, int arg1) {
                 db.delete(TABLE_NAME_ROLE_LIST,"_ID=" + String.valueOf(roleId), null);
                 db.delete(TABLE_NAME_GOAL_LIST, GOAL_ROLE_ID + "=" + String.valueOf(roleId), null);
+                db.delete(TABLE_NAME_TASK_LIST, TASK_GOAL_ID + "=" + String.valueOf(roleId), null);
+                db.delete(TABLE_NAME_RESOURCE_LIST, RESOURCE_ROLE_ID + "=" + String.valueOf(roleId), null);
+                // TODO: Delete Event ??
                 Snackbar.make(view, "已刪除", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 getRoleGoalData();
                 adapter = new RoleGoalAdapter(getActivity(), mList);

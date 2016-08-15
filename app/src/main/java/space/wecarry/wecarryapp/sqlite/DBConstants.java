@@ -8,6 +8,7 @@ public class DBConstants {
     public static final String TABLE_NAME_ROLE_LIST = "ROLE_LIST";
     public static final String TABLE_NAME_GOAL_LIST = "GOAL_LIST";
     public static final String TABLE_NAME_TASK_LIST = "TASK_LIST";
+    public static final String TABLE_NAME_RESOURCE_LIST = "RESOURCE_LIST";
 
     // Role
     public static final String ROLE_ID = "ROLE_ID";
@@ -27,6 +28,7 @@ public class DBConstants {
     // Task
     public static final String TASK_ID = "TASK_ID";
     public static final String TASK_TITLE = "TASK_TITLE";
+    public static final String TASK_MILESTONE = "TASK_MILESTONE";
     public static final String TASK_EST = "TASK_EST";
     public static final String TASK_LST = "TASK_LST";
     public static final String TASK_EET = "TASK_EET";
@@ -36,6 +38,16 @@ public class DBConstants {
     public static final String TASK_PREPROCESS = "TASK_PREPROCESS";
     public static final String TASK_RESOURCE = "TASK_RESOURCE";
     public static final String TASK_GOAL_ID = "TASK_GOAL_ID";
+    public static final String TASK_ROLE_ID = "TASK_ROLE_ID";
+
+    // Resource
+    public static final String RESOURCE_ID = "RESOURCE_ID";
+    public static final String RESOURCE_TITLE = "RESOURCE_TITLE";
+    public static final String RESOURCE_EMAIL = "RESOURCE_EMAIL";
+    public static final String RESOURCE_TASK_ID = "RESOURCE_TASK_ID";
+    public static final String RESOURCE_GOAL_ID = "RESOURCE_GOAL_ID";
+    public static final String RESOURCE_ROLE_ID = "RESOURCE_ROLE_ID";
+
 
 //    public static String LOCAL_DB_VERSION = "";
 //    public static String SERVER_DB_VERSION = "";
