@@ -18,9 +18,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.PieChartActivity_old" />
         <activity android:name=".activity.RoleGoalActivity" />
-        <activity android:name=".activity.PlanActivity"></activity>
+        <activity android:name=".activity.PlanActivity"/>
+        <activity android:name=".activity.TaskActivity"/>
     </application>
 
 </manifest>

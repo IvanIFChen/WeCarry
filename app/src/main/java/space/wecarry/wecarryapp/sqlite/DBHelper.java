@@ -165,7 +165,7 @@ public class DBHelper extends SQLiteOpenHelper{
 
         Cursor cursor = db.query(TEST_GOAL_TABLE, new String[] {_ID, // fixme: test table
                         GOAL_ID, GOAL_TITLE, GOAL_DEADLINE, GOAL_DURATION,
-                GOAL_IMPORTANCE, GOAL_URGENCY, GOAL_ROLE_ID}, GOAL_TITLE + "=?",
+                GOAL_IMPORTANCE, GOAL_URGENCY, GOAL_ROLE_ID}, GOAL_TITLE + "= ?",
                 new String[] { title }, null, null, null, null);
         // get goal item and its data (without task items).
         if (cursor != null) {
@@ -266,6 +266,33 @@ public class DBHelper extends SQLiteOpenHelper{
         }
         Log.i("getAllGoal", "goalList size: " + Integer.toString(goalList.size()));
         return goalList;
+    }
+
+    public ArrayList<TaskItem> getAllTask() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<TaskItem> taskList = new ArrayList<TaskItem>();
+        TaskItem ti = new TaskItem();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME_TASK_LIST, null);
+
+        if (cursor.getCount() > 0) {
+            for (int i = 0; i < cursor.getCount(); i++) {
+                cursor.moveToPosition(i);
+                ti = new TaskItem(
+                        cursor.getString(2),
+                        cursor.getLong(3),
+                        cursor.getLong(4),
+                        cursor.getLong(5),
+                        cursor.getLong(6),
+                        cursor.getLong(7),
+                        cursor.getLong(8),
+                        new ArrayList<TaskItem>(),      // TODO: parse data
+                        new ArrayList<ResourceItem>()); // TODO: parse data
+                // add this task to taskList
+                taskList.add(ti);
+            }
+        }
+        Log.i("getAllTask", "taskList size: " + Integer.toString(taskList.size()));
+        return taskList;
     }
 
     @Override
