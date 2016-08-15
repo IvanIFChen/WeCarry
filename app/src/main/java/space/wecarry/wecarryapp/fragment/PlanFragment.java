@@ -25,6 +25,7 @@ import space.wecarry.wecarryapp.item.GoalItem;
 import space.wecarry.wecarryapp.item.TaskItem;
 import space.wecarry.wecarryapp.sqlite.DBHelper;
 
+import static space.wecarry.wecarryapp.sqlite.DBConstants.RESOURCE_GOAL_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_GOAL_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_RESOURCE_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_TASK_LIST;
@@ -120,6 +121,8 @@ public class PlanFragment extends Fragment {
                         taskItem.setEarliestEndTime(cursorTask.getInt(7));
                         taskItem.setDeadline(cursorTask.getLong(8));
                         taskItem.setDuration(cursorTask.getLong(9));
+                        taskItem.setGoalId(cursorTask.getInt(12));
+                        taskItem.setRoleId(cursorTask.getInt(13));
                         // TODO: Get preprocessList
                         // TODO: Get resourcesList
                         goalItem.addTaskItem(taskItem);
@@ -151,7 +154,7 @@ public class PlanFragment extends Fragment {
             public void onClick(DialogInterface arg0, int arg1) {
                 db.delete(TABLE_NAME_GOAL_LIST,"_ID=" + String.valueOf(goalId), null);
                 db.delete(TABLE_NAME_TASK_LIST, TASK_GOAL_ID + "=" + String.valueOf(goalId), null);
-                db.delete(TABLE_NAME_RESOURCE_LIST, TASK_GOAL_ID + "=" + String.valueOf(goalId), null);
+                db.delete(TABLE_NAME_RESOURCE_LIST, RESOURCE_GOAL_ID + "=" + String.valueOf(goalId), null);
                 // TODO: Delete Event ??
                 Snackbar.make(view, "已刪除", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 getGoalTaskData();

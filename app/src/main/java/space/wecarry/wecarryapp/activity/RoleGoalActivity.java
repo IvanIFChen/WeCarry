@@ -35,11 +35,17 @@ import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_IMPORTANCE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_ROLE_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_TITLE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_URGENCY;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.RESOURCE_GOAL_ID;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.RESOURCE_ROLE_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_DEADLINE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_DURATION;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_TITLE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_GOAL_LIST;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_RESOURCE_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_ROLE_LIST;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_TASK_LIST;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_GOAL_ID;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_ROLE_ID;
 
 public class RoleGoalActivity extends AppCompatActivity {
     private EditText editRole, editGoal, editDeadline;
@@ -84,10 +90,10 @@ public class RoleGoalActivity extends AppCompatActivity {
             for(GoalItem goalItem: old_mRole.getGoalList()) {
                 mRole.getGoalList().add(goalItem);
             }
+            mRole.setId(old_mRole.getId());
             mRole.setTitle(old_mRole.getTitle());
             mRole.setDeadline(old_mRole.getDeadline());
             mRole.setDuration(old_mRole.getDuration());
-            mRole.setId(old_mRole.getId());
         }
 
         editRole.setText(mRole.getTitle());
@@ -340,6 +346,8 @@ public class RoleGoalActivity extends AppCompatActivity {
             // Delete goal
             for(GoalItem goalItem: deleteList) {
                 db.delete(TABLE_NAME_GOAL_LIST,"_ID=" + String.valueOf(goalItem.getGoalId()), null);
+                db.delete(TABLE_NAME_TASK_LIST, TASK_GOAL_ID + "=" + String.valueOf(goalItem.getGoalId()), null);
+                db.delete(TABLE_NAME_RESOURCE_LIST, RESOURCE_GOAL_ID + "=" + String.valueOf(goalItem.getGoalId()), null);
             }
         }
     }

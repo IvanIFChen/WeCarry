@@ -33,7 +33,10 @@ import space.wecarry.wecarryapp.sqlite.DBHelper;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_DEADLINE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_DURATION;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_TITLE;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.RESOURCE_GOAL_ID;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.RESOURCE_TASK_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_GOAL_LIST;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_RESOURCE_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_TASK_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_DEADLINE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_DURATION;
@@ -81,6 +84,7 @@ public class PlanActivity extends AppCompatActivity {
                 mGoal.getTaskList().add(taskItem);
             }
             mGoal.setGoalId(old_mGoal.getGoalId());
+            mGoal.setRoleId(old_mGoal.getRoleId());
             mGoal.setTitle(old_mGoal.getTitle());
             mGoal.setDeadline(old_mGoal.getDeadline());
             mGoal.setDuration(old_mGoal.getDuration());
@@ -366,6 +370,7 @@ public class PlanActivity extends AppCompatActivity {
             // Delete goal
             for(TaskItem taskItem: deleteList) {
                 db.delete(TABLE_NAME_TASK_LIST,"_ID=" + String.valueOf(taskItem.getTaskId()), null);
+                db.delete(TABLE_NAME_RESOURCE_LIST, RESOURCE_TASK_ID + "=" + String.valueOf(taskItem.getTaskId()), null);
             }
         }
     }
@@ -386,7 +391,9 @@ public class PlanActivity extends AppCompatActivity {
                 // insert or update
                 if(taskItem.getTaskId() == -1) {
                     // User is adding a new task
+                    Log.i(TASK_GOAL_ID, String.valueOf(mGoal.getGoalId()));
                     cvg.put(TASK_GOAL_ID, mGoal.getGoalId());   // Give goal the Goal Id
+                    Log.i(TASK_ROLE_ID, String.valueOf(mGoal.getRoleId()));
                     cvg.put(TASK_ROLE_ID, mGoal.getRoleId());
                     long rowTask =db.insert(TABLE_NAME_TASK_LIST, null, cvg);
                     mGoal.getTaskList().get(index).setTaskId((int)rowTask);

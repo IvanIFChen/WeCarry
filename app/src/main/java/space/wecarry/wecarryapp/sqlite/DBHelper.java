@@ -117,7 +117,8 @@ public class DBHelper extends SQLiteOpenHelper{
                         TASK_DURATION + " INTEGER, " +
                         TASK_PREPROCESS + " TEXT, " +
                         TASK_RESOURCE + " TEXT, " +
-                        TASK_GOAL_ID + " INTEGER " +
+                        TASK_GOAL_ID + " INTEGER, " +
+                        TASK_ROLE_ID + " INTEGER " +
                         ");";
 
         db.execSQL(INIT_ROLE_TABLE);
