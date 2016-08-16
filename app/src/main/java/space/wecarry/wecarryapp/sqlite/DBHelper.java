@@ -71,7 +71,9 @@ public class DBHelper extends SQLiteOpenHelper{
                         TASK_PREPROCESS + " TEXT, " +
                         TASK_RESOURCE + " TEXT, " +
                         TASK_GOAL_ID + " INTEGER, " +
-                        TASK_ROLE_ID + " INTEGER " +
+                        TASK_ROLE_ID + " INTEGER, " +
+                        TASK_IMPORTANCE + " TEXT, " +
+                        TASK_URGENCY + " TEXT " +
                         ");";
 
         final String INIT_RESOURCE_TABLE =
@@ -85,6 +87,15 @@ public class DBHelper extends SQLiteOpenHelper{
                         RESOURCE_TASK_ID + " INTEGER, " +
                         RESOURCE_GOAL_ID + " INTEGER, " +
                         RESOURCE_ROLE_ID + " INTEGER " +
+                        ");";
+
+        final String INIT_SCHEDULE_TABLE =
+                "CREATE TABLE IF NOT EXISTS " +
+                        TABLE_NAME_SCHEDULE_LIST +
+                        " (" +
+                        _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        SCHEDULE_TASK_ID + " INTEGER, " +
+                        SCHEDULE_EVENT_ID + " INTEGER " +
                         ");";
 
         // for testing
@@ -118,13 +129,16 @@ public class DBHelper extends SQLiteOpenHelper{
                         TASK_PREPROCESS + " TEXT, " +
                         TASK_RESOURCE + " TEXT, " +
                         TASK_GOAL_ID + " INTEGER, " +
-                        TASK_ROLE_ID + " INTEGER " +
+                        TASK_ROLE_ID + " INTEGER, " +
+                        TASK_IMPORTANCE + " TEXT, " +
+                        TASK_URGENCY + " TEXT " +
                         ");";
 
         db.execSQL(INIT_ROLE_TABLE);
         db.execSQL(INIT_GOAL_TABLE);
         db.execSQL(INIT_TASK_TABLE);
         db.execSQL(INIT_RESOURCE_TABLE);
+        db.execSQL(INIT_SCHEDULE_TABLE);
 
         db.execSQL((INIT_TEST_GOAL_TABLE));
         db.execSQL((INIT_TEST_TASK_TABLE));
@@ -328,11 +342,13 @@ public class DBHelper extends SQLiteOpenHelper{
         final String goal = "DROP TABLE IF EXISTS " + TABLE_NAME_GOAL_LIST;
         final String task = "DROP TABLE IF EXISTS " + TABLE_NAME_TASK_LIST;
         final String resource = "DROP TABLE IF EXISTS " + TABLE_NAME_RESOURCE_LIST;
+        final String schedule = "DROP TABLE IF EXISTS " + TABLE_NAME_SCHEDULE_LIST;
         // Note: To upgrade table by deleting&creating table is not the best way.
         db.execSQL(role);
         db.execSQL(goal);
         db.execSQL(task);
         db.execSQL(resource);
+        db.execSQL(schedule);
         this.onCreate(db);
         Log.d("DBHelper", "onUpgrade");
     }

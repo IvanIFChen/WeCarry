@@ -41,8 +41,10 @@ import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_TASK_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_DEADLINE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_DURATION;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_GOAL_ID;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_IMPORTANCE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_ROLE_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_TITLE;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_URGENCY;
 
 public class PlanActivity extends AppCompatActivity {
     private EditText editGoal, editTask, editDeadline, editDuration;
@@ -388,12 +390,12 @@ public class PlanActivity extends AppCompatActivity {
                 cvg.put(TASK_TITLE, taskItem.getTitle());
                 cvg.put(TASK_DEADLINE, taskItem.getDeadline());
                 cvg.put(TASK_DURATION, taskItem.getDuration());
+                cvg.put(TASK_IMPORTANCE, String.valueOf(mGoal.isImportant()));
+                cvg.put(TASK_URGENCY, String.valueOf(mGoal.isUrgent()));
                 // insert or update
                 if(taskItem.getTaskId() == -1) {
                     // User is adding a new task
-                    Log.i(TASK_GOAL_ID, String.valueOf(mGoal.getGoalId()));
                     cvg.put(TASK_GOAL_ID, mGoal.getGoalId());   // Give goal the Goal Id
-                    Log.i(TASK_ROLE_ID, String.valueOf(mGoal.getRoleId()));
                     cvg.put(TASK_ROLE_ID, mGoal.getRoleId());
                     long rowTask =db.insert(TABLE_NAME_TASK_LIST, null, cvg);
                     mGoal.getTaskList().get(index).setTaskId((int)rowTask);

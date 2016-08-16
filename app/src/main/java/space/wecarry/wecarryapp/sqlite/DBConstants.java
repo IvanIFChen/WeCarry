@@ -9,6 +9,7 @@ public class DBConstants {
     public static final String TABLE_NAME_GOAL_LIST = "GOAL_LIST";
     public static final String TABLE_NAME_TASK_LIST = "TASK_LIST";
     public static final String TABLE_NAME_RESOURCE_LIST = "RESOURCE_LIST";
+    public static final String TABLE_NAME_SCHEDULE_LIST = "SCHEDULE_LIST";
 
     // Role
     public static final String ROLE_ID = "ROLE_ID";
@@ -39,6 +40,8 @@ public class DBConstants {
     public static final String TASK_RESOURCE = "TASK_RESOURCE";
     public static final String TASK_GOAL_ID = "TASK_GOAL_ID";
     public static final String TASK_ROLE_ID = "TASK_ROLE_ID";
+    public static final String TASK_IMPORTANCE = "TASK_IMPORTANCE";
+    public static final String TASK_URGENCY = "TASK_URGENCY";
 
     // Resource
     public static final String RESOURCE_ID = "RESOURCE_ID";
@@ -48,6 +51,9 @@ public class DBConstants {
     public static final String RESOURCE_GOAL_ID = "RESOURCE_GOAL_ID";
     public static final String RESOURCE_ROLE_ID = "RESOURCE_ROLE_ID";
 
+    // Schedule
+    public static final String SCHEDULE_TASK_ID = "SCHEDULE_TASK_ID";
+    public static final String SCHEDULE_EVENT_ID = "SCHEDULE_EVENT_ID";
 
 //    public static String LOCAL_DB_VERSION = "";
 //    public static String SERVER_DB_VERSION = "";

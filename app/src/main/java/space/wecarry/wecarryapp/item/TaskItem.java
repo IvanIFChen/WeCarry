@@ -1,11 +1,7 @@
 package space.wecarry.wecarryapp.item;
 
-import android.util.Log;
-
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by Ivan IF Chen on 8/9/2016.
@@ -24,6 +20,8 @@ public class TaskItem implements Serializable {
     private long duration; /// in milliseconds
     private ArrayList<TaskItem> preprocessList;
     private ArrayList<ResourceItem> resourcesList;
+    private boolean important;
+    private boolean urgency;
 
     public TaskItem() {
         this.taskId = -1;
@@ -39,6 +37,8 @@ public class TaskItem implements Serializable {
         this.deadline = 0;
         this.preprocessList = new ArrayList<TaskItem>();
         this.resourcesList = new ArrayList<ResourceItem>();
+        this.important = false;
+        this.urgency = false;
     }
 
     public TaskItem(String title, long processTime) {
@@ -56,6 +56,9 @@ public class TaskItem implements Serializable {
         this.title = title;
         this.deadline = deadline;
         this.duration = processTime;
+//        this.latestEndTime = deadline;
+//        this.latestStartTime = deadline - processTime;
+
     }
 
     public TaskItem(int goalId, int roleId, String title, long deadline, long duration) {
@@ -64,6 +67,8 @@ public class TaskItem implements Serializable {
         this.title = title;
         this.deadline = deadline;
         this.duration = duration;
+        this.preprocessList = preprocessList;
+        this.resourcesList = resourcesList;
     }
 
     // all fields
@@ -187,6 +192,22 @@ public class TaskItem implements Serializable {
         this.resourcesList = resourcesList;
     }
 
+    public boolean isImportant() {
+        return important;
+    }
+
+    public void setImportant(boolean important) {
+        this.important = important;
+    }
+
+    public boolean isUrgency() {
+        return urgency;
+    }
+
+    public void setUrgency(boolean urgency) {
+        this.urgency = urgency;
+    }
+
     // output resource titles seperated with commas.
     public String resourceToString() {
         //TODO: incomplete, only store names.
@@ -235,6 +256,9 @@ public class TaskItem implements Serializable {
                 ", duration=" + duration +
                 ", preprocessList=" + preprocessList +
                 ", resourcesList=" + resourcesList +
+                ", important=" + important +
+                ", urgency=" + urgency +
                 '}';
     }
+
 }

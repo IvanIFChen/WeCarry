@@ -24,10 +24,11 @@
     <string name="editDeadlineHint">預計何時達成？</string>
     <string name="task">任務</string>
     <string name="editTaskHint">得做什麼事情？</string>
-    <string name="duration">為期多久</string>
+    <string name="duration">為期時間</string>
     <string name="editDurationHint">花費多少時間？</string>
 
     <!--Menu-->
     <string name="action_show_week">過去7天</string>
     <string name="action_show_month">過去30天</string>
+    <string name="scheduling">排程</string>
 </resources>
