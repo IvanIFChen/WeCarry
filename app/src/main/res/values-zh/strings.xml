@@ -2,7 +2,7 @@
 <resources>
 
     <!--Nav Drawer-->
-    <string name="navigation_drawer_role_goal">角色目標</string>
+    <string name="navigation_drawer_role_goal">角色及目標</string>
     <string name="navigation_drawer_plan">計畫</string>
     <string name="navigation_drawer_calendar">行事曆</string>
     <string name="navigation_drawer_delegate">授權</string>

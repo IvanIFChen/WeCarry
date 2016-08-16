@@ -1,7 +1,11 @@
 package space.wecarry.wecarryapp.item;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Ivan IF Chen on 8/9/2016.
@@ -32,8 +36,9 @@ public class TaskItem implements Serializable {
         this.earliestEndTime = 0;
         this.latestEndTime = 0;
         this.duration = 0;
+        this.deadline = 0;
         this.preprocessList = new ArrayList<TaskItem>();
-        this.resourcesList = new ArrayList<>();
+        this.resourcesList = new ArrayList<ResourceItem>();
     }
 
     public TaskItem(String title, long processTime) {
@@ -44,33 +49,30 @@ public class TaskItem implements Serializable {
         this.earliestEndTime = 0;
         this.latestEndTime = 0;
         this.preprocessList = new ArrayList<TaskItem>();
-        this.resourcesList = new ArrayList<>();
+        this.resourcesList = new ArrayList<ResourceItem>();
     }
 
     public TaskItem(String title, long deadline, long processTime) {
         this.title = title;
         this.deadline = deadline;
         this.duration = processTime;
-//        this.latestEndTime = deadline;
-//        this.latestStartTime = deadline - processTime;
-
     }
 
-    public TaskItem(String title, long earliestStartTime, long latestStartTime, long earliestEndTime, long latestEndTime, long deadline, long duration, ArrayList<TaskItem> preprocessList, ArrayList<ResourceItem> resourcesList) {
+    public TaskItem(int goalId, int roleId, String title, long deadline, long duration) {
+        this.goalId = goalId;
+        this.roleId = roleId;
         this.title = title;
-        this.earliestStartTime = earliestStartTime;
-        this.latestStartTime = latestStartTime;
-        this.earliestEndTime = earliestEndTime;
-        this.latestEndTime = latestEndTime;
         this.deadline = deadline;
         this.duration = duration;
-        this.preprocessList = preprocessList;
-        this.resourcesList = resourcesList;
     }
 
-    public TaskItem(int id, String title, long earliestStartTime, long latestStartTime, long earliestEndTime, long latestEndTime, long deadline, long duration, ArrayList<TaskItem> preprocessList, ArrayList<ResourceItem> resourcesList) {
-        this.taskId = id;
+    // all fields
+    public TaskItem(int taskId, int goalId, int roleId, String title, boolean isMilestone, long earliestStartTime, long latestStartTime, long earliestEndTime, long latestEndTime, long deadline, long duration, ArrayList<TaskItem> preprocessList, ArrayList<ResourceItem> resourcesList) {
+        this.taskId = taskId;
+        this.goalId = goalId;
+        this.roleId = roleId;
         this.title = title;
+        this.isMilestone = isMilestone;
         this.earliestStartTime = earliestStartTime;
         this.latestStartTime = latestStartTime;
         this.earliestEndTime = earliestEndTime;
@@ -185,6 +187,38 @@ public class TaskItem implements Serializable {
         this.resourcesList = resourcesList;
     }
 
+    // output resource titles seperated with commas.
+    public String resourceToString() {
+        //TODO: incomplete, only store names.
+        if (this.resourcesList != null) {
+            if (this.resourcesList.size() != 0) {
+                String out = "";
+                for (ResourceItem ri : this.resourcesList) {
+                    out = ri.getTitle() + ", ";
+                }
+                return out.substring(0, out.lastIndexOf(","));
+            }
+        }
+        return " ";
+    }
+
+    public void setResourceFromString(String res) {
+        if (res != null && !res.isEmpty()) {
+            Log.d("res value", res + " ");
+                List<String> items = Arrays.asList(res.split("\\s*,\\s*"));
+            // TODO: above ^ only parse names, doesn't save email.
+            ArrayList<ResourceItem> resList = new ArrayList<ResourceItem>();
+            for (String s : items) {
+                ResourceItem ri = new ResourceItem(s, "");
+                resList.add(ri);
+            }
+
+            // save to field
+            this.resourcesList = resList;
+        }
+    }
+
+
     @Override
     public String toString() {
         return "TaskItem{" +
@@ -203,5 +237,4 @@ public class TaskItem implements Serializable {
                 ", resourcesList=" + resourcesList +
                 '}';
     }
-
 }

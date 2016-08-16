@@ -46,7 +46,7 @@ public class DelegateAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.listview_item_task, null);
+            convertView = layoutInflater.inflate(R.layout.listview_item_delegate, null);
 
             holder = new ViewHolder();
 //            holder.textGoal = (TextView) convertView.findViewById(R.id.textViewGoal);

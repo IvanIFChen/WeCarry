@@ -33,10 +33,16 @@
     <string name="editTaskHint">得做什麼事情？</string>
     <string name="duration">Duration</string>
     <string name="editDurationHint">花費多少時間？</string>
+    <string name="resource">Resource</string>
+    <string name="editResourceHint">要交給誰做？</string>
 
     <!--Menu-->
     <string name="action_show_week">Last 7 days</string>
     <string name="action_show_month">Last 30 days</string>
+
+    <!--Default delegate activtiy fields-->
+    <string name="task_teach_string">教</string>
+    <string name="task_collect_result">驗收成果</string>
 
 
 </resources>

@@ -39,7 +39,7 @@ import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_GOAL_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_TITLE;
 
 public class DelegateActivty extends AppCompatActivity {
-    private EditText taskTitleView, editTask, editDeadline, editDuration;
+    private EditText taskTitleView, editTask, editDeadline, editDuration, editResource;
     private Button btnConfirm, btnCancel, btnNewList, btnDelete;
     private LinearLayout ll_in_sv;
     private ArrayList<HashMap> objectList;
@@ -51,7 +51,8 @@ public class DelegateActivty extends AppCompatActivity {
      * is no FAB in delegate fragment, so taskIDSelected "should" never be -1.
      */
     private int taskIDSelected = -1;
-    private ArrayList<TaskItem> outputTaskList;
+    private int goalID, roleID;
+    private ArrayList<TaskItem> taskList = new ArrayList<TaskItem>();
     private int mYear, mMonth, mDay;
     private Calendar today = null;
     private DBHelper dbHelper = null;
@@ -62,7 +63,7 @@ public class DelegateActivty extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delegate);
         buttonView = LayoutInflater.from(DelegateActivty.this).inflate(R.layout.delegate_object_button, null);
-        taskTitleView = (EditText)findViewById(R.id.editTextGoal);
+        taskTitleView = (EditText)findViewById(R.id.textTask);
         ll_in_sv = (LinearLayout)findViewById(R.id.linearLayout_in_scrollView);
         btnConfirm = (Button)findViewById(R.id.info_dialog_confirm);
         btnCancel = (Button)findViewById(R.id.info_dialog_cancel);
@@ -75,6 +76,12 @@ public class DelegateActivty extends AppCompatActivity {
         Log.i("taskIDSelected", String.valueOf(taskIDSelected));
         // get the selected task from fragment
         taskSelected = (TaskItem) intent.getSerializableExtra("taskItem");
+        Log.d("taskSelected", taskSelected.toString());
+        goalID = taskSelected.getGoalId();
+        roleID = taskSelected.getRoleId();
+
+        if (goalID == -1 || roleID == -1)
+            Log.e("Delegate activity", "Warning: this task doesn't have either a goalID or roleID");
 
         // set title view to task title.
         taskTitleView.setText(taskSelected.getTitle());
@@ -83,10 +90,10 @@ public class DelegateActivty extends AppCompatActivity {
         // make strike through text.
         taskTitleView.setPaintFlags(taskTitleView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
-        // initialize the
-
+        // initialize the taskList;
+        initializeTaskList();
         // initialize the default set of items.
-        addAndUpdateView();
+        updateListItems();
         setActions();
     }
 
@@ -95,53 +102,67 @@ public class DelegateActivty extends AppCompatActivity {
          * By default, delegate activity will show two set of items, teach and collect result.
          * It will be a guideline for users to know what kind of tasks/items he/she should add.
          */
-        TaskItem teachTask = new TaskItem()
+        // 0 means leave this field blank.
+        String teachString = getString(R.string.task_teach_string);
+        String collectResultString = getString(R.string.task_collect_result);
+        TaskItem teachTask = new TaskItem(goalID, roleID, teachString, 0, 0);
+        TaskItem collectResultTask = new TaskItem(goalID, roleID, collectResultString, 0, 0);
+
+        // add these tasks to taskList
+        taskList.add(teachTask);
+        taskList.add(collectResultTask);
     }
 
-    private void addAndUpdateView() {
+    private void updateListItems() {
         objectList = new ArrayList<HashMap>();
         int listViewId = 0;
         ll_in_sv.removeAllViews();
 
         //資料來源
         /**
-         * This is the auto-generated list view, in TaskActivity_old it will auto show two
+         * This is the auto-generated list view, in delegate activity it will auto show two
          * items, teach and collect result. As a guideline for user to know what kind of
          * tasks he/she can add.
          */
-        for (int i = 0; i < mGoal.getTaskList().size(); i++) {
+        for (int i = 0; i < taskList.size(); i++) {
 
             HashMap editMap = new HashMap();
-            View view = LayoutInflater.from(DelegateActivty.this).inflate(R.layout.plan_object, null); //物件來源
+            // TODO: add resources in delegate_object.
+            View view = LayoutInflater.from(DelegateActivty.this).inflate(R.layout.delegate_object, null); //物件來源
             LinearLayout ll = (LinearLayout) view.findViewById(R.id.ll);
 
             editTask = (EditText)ll.findViewById(R.id.editTextTask);
-            editTask.setText(mGoal.getTaskList().get(i).getTitle());
+            editTask.setText(taskList.get(i).getTitle());
+
+            editResource = (EditText)ll.findViewById(R.id.editTextResource);
+            editResource.setText(taskList.get(i).resourceToString());
+            editResource.setTextIsSelectable(true);
+            editResource.setFocusable(true);
 
             editDeadline = (EditText)ll.findViewById(R.id.editTextDeadline);
-            long deadline = mGoal.getTaskList().get(i).getDeadline();
-            if(deadline !=0) {
+            long deadline = taskList.get(i).getDeadline();
+            if (deadline != 0)
                 editDeadline.setText(millSecToDateConverter(deadline));
-            }else {
-                // If user didn't set any deadline  //目前不用理它?
-            }
 
             editDuration = (EditText)ll.findViewById(R.id.editTextDuration);
-            editDuration.setText(Long.toString(mGoal.getTaskList().get(i).getDuration()));  // TODO: format
+            editDuration.setText(Long.toString(taskList.get(i).getDuration()));  // TODO: format
 
             editDeadline.setOnClickListener(deadlineClickHandler);
             editDeadline.setId(listViewId);
+
             editDuration.setOnClickListener(deadlineClickHandler);  //TODO: durationClickHandler
             editDuration.setId(listViewId);
 
             btnDelete = (Button)ll.findViewById(R.id.btn_del);
             btnDelete.setOnClickListener(deleteClickHandler);//設定監聽method
             btnDelete.setId(listViewId);//將按鈕帶入id 以供監聽時辨識使用
+
             listViewId++;
             //將所有的元件放入map並存入list中
             editMap.put("TASK", editTask);
             editMap.put("DEADLINE", editDeadline);
             editMap.put("DURATION", editDuration);
+            editMap.put("RESOURCE", editResource);
             objectList.add(editMap);
 
             //將上面新建的例元件新增到主頁面的ll_in_sv中
@@ -161,25 +182,20 @@ public class DelegateActivty extends AppCompatActivity {
                 // Check the goal text. It should not be empty.
                 if(!"".equals(taskTitleView.getText().toString().trim())) {
                     // Save data to buffer------------------------------------------------------------------------------------
-                    saveDataInBuffer(); // save Task (in buffer)
-                    mGoal.setTitle(taskTitleView.getText().toString());    // save Role (in buffer)
+                    updateTaskListData(); // save Task (in buffer)
 
-                    // Save buffer to SQLite------------------------------------------------------------------------------------
-                    // Open db
+                    // Save data to db.
                     dbHelper = new DBHelper(getApplicationContext());
                     db = dbHelper.getReadableDatabase();
 
-                    // Did user add a goal or update a goal?
-                    if(taskIDSelected == -1) {
-                        // User selected to add a new role
-
-//                        mGoal.setId((int)rowId);    // We need to know the Role Id, and save it in Goal
-
-                    } else {
+                    // There's no fab, so should this check should not be necessary.
+                    if(taskIDSelected != -1) {
                         // User selected to edit the role
-                        saveTask();
-                        deleteTask();
-                        saveGoal();
+                        deleteOriginalTask();
+                        saveNewTasks();
+//                        saveTask();
+//                        deleteTask();
+//                        saveGoal();
                     }
                     // Return to update the date of RoleGoalFragment ----------------------------------------------------------------------
                     Intent intent = getIntent();    //取出上一個Activity傳過來的 Intent 物件。
@@ -208,9 +224,10 @@ public class DelegateActivty extends AppCompatActivity {
                 Log.i("msg", "Add");
                 // TODO: 數量限制?
                 // We need to store data before adding, or data will be missing
-                saveDataInBuffer();
-                mGoal.addTaskItem(new TaskItem());
-                addAndUpdateView(); //reload view
+                updateTaskListData();
+                // add a new empty task item into taskList
+                taskList.add(new TaskItem());
+                updateListItems(); //reload view
             }
         });
     }
@@ -222,9 +239,9 @@ public class DelegateActivty extends AppCompatActivity {
             Button delBtn =  (Button)v;
             int id = delBtn.getId();// Get the id which user click
             // We need to store data before delete, or data will be missing
-            saveDataInBuffer();
-            mGoal.getTaskList().remove(id);
-            addAndUpdateView(); //reload view
+            updateTaskListData();
+            taskList.remove(id);
+            updateListItems(); //reload view
         }
     };
 
@@ -233,28 +250,22 @@ public class DelegateActivty extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             // Get the deadline(Long)
-            Long deadline = mGoal.getTaskList().get(v.getId()).getDeadline();
+            Long deadline = taskList.get(v.getId()).getDeadline();
             showDatePickerDialog(deadline, (EditText) v, v.getId());
         }
     };
 
     // Function for buffer---------------------------------------------------------------------------------------
-    private void saveDataInBuffer() {
+    private void updateTaskListData() {
         int i = 0;
         for(HashMap editMap:objectList){
             String task = ((EditText)editMap.get("TASK")).getText().toString();
-            String deadline = ((EditText)editMap.get("DEADLINE")).getText().toString();
-            String duration = ((EditText)editMap.get("DURATION")).getText().toString();
-            mGoal.getTaskList().get(i).getId(); // It is important to identify each task    // If id is -1, it means the task is new
-            mGoal.getTaskList().get(i).setTitle(task);
-            try {
-                mGoal.getTaskList().get(i).setDeadline(dateToMillSecConverter(deadline));
-            } catch (ParseException e) {
-                mGoal.getTaskList().get(i).setDeadline(0);
-                e.printStackTrace();
-            }
-            mGoal.getTaskList().get(i).setDuration(Long.valueOf(duration)); // TODO: format
-            i++;
+            String resource = ((EditText)editMap.get("RESOURCE")).getText().toString();
+            taskList.get(i).setTitle(task);
+            // We already save deadline to buffer in the function "showDatePickerDialog"
+            // We already save duration to buffer in the ClickListener "durationClickHandler"
+            taskList.get(i).setResourceFromString(resource);
+            i += 1;
         }
     }
 
@@ -287,7 +298,7 @@ public class DelegateActivty extends AppCompatActivity {
                         // Why do we converted it twice(string > long > string)? Because we want the same format.
                         editText.setText(millSecToDateConverter(deadline));
                         // Store the date user picked into mGoal
-                        mGoal.getTaskList().get(id).setDeadline(deadline);
+                        taskList.get(id).setDeadline(deadline);
 
                     }
                 }, mYear, mMonth, mDay);
@@ -308,73 +319,94 @@ public class DelegateActivty extends AppCompatActivity {
     }
 
     // Function for DB-------------------------------------------------------------------------------------------
-    private long saveGoal() {
-        long rowId = mGoal.getId();
-        ContentValues cvr = new ContentValues();
-        cvr.put(GOAL_TITLE, mGoal.getTitle());
-        cvr.put(GOAL_DEADLINE, mGoal.getDeadline());
-        cvr.put(GOAL_DURATION, mGoal.getDuration());
-        if(mGoal.getId() == -1  && taskIDSelected == -1) {
-            // Double check: User is adding a new role
-//            rowId = db.insert(TABLE_NAME_ROLE_LIST, null, cvr);
-        }else if(mGoal.getId() != -1  && taskIDSelected != -1) {
-            // User is modifying the role
-            db.update(TABLE_NAME_GOAL_LIST, cvr,"_ID=" + String.valueOf(mGoal.getId()), null);
-        }else {
-            // Something wrong?!
-            Log.i("DB bug: ", " The role id may be modified? ");
-        }
-        return rowId;
+    private void deleteOriginalTask() {
+        // delete taskSelected from db
+        db.delete(TABLE_NAME_TASK_LIST, "_ID=" + Integer.toString(taskSelected.getTaskId()), null);
     }
 
-    private void deleteTask() {
-        // Analyze the differences of before and after
-        // If we don't find the old_goal after user editing, the old_goal should be deleted by user
-        if(taskIDSelected != -1) {
-            ArrayList<TaskItem> deleteList = new ArrayList<>();
-
-            for(int z = 0; z < old_mGoal.getTaskList().size(); z++) {
-                deleteList.add(old_mGoal.getTaskList().get(z));
-                for(int j = 0; j< mGoal.getTaskList().size(); j++) {
-                    if(old_mGoal.getTaskList().get(z).getId() == mGoal.getTaskList().get(j).getId()) {
-                        // This goal was not be deleted by user
-                        deleteList.remove(old_mGoal.getTaskList().get(z));
-                        break;
-                    }
-                }
-            }
-            // Delete goal
-            for(TaskItem taskItem: deleteList) {
-                db.delete(TABLE_NAME_TASK_LIST,"_ID=" + String.valueOf(taskItem.getId()), null);
-            }
-        }
-    }
-
-    private void saveTask() {
-        // Clean empty goals in buffer, get them, and insert or update to SQLite
+    private void saveNewTasks() {
         int index = 0;
-        for(TaskItem taskItem: mGoal.getTaskList()) {
-            String title = taskItem.getTitle();
-            //Clean empty goal in buffer
-            if(!"".equals(title.trim())) {
-                // Title is not empty
-                // Get data
-                ContentValues cvg = new ContentValues();
-                cvg.put(TASK_TITLE, taskItem.getTitle());
-                cvg.put(TASK_DEADLINE, taskItem.getDeadline());
-                cvg.put(TASK_DURATION, taskItem.getDuration());
-                // insert or update
-                if(taskItem.getId() == -1) {
-                    // User is adding a new task
-                    cvg.put(TASK_GOAL_ID, mGoal.getId());   // Give goal the Goal Id
-                    long rowTask =db.insert(TABLE_NAME_TASK_LIST, null, cvg);
-                    mGoal.getTaskList().get(index).setId((int)rowTask);
-                }else {
-                    // User is modifying the task
-                    db.update(TABLE_NAME_TASK_LIST, cvg,"_ID=" + String.valueOf(taskItem.getId()), null);
-                }
+        for (TaskItem ti : taskList) {
+            String title = ti.getTitle();
+
+            // check if there're empty title names that should not be added to db.
+            if (!"".equals(title.trim())) {
+                ti.setTitle(taskSelected.getTitle() + " - " + title);
+                // start save to db process
+                dbHelper.insertTask(ti, goalID, roleID); // TODO: test this.
             }
-            index++;
+
         }
     }
+
+
+//    private long saveGoal() {
+//        long rowId = mGoal.getId();
+//        ContentValues cvr = new ContentValues();
+//        cvr.put(GOAL_TITLE, mGoal.getTitle());
+//        cvr.put(GOAL_DEADLINE, mGoal.getDeadline());
+//        cvr.put(GOAL_DURATION, mGoal.getDuration());
+//        if(mGoal.getId() == -1  && taskIDSelected == -1) {
+//            // Double check: User is adding a new role
+////            rowId = db.insert(TABLE_NAME_ROLE_LIST, null, cvr);
+//        }else if(mGoal.getId() != -1  && taskIDSelected != -1) {
+//            // User is modifying the role
+//            db.update(TABLE_NAME_GOAL_LIST, cvr,"_ID=" + String.valueOf(mGoal.getId()), null);
+//        }else {
+//            // Something wrong?!
+//            Log.i("DB bug: ", " The role id may be modified? ");
+//        }
+//        return rowId;
+//    }
+//
+//    private void deleteTask() {
+//        // Analyze the differences of before and after
+//        // If we don't find the old_goal after user editing, the old_goal should be deleted by user
+//        if(taskIDSelected != -1) {
+//            ArrayList<TaskItem> deleteList = new ArrayList<>();
+//
+//            for(int z = 0; z < old_mGoal.getTaskList().size(); z++) {
+//                deleteList.add(old_mGoal.getTaskList().get(z));
+//                for(int j = 0; j< mGoal.getTaskList().size(); j++) {
+//                    if(old_mGoal.getTaskList().get(z).getId() == mGoal.getTaskList().get(j).getId()) {
+//                        // This goal was not be deleted by user
+//                        deleteList.remove(old_mGoal.getTaskList().get(z));
+//                        break;
+//                    }
+//                }
+//            }
+//            // Delete goal
+//            for(TaskItem taskItem: deleteList) {
+//                db.delete(TABLE_NAME_TASK_LIST,"_ID=" + String.valueOf(taskItem.getId()), null);
+//            }
+//        }
+//    }
+//
+//    private void saveTask() {
+//        // Clean empty goals in buffer, get them, and insert or update to SQLite
+//        int index = 0;
+//        for(TaskItem taskItem: mGoal.getTaskList()) {
+//            String title = taskItem.getTitle();
+//            //Clean empty goal in buffer
+//            if(!"".equals(title.trim())) {
+//                // Title is not empty
+//                // Get data
+//                ContentValues cvg = new ContentValues();
+//                cvg.put(TASK_TITLE, taskItem.getTitle());
+//                cvg.put(TASK_DEADLINE, taskItem.getDeadline());
+//                cvg.put(TASK_DURATION, taskItem.getDuration());
+//                // insert or update
+//                if(taskItem.getId() == -1) {
+//                    // User is adding a new task
+//                    cvg.put(TASK_GOAL_ID, mGoal.getId());   // Give goal the Goal Id
+//                    long rowTask =db.insert(TABLE_NAME_TASK_LIST, null, cvg);
+//                    mGoal.getTaskList().get(index).setId((int)rowTask);
+//                }else {
+//                    // User is modifying the task
+//                    db.update(TABLE_NAME_TASK_LIST, cvg,"_ID=" + String.valueOf(taskItem.getId()), null);
+//                }
+//            }
+//            index++;
+//        }
+//    }
 }

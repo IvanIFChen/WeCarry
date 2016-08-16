@@ -27,6 +27,8 @@ public class DemoData {
     ArrayList<GoalItem> r1Goals = new ArrayList<GoalItem>();
     ArrayList<GoalItem> r2Goals = new ArrayList<GoalItem>();
 
+    // TODO: generate roleID, goalID, taskID stuff like that.
+
     public DemoData(Boolean showInWeek) {
         this.showInWeek = showInWeek;
         // when create this class (object) it will generate the data.

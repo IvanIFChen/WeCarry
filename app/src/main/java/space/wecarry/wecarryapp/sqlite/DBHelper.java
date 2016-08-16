@@ -132,34 +132,38 @@ public class DBHelper extends SQLiteOpenHelper{
 
 
     // fixme: do not use
-    public void insertGoal(GoalItem gi, int goalID, int goalRoleID) {
-        Log.d("inserting goal", gi.toString());
-        SQLiteDatabase db = this.getWritableDatabase();
-        ArrayList<TaskItem> taskList = new ArrayList<TaskItem>();
+//    public void insertGoal(GoalItem gi, int goalID, int goalRoleID) {
+//        Log.d("inserting goal", gi.toString());
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        ArrayList<TaskItem> taskList = new ArrayList<TaskItem>();
+//
+//        // insert all the tasks into task table first.
+//        for (TaskItem ti : gi.getTaskList()) {
+//            insertTask(ti, goalID);
+//        }
+//
+//        ContentValues cv = new ContentValues();
+//        cv.put(GOAL_ID, goalID);
+//        cv.put(GOAL_TITLE, gi.getTitle());
+//        cv.put(GOAL_DEADLINE, gi.getDeadline());
+//        cv.put(GOAL_DURATION, gi.getDuration());
+//        cv.put(GOAL_IMPORTANCE, String.valueOf(gi.isImportant()));
+//        cv.put(GOAL_URGENCY, String.valueOf(gi.isUrgent()));
+//        cv.put(GOAL_ROLE_ID, goalRoleID);
+//        db.insert(TEST_GOAL_TABLE, null, cv); // fixme: test table
+//    }
 
-        // insert all the tasks into task table first.
-        for (TaskItem ti : gi.getTaskList()) {
-            insertTask(ti, goalID);
-        }
+    // TODO: not tested
+    public void insertTask(TaskItem ti, int goalID, int roleID) {
+        Log.d("insertTask", ti.getTitle());
+        SQLiteDatabase db = this.getWritableDatabase();
+        boolean isMilestone = false;
+
+        if (ti.getDeadline() == 0)
+            isMilestone = true;
 
         ContentValues cv = new ContentValues();
-        cv.put(GOAL_ID, goalID);
-        cv.put(GOAL_TITLE, gi.getTitle());
-        cv.put(GOAL_DEADLINE, gi.getDeadline());
-        cv.put(GOAL_DURATION, gi.getDuration());
-        cv.put(GOAL_IMPORTANCE, String.valueOf(gi.isImportant()));
-        cv.put(GOAL_URGENCY, String.valueOf(gi.isUrgent()));
-        cv.put(GOAL_ROLE_ID, goalRoleID);
-        db.insert(TEST_GOAL_TABLE, null, cv); // fixme: test table
-    }
-
-    // fixme: do not use
-    public void insertTask(TaskItem ti, int goalID) {
-        Log.d("insertTask", ti.toString());
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues cv = new ContentValues();
-        cv.put(TASK_ID, -1); // Fixme: this should be the _ID value, dunno how to set
+        // note: let sqlite auto insert _ID field.
         cv.put(TASK_TITLE, ti.getTitle());
         cv.put(TASK_EST, ti.getEarliestStartTime());
         cv.put(TASK_LST, ti.getLatestStartTime());
@@ -168,63 +172,56 @@ public class DBHelper extends SQLiteOpenHelper{
         cv.put(TASK_DEADLINE, ti.getDeadline());
         cv.put(TASK_DURATION, ti.getDuration());
         cv.put(TASK_PREPROCESS, ""); // TODO: think of a way to save this data.
-        cv.put(TASK_RESOURCE, "");   // TODO: same^.
+        cv.put(TASK_RESOURCE, ti.resourceToString()); // TODO: toString incomplete.
         cv.put(TASK_GOAL_ID, goalID);
+        cv.put(TASK_ROLE_ID, roleID);
+        cv.put(TASK_MILESTONE, String.valueOf(isMilestone));
 
-        db.insert(TEST_TASK_TABLE, null, cv); // fixme: test table
+        db.insert(TABLE_NAME_TASK_LIST, null, cv);
     }
 
     // fixme: do not use
     // TODO: goal should have some kind of unique identifier, not just title.
-    public GoalItem getGoal(String title) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        GoalItem gi = new GoalItem();
-        int goalID = -1;
+//    public GoalItem getGoal(String title) {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        GoalItem gi = new GoalItem();
+//        int goalID = -1;
+//
+//        Cursor cursor = db.query(TEST_GOAL_TABLE, new String[] {_ID, // fixme: test table
+//                        GOAL_ID, GOAL_TITLE, GOAL_DEADLINE, GOAL_DURATION,
+//                GOAL_IMPORTANCE, GOAL_URGENCY, GOAL_ROLE_ID}, GOAL_TITLE + "= ?",
+//                new String[] { title }, null, null, null, null);
+//        // get goal item and its data (without task items).
+//        if (cursor != null) {
+//            cursor.moveToFirst();
+//            gi = new GoalItem(
+//                    cursor.getString(2),
+//                    cursor.getLong(3),
+//                    Boolean.parseBoolean(cursor.getString(5)),
+//                    Boolean.parseBoolean(cursor.getString(6)),
+//                    new ArrayList<TaskItem>());
+//            // get goalID in order to find its task items
+//            goalID = cursor.getInt(1);
+//        }
+//        // getting task items
+//        ArrayList<TaskItem> tasks = getTasksByGoalID(goalID);
+//        gi.setTaskList(tasks);
+//
+//        return gi;
+//    }
 
-        Cursor cursor = db.query(TEST_GOAL_TABLE, new String[] {_ID, // fixme: test table
-                        GOAL_ID, GOAL_TITLE, GOAL_DEADLINE, GOAL_DURATION,
-                GOAL_IMPORTANCE, GOAL_URGENCY, GOAL_ROLE_ID}, GOAL_TITLE + "= ?",
-                new String[] { title }, null, null, null, null);
-        // get goal item and its data (without task items).
-        if (cursor != null) {
-            cursor.moveToFirst();
-            gi = new GoalItem(
-                    cursor.getString(2),
-                    cursor.getLong(3),
-                    Boolean.parseBoolean(cursor.getString(5)),
-                    Boolean.parseBoolean(cursor.getString(6)),
-                    new ArrayList<TaskItem>());
-            // get goalID in order to find its task items
-            goalID = cursor.getInt(1);
-        }
-        // getting task items
-        ArrayList<TaskItem> tasks = getTasksByGoalID(goalID);
-        gi.setTaskList(tasks);
-
-        return gi;
-    }
-
-    // fixme: do not use
+    // TODO: not tested
     public ArrayList<TaskItem> getTasksByGoalID(int goalID) {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<TaskItem> tasks = new ArrayList<TaskItem>();
-        Cursor c = db.rawQuery("SELECT * FROM " + TEST_TASK_TABLE, null); // fixme: test table
+        Cursor c = db.rawQuery("SELECT * FROM " + TABLE_NAME_TASK_LIST, null);
 
         if (c.getCount() > 0) {
             for (int i = 0; i < c.getCount(); i++) {
                 c.moveToPosition(i);
                 // if this current cursor item is belong to this goalID
                 if (c.getInt(c.getColumnIndex(TASK_GOAL_ID)) == goalID) {
-                    TaskItem ti = new TaskItem(
-                            c.getString(2),
-                            c.getLong(3),
-                            c.getLong(4),
-                            c.getLong(5),
-                            c.getLong(6),
-                            c.getLong(7),
-                            c.getLong(8),
-                            new ArrayList<TaskItem>(),      // TODO: parse data
-                            new ArrayList<ResourceItem>()); // TODO: parse data
+                    TaskItem ti = parseTask(c);
                     tasks.add(ti);
                 }
             }
@@ -232,31 +229,51 @@ public class DBHelper extends SQLiteOpenHelper{
         return tasks;
     }
 
-    // fixme: do not use
-    public TaskItem getTask(String title) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        TaskItem ti = new TaskItem();
-        Cursor cursor = db.query(TEST_TASK_TABLE, new String[] {_ID, // Fixme: test table
-                        TASK_ID, TASK_TITLE, TASK_EST, TASK_LST, TASK_EET, TASK_LET,
-                        TASK_DEADLINE, TASK_DURATION, TASK_PREPROCESS, TASK_RESOURCE,
-                        TASK_GOAL_ID}, TASK_TITLE + "=?",
-                        new String[] { title }, null, null, null, null);
-        if (cursor != null) {
-            cursor.moveToFirst();
-            ti = new TaskItem(
-                    cursor.getString(2),
-                    cursor.getLong(3),
-                    cursor.getLong(4),
-                    cursor.getLong(5),
-                    cursor.getLong(6),
-                    cursor.getLong(7),
-                    cursor.getLong(8),
-                    new ArrayList<TaskItem>(),      // TODO: parse data
-                    new ArrayList<ResourceItem>()); // TODO: parse data
-        }
+    private TaskItem parseTask(Cursor c) {
+        TaskItem ti = new TaskItem(
+                c.getInt(c.getColumnIndex(_ID)),
+                c.getInt(c.getColumnIndex(TASK_GOAL_ID)),
+                c.getInt(c.getColumnIndex(TASK_ROLE_ID)),
+                c.getString(c.getColumnIndex(TASK_TITLE)),
+                Boolean.parseBoolean(c.getString(c.getColumnIndex(TASK_MILESTONE))),
+                c.getInt(c.getColumnIndex(TASK_EST)),
+                c.getInt(c.getColumnIndex(TASK_LST)),
+                c.getInt(c.getColumnIndex(TASK_EET)),
+                c.getInt(c.getColumnIndex(TASK_LET)),
+                c.getInt(c.getColumnIndex(TASK_DEADLINE)),
+                c.getInt(c.getColumnIndex(TASK_DURATION)),
+                new ArrayList<TaskItem>(),
+                new ArrayList<ResourceItem>()); // TODO: parse data
+        ti.setResourceFromString(c.getString(c.getColumnIndex(TASK_RESOURCE))); // TODO: parsing incomplete
         return ti;
     }
 
+    // fixme: do not use
+//    public TaskItem getTask(String title) {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        TaskItem ti = new TaskItem();
+//        Cursor cursor = db.query(TEST_TASK_TABLE, new String[] {_ID, // Fixme: test table
+//                        TASK_ID, TASK_TITLE, TASK_EST, TASK_LST, TASK_EET, TASK_LET,
+//                        TASK_DEADLINE, TASK_DURATION, TASK_PREPROCESS, TASK_RESOURCE,
+//                        TASK_GOAL_ID}, TASK_TITLE + "=?",
+//                        new String[] { title }, null, null, null, null);
+//        if (cursor != null) {
+//            cursor.moveToFirst();
+//            ti = new TaskItem(
+//                    cursor.getString(2),
+//                    cursor.getLong(3),
+//                    cursor.getLong(4),
+//                    cursor.getLong(5),
+//                    cursor.getLong(6),
+//                    cursor.getLong(7),
+//                    cursor.getLong(8),
+//                    new ArrayList<TaskItem>(),      // TODO: parse data
+//                    new ArrayList<ResourceItem>()); // TODO: parse data
+//        }
+//        return ti;
+//    }
+
+    // TODO: not tested
     public ArrayList<GoalItem> getAllGoal() {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<GoalItem> goalList = new ArrayList<GoalItem>();
@@ -286,7 +303,8 @@ public class DBHelper extends SQLiteOpenHelper{
         return goalList;
     }
 
-    public ArrayList<TaskItem> getAllTask() {
+    // TODO: not tested
+    public ArrayList<TaskItem> getAllTasks() {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<TaskItem> taskList = new ArrayList<TaskItem>();
         TaskItem ti = new TaskItem();
@@ -295,21 +313,12 @@ public class DBHelper extends SQLiteOpenHelper{
         if (cursor.getCount() > 0) {
             for (int i = 0; i < cursor.getCount(); i++) {
                 cursor.moveToPosition(i);
-                ti = new TaskItem(
-                        cursor.getString(2),
-                        cursor.getLong(3),
-                        cursor.getLong(4),
-                        cursor.getLong(5),
-                        cursor.getLong(6),
-                        cursor.getLong(7),
-                        cursor.getLong(8),
-                        new ArrayList<TaskItem>(),      // TODO: parse data
-                        new ArrayList<ResourceItem>()); // TODO: parse data
+                ti = parseTask(cursor);
                 // add this task to taskList
                 taskList.add(ti);
             }
         }
-        Log.i("getAllTask", "taskList size: " + Integer.toString(taskList.size()));
+        Log.i("getAllTasks", "taskList size: " + Integer.toString(taskList.size()));
         return taskList;
     }
 

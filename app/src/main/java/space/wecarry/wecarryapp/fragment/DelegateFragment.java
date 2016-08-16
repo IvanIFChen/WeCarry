@@ -57,7 +57,7 @@ public class DelegateFragment extends Fragment {
                 Intent intent = new Intent();
                 intent.setClass(getActivity(), DelegateActivty.class);
                 Bundle bundle = new Bundle();
-                bundle.putInt("taskUserSelected", position);
+                bundle.putInt("taskIDSelected", position);
                 bundle.putSerializable("taskItem", taskList.get(position));
                 intent.putExtras(bundle);
                 startActivityForResult(intent, 0);
@@ -66,7 +66,7 @@ public class DelegateFragment extends Fragment {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                TaskItem ti = (TaskItem) taskList.get(position);
+                TaskItem ti = taskList.get(position);
                 deleteTaskDialog(ti.getTitle(), ti.getTaskId(), view);
                 return true;
             }
@@ -76,7 +76,7 @@ public class DelegateFragment extends Fragment {
 
     private void getTaskData() {
         DBHelper dbHelper = new DBHelper(getActivity());
-        taskList = dbHelper.getAllTask();
+        taskList = dbHelper.getAllTasks();
         dbHelper.close();
     }
 
