@@ -45,6 +45,7 @@
     <!--Default delegate activtiy fields-->
     <string name="task_teach_string">教</string>
     <string name="task_collect_result">驗收成果</string>
+    <string name="reset">重設</string>
 
 
 </resources>

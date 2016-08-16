@@ -40,7 +40,7 @@ import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_DURATION;
 public class CalendarFragment extends Fragment {
 
     private ListView listView;
-    private Button buttonSchedule;
+    private Button buttonSchedule, buttonReset;
     private ArrayList<TaskItem> taskList;
     private SimpleAdapter adapter;
     private DBHelper dbHelper = null;
@@ -58,6 +58,7 @@ public class CalendarFragment extends Fragment {
         getActivity().setTitle(getString(R.string.navigation_drawer_calendar));
         listView = (ListView) rootView.findViewById(R.id.listView);
         buttonSchedule = (Button) rootView.findViewById(R.id.buttonScheduling);
+        buttonReset = (Button) rootView.findViewById(R.id.buttonReset);
 
         // get taskList data from db.
         getTaskData();
@@ -158,7 +159,7 @@ public class CalendarFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // Starting scheduling
-                new Scheduling(getActivity(), taskList);
+                new Scheduling(getActivity(), taskList).scheduleAdapter();
 
                 // Go to the Calendar in user's device
                 Uri.Builder builder = CalendarContract.CONTENT_URI.buildUpon();
@@ -167,6 +168,17 @@ public class CalendarFragment extends Fragment {
                 Intent intent = new Intent(Intent.ACTION_VIEW)
                         .setData(builder.build());
                 startActivity(intent);
+            }
+        });
+
+        buttonReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(new Scheduling(getActivity()).deleteAllEvent() > 0) {
+                    Toast.makeText(getActivity(), "已重設排程", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(getActivity(), "尚未排程", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

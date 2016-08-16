@@ -55,6 +55,13 @@ public class Scheduling {
     private long projectDeadline;
     private Context context;
 
+    public Scheduling(Context c){
+        this.context = c;
+        // Open db
+        dbHelper = new DBHelper(context);
+        db = dbHelper.getReadableDatabase();
+    }
+
     public Scheduling(Context c, ArrayList<TaskItem> ls) {
         this.context = c;
         busyTimeItemsList = new ArrayList<BusyTimeItem>();
@@ -105,14 +112,7 @@ public class Scheduling {
         findFreeTime();
 
         // Start scheduling
-        scheduleAdapter();
-
-        // Check if some tasks have no time to do
-        if(overDeadlineList.size() > 0) {
-            Toast.makeText(context, "部分任務超過Deadline無法排程", Toast.LENGTH_SHORT).show();   // TODO: English and better method to show message
-        }else {
-            Toast.makeText(context, "成功排程", Toast.LENGTH_SHORT).show();
-        }
+//        scheduleAdapter();
 
     }
 
@@ -160,7 +160,7 @@ public class Scheduling {
     }
 
     // To insert sleepTime in arrayList as busyTime
-    private void insertPreferenceBusyTime( //, int busyStartHour, int busyEndHour, int busyStartMin, int busyEndMin // TODO: User input
+    public void insertPreferenceBusyTime( //, int busyStartHour, int busyEndHour, int busyStartMin, int busyEndMin // TODO: User input
     ) {
         Calendar startSleep = Calendar.getInstance();
         Calendar endSleep = Calendar.getInstance();
@@ -205,7 +205,7 @@ public class Scheduling {
             }
         });
         // freeTime = busyTime - busyTime
-        long startWorking = nowTime + 15*60*1000;    // buffer 15 minutes before starting scheduling
+        long startWorking = (nowTime + 15*60*1000) - ((nowTime + 15*60*1000)%10000);    // buffer 15 minutes before starting scheduling //TODO: ???
         long freeStart = 0;
         long freeEnd = 0;
         for (BusyTimeItem busy : busyTimeItemsList) {
@@ -226,12 +226,12 @@ public class Scheduling {
 
     // All about scheduling is in here
     // Currently we just insert a task in a freeTime.
-    private void scheduleAdapter() {
+    public void scheduleAdapter() {
         int indexFreeTime = 0;
-        long tolerance = 59999;
         for(TaskItem ti : tasksList) {
             long duration = ti.getDuration() ;
             int insertTimes = 0;    // Number of times of inserted to calendar
+            int tolerance = 59990;
             // Give a free time to a task,
             // so all of duration of a task should be used with free time
             while(duration > (0 + tolerance)) {
@@ -261,6 +261,12 @@ public class Scheduling {
                 }
             }
         }
+        // Check if some tasks have no time to do
+        if(overDeadlineList.size() > 0) {
+            Toast.makeText(context, "部分任務超過Deadline無法排程", Toast.LENGTH_SHORT).show();   // TODO: English and better method to show message
+        }else {
+            Toast.makeText(context, "成功排程", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void addEventToCalendar(String title, long startMillis, long endMillis) {
@@ -276,7 +282,7 @@ public class Scheduling {
         saveEventUriToDB(uri.toString());
     }
 
-    private void deleteAllEvent() {
+    public int deleteAllEvent() {
         cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME_SCHEDULE_LIST, null );
         int dataRow = cursor.getCount();
         if(dataRow > 0) {
@@ -288,6 +294,7 @@ public class Scheduling {
             }
         }
         db.delete(TABLE_NAME_SCHEDULE_LIST, _ID + " > " + "-1", null);  // clean the data from db
+        return dataRow;
     }
 
     private void saveEventUriToDB(String uri) {
