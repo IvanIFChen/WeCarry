@@ -11,8 +11,6 @@ import android.provider.CalendarContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -41,11 +39,12 @@ public class CalendarFragment extends Fragment {
 
     private ListView listView;
     private Button buttonSchedule, buttonReset;
-    private ArrayList<TaskItem> taskList;
+    private ArrayList<TaskItem> taskList, mList;
     private SimpleAdapter adapter;
     private DBHelper dbHelper = null;
     private SQLiteDatabase db = null;
     private Cursor cursorTask= null;
+    private long nowTime = Calendar.getInstance().getTimeInMillis();
     String roleTile, goalTitle;
     ArrayList<HashMap<String,String>> list = new ArrayList();
 
@@ -62,6 +61,14 @@ public class CalendarFragment extends Fragment {
 
         // get taskList data from db.
         getTaskData();
+
+        // Clean task which is over deadline
+        for(TaskItem ti : mList) {
+            long deadline = ti.getDeadline();
+            if (deadline > nowTime) {
+                taskList.add(ti);
+            }
+        }
 
         // Sort by deadline,urgency and importance
         Collections.sort(taskList, new Comparator<TaskItem>() {
@@ -108,6 +115,7 @@ public class CalendarFragment extends Fragment {
     }
 
     public void getTaskData() {
+        mList = new ArrayList<>();
         taskList = new ArrayList<>();
         // Open db
         dbHelper = new DBHelper(getActivity());
@@ -136,7 +144,7 @@ public class CalendarFragment extends Fragment {
                 taskItem.setUrgency(Boolean.parseBoolean(cursorTask.getString(15)));
                 // TODO: Get preprocessList
                 // TODO: Get resourcesList
-                taskList.add(taskItem);
+                mList.add(taskItem);
                 cursorTask.moveToNext();
             }
 
