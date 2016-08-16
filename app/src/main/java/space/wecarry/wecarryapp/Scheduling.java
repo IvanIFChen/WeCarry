@@ -235,7 +235,8 @@ public class Scheduling {
                     long endTime = freeTimeItemsList.get(indexFreeTime).getEnd();
                     if(duration <0) {
                         endTime = (freeTimeItemsList.get(indexFreeTime).getAvailableTime()) + duration + startTime;
-                        // TODO: 剩下的時間不要浪費?
+                        // Do not waste the remaining time
+                        freeTimeItemsList.add((indexFreeTime +1), new FreeTimeItem(endTime, freeTimeItemsList.get(indexFreeTime).getEnd()));
                     }
                     addEventToCalendar(ti.getTitle() + "(" + Integer.toString(insertTimes + 1) + ")", startTime, endTime);
                     insertTimes++;
