@@ -20,9 +20,6 @@ public class DBHelper extends SQLiteOpenHelper{
     private static final int DATABASE_VERSION = 1;
     private static String DATABASE_NAME = "DB";
     private DBHelper mHelper;
-    // for testing
-    private static final String TEST_GOAL_TABLE = "test_goal_table";
-    private static final String TEST_TASK_TABLE = "test_task_table";
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -98,50 +95,12 @@ public class DBHelper extends SQLiteOpenHelper{
                         SCHEDULE_EVENT_ID + " INTEGER " +
                         ");";
 
-        // for testing
-        final String INIT_TEST_GOAL_TABLE =
-                "CREATE TABLE IF NOT EXISTS " +
-                        TEST_GOAL_TABLE +
-                        " (" +
-                        _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        GOAL_ID + " INTEGER, " +
-                        GOAL_TITLE + " TEXT, " +
-                        GOAL_DEADLINE + " INTEGER, " +
-                        GOAL_DURATION + " INTEGER, " +
-                        GOAL_IMPORTANCE + " TEXT, " +
-                        GOAL_URGENCY + " TEXT, " +
-                        GOAL_ROLE_ID + " INTEGER " +
-                        ");";
-        // for testing
-        final String INIT_TEST_TASK_TABLE =
-                "CREATE TABLE IF NOT EXISTS " +
-                        TEST_TASK_TABLE +
-                        " (" +
-                        _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        TASK_ID + " INTEGER, " +
-                        TASK_TITLE + " TEXT, " +
-                        TASK_EST + " INTEGER, " +
-                        TASK_LST + " INTEGER, " +
-                        TASK_EET + " INTEGER, " +
-                        TASK_LET + " INTEGER, " +
-                        TASK_DEADLINE + " INTEGER, " +
-                        TASK_DURATION + " INTEGER, " +
-                        TASK_PREPROCESS + " TEXT, " +
-                        TASK_RESOURCE + " TEXT, " +
-                        TASK_GOAL_ID + " INTEGER, " +
-                        TASK_ROLE_ID + " INTEGER, " +
-                        TASK_IMPORTANCE + " TEXT, " +
-                        TASK_URGENCY + " TEXT " +
-                        ");";
-
         db.execSQL(INIT_ROLE_TABLE);
         db.execSQL(INIT_GOAL_TABLE);
         db.execSQL(INIT_TASK_TABLE);
         db.execSQL(INIT_RESOURCE_TABLE);
         db.execSQL(INIT_SCHEDULE_TABLE);
 
-        db.execSQL((INIT_TEST_GOAL_TABLE));
-        db.execSQL((INIT_TEST_TASK_TABLE));
     }
 
 

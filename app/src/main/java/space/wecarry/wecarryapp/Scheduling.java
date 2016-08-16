@@ -89,10 +89,10 @@ public class Scheduling {
         // Sort by importance and urgency
         Collections.sort(tasksList, new Comparator<TaskItem>() {
             @Override
-            public int compare(TaskItem lhs, TaskItem rhs) {if (lhs.isUrgency()) {return 1;} else {return -1;}}});
+            public int compare(TaskItem lhs, TaskItem rhs) {if (lhs.isUrgency() == true && rhs.isUrgency() != true) {return -1;} else {return 1;}}});
         Collections.sort(tasksList, new Comparator<TaskItem>() {
             @Override
-            public int compare(TaskItem lhs, TaskItem rhs) {if (lhs.isImportant()) {return 1;} else {return -1;}}});
+            public int compare(TaskItem lhs, TaskItem rhs) {if (lhs.isImportant() == true && rhs.isImportant() != true) {return -11;} else {return 1;}}});
 
         // Find busy time from user's calendar
         Cursor cur = getCalendarInstance();
@@ -106,6 +106,13 @@ public class Scheduling {
 
         // Start scheduling
         scheduleAdapter();
+
+        // Check if some tasks have no time to do
+        if(overDeadlineList.size() > 0) {
+            Toast.makeText(context, "部分任務超過Deadline無法排程", Toast.LENGTH_SHORT).show();   // TODO: English and better method to show message
+        }else {
+            Toast.makeText(context, "成功排程", Toast.LENGTH_SHORT).show();
+        }
 
     }
 
@@ -160,7 +167,7 @@ public class Scheduling {
         Calendar startLunch = Calendar.getInstance();
         Calendar endLunch = Calendar.getInstance();
         // set sleep time
-        startSleep.set(Calendar.HOUR_OF_DAY, 23);
+        startSleep.set(Calendar.HOUR_OF_DAY, 22);
         startSleep.set(Calendar.MINUTE, 0);
         startSleep.add(Calendar.DAY_OF_MONTH, -1);  //we started sleeping yesterday
         endSleep.set(Calendar.HOUR_OF_DAY, 9);
@@ -220,13 +227,14 @@ public class Scheduling {
     // All about scheduling is in here
     // Currently we just insert a task in a freeTime.
     private void scheduleAdapter() {
-        int indexFreeTime =0;
+        int indexFreeTime = 0;
+        long tolerance = 59999;
         for(TaskItem ti : tasksList) {
             long duration = ti.getDuration() ;
             int insertTimes = 0;    // Number of times of inserted to calendar
             // Give a free time to a task,
             // so all of duration of a task should be used with free time
-            while(duration >0) {
+            while(duration > (0 + tolerance)) {
                 // if the duration has not been consumed
                 // we give it free time
                 if(indexFreeTime < freeTimeItemsList.size()) {
@@ -238,11 +246,16 @@ public class Scheduling {
                         // Do not waste the remaining time
                         freeTimeItemsList.add((indexFreeTime +1), new FreeTimeItem(endTime, freeTimeItemsList.get(indexFreeTime).getEnd()));
                     }
+                    if(ti.getDeadline() < startTime) {
+                        // task is over deadline
+                        overDeadlineList.add(ti);
+                        break;
+                    }
                     addEventToCalendar(ti.getTitle() + "(" + Integer.toString(insertTimes + 1) + ")", startTime, endTime);
                     insertTimes++;
                     indexFreeTime++;
                 }else {
-//                    toastMessage = "You have no time to do some tasks!";
+                    //have no time to do the tasks
                     overDeadlineList.add(ti);
                     break;
                 }

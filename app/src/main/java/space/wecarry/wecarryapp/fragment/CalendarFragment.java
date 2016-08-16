@@ -21,6 +21,8 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import space.wecarry.wecarryapp.R;
@@ -59,6 +61,17 @@ public class CalendarFragment extends Fragment {
 
         // get taskList data from db.
         getTaskData();
+
+        // Sort by deadline,urgency and importance
+        Collections.sort(taskList, new Comparator<TaskItem>() {
+            @Override
+            public int compare(TaskItem lhs, TaskItem rhs) {if (lhs.getDeadline() > rhs.getDeadline()) {return 1;} else {return -1;}}});
+        Collections.sort(taskList, new Comparator<TaskItem>() {
+            @Override
+            public int compare(TaskItem lhs, TaskItem rhs) {if (lhs.isUrgency() == true && rhs.isUrgency() != true) {return -1;} else {return 1;}}});
+        Collections.sort(taskList, new Comparator<TaskItem>() {
+            @Override
+            public int compare(TaskItem lhs, TaskItem rhs) {if (lhs.isImportant() == true && rhs.isImportant() != true) {return -11;} else {return 1;}}});
 
         //把資料加入ArrayList中
         for(TaskItem ti: taskList){
@@ -118,6 +131,8 @@ public class CalendarFragment extends Fragment {
                 taskItem.setDuration(cursorTask.getLong(9));
                 taskItem.setGoalId(cursorTask.getInt(12));
                 taskItem.setRoleId(cursorTask.getInt(13));
+                taskItem.setImportant(Boolean.parseBoolean(cursorTask.getString(14)));
+                taskItem.setUrgency(Boolean.parseBoolean(cursorTask.getString(15)));
                 // TODO: Get preprocessList
                 // TODO: Get resourcesList
                 taskList.add(taskItem);
