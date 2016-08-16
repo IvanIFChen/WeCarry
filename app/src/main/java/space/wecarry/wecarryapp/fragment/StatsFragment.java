@@ -223,16 +223,17 @@ public class StatsFragment extends Fragment {
         for (GoalItem gi : goalList) {
             switch (gi.checkQuadrant()) {
                 case 1:
-                    q1Pie = q1Pie + (float) (gi.getDuration() / 100 / 60 / 60);
+                    q1Pie = q1Pie + (float) (gi.getDuration() / 1000 / 60 / 60);
                     break;
                 case 2:
-                    q2Pie = q2Pie + (float) (gi.getDuration() / 100 / 60 / 60);
+                    q2Pie = q2Pie + (float) (gi.getDuration() / 1000 / 60 / 60);
+                    Log.d("q2Pie", Float.toString(q2Pie));
                     break;
                 case 3:
-                    q3Pie = q3Pie + (float) (gi.getDuration() / 100 / 60 / 60);
+                    q3Pie = q3Pie + (float) (gi.getDuration() / 1000 / 60 / 60);
                     break;
                 case 4:
-                    q4Pie = q4Pie + (float) (gi.getDuration() / 100 / 60 / 60);
+                    q4Pie = q4Pie + (float) (gi.getDuration() / 1000 / 60 / 60);
                     break;
             }
         }
@@ -314,8 +315,10 @@ public class StatsFragment extends Fragment {
                     Integer.toString(day));
 
             Calendar thisDay = new GregorianCalendar();
+            thisDay.clear();
             thisDay.set(year, month, day, 0, 0, 0);
             long dayAt0000 = thisDay.getTimeInMillis(); // in millisecond
+            thisDay.clear();
             thisDay.set(year, month, day, 23, 59, 59);
             long dayAt2359 = thisDay.getTimeInMillis(); // in millisecond
             logMillisecondToDate("0000", dayAt0000);
@@ -326,19 +329,22 @@ public class StatsFragment extends Fragment {
             for (TaskItem ti : q1) {
                 // Fixme: timeCompeted should not be deadline.
                 long timeCompleted = ti.getDeadline();
-//                logMillisecondToDate(timeCompleted);
+//                logMillisecondToDate(ti.getTitle(), timeCompleted);
+//                Log.d(ti.getTitle(), ti.toString());
+//                Log.d("0000", Long.toString(dayAt0000));
+//                Log.d("2359", Long.toString(dayAt2359));
                 if (timeCompleted >= dayAt0000 && timeCompleted <= dayAt2359) {
                     Log.d("add to e1", ti.getTitle());
-                    e1Size = e1Size + (float) ti.getDuration() / 100 / 60 / 60;
+                    e1Size = e1Size + (float) ti.getDuration() / 1000 / 60 / 60;
                 }
             }
             for (TaskItem ti : q2) {
                 // Fixme: timeCompeted should not be deadline.
                 long timeCompleted = ti.getDeadline();
-//                logMillisecondToDate(timeCompleted);
+//                logMillisecondToDate(ti.getTitle(), timeCompleted);
                 if (timeCompleted >= dayAt0000 && timeCompleted <= dayAt2359) {
                     Log.d("add to e2", ti.getTitle());
-                    e2Size = e2Size + (float) ti.getDuration() / 100 / 60 / 60;
+                    e2Size = e2Size + (float) ti.getDuration() / 1000 / 60 / 60;
                 }
             }
             for (TaskItem ti : q3) {
@@ -347,7 +353,7 @@ public class StatsFragment extends Fragment {
 //                logMillisecondToDate(timeCompleted);
                 if (timeCompleted >= dayAt0000 && timeCompleted <= dayAt2359) {
                     Log.d("add to e3", ti.getTitle());
-                    e3Size = e3Size + (float) ti.getDuration() / 100 / 60 / 60;
+                    e3Size = e3Size + (float) ti.getDuration() / 1000 / 60 / 60;
                 }
             }
             for (TaskItem ti : q4) {
@@ -356,7 +362,7 @@ public class StatsFragment extends Fragment {
 //                logMillisecondToDate(timeCompleted);
                 if (timeCompleted >= dayAt0000 && timeCompleted <= dayAt2359) {
                     Log.d("add to e4", ti.getTitle());
-                    e4Size = e4Size + (float) ti.getDuration() / 100 / 60 / 60;
+                    e4Size = e4Size + (float) ti.getDuration() / 1000 / 60 / 60;
                 }
             }
             // calc otherSize value (hours in day - (e1Size + ... e4Size + personalTime)

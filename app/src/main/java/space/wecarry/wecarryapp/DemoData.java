@@ -117,31 +117,31 @@ public class DemoData {
         for (int i = 1; i <= sampleSize; i++) {
             TaskItem task;
             task = new TaskItem("task" + nameCount,
-                    60 * 100 * randomValue());
+                    60 * 1000 * randomValue());
 //            Log.e("task", task.toString());
             g1Tasks.add(task);
             taskList.add(task);
             nameCount = nameCount + 1;
             task = new TaskItem("task" + nameCount,
-                    60 * 100 * randomValue());
+                    60 * 1000 * randomValue());
 //            Log.e("task", task.toString());
             g2Tasks.add(task);
             taskList.add(task);
             nameCount = nameCount + 1;
             task = new TaskItem("task" + nameCount,
-                    60 * 100 * randomValue());
+                    60 * 1000 * randomValue());
 //            Log.e("task", task.toString());
             g3Tasks.add(task);
             taskList.add(task);
             nameCount = nameCount + 1;
             task = new TaskItem("task" + nameCount,
-                    60 * 100 * randomValue());
+                    60 * 1000 * randomValue());
 //            Log.e("task", task.toString());
             g4Tasks.add(task);
             taskList.add(task);
             nameCount = nameCount + 1;
             task = new TaskItem("task" + nameCount,
-                    60 * 100 * randomValue());
+                    60 * 1000 * randomValue());
 //            Log.e("task", task.toString());
             g5Tasks.add(task);
             taskList.add(task);
