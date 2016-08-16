@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,7 +77,18 @@ public class DelegateFragment extends Fragment {
 
     private void getTaskData() {
         DBHelper dbHelper = new DBHelper(getActivity());
-        taskList = dbHelper.getAllTasks();
+        taskList = new ArrayList<TaskItem>();
+        ArrayList<TaskItem> allTasks = dbHelper.getAllTasks();
+        Log.d("allTasks size", Integer.toString(allTasks.size()) + " ");
+        // only get tasks without resources.
+        for (TaskItem ti : allTasks) {
+            // if doesn't have resource.
+            if (ti.resourceToString().equals("")) {
+                // add to taskList and show in delegate fragment list view.
+                taskList.add(ti);
+            }
+        }
+        Log.d("taskList size", Integer.toString(taskList.size()));
         dbHelper.close();
     }
 

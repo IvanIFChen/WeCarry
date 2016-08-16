@@ -46,11 +46,11 @@ public class DemoData {
         generateTasks();
 
         // initialize goal items and their tasks (without deadline).
-        GoalItem g1 = new GoalItem("goal1", 0, true, true, g1Tasks); // will add deadline later
-        GoalItem g2 = new GoalItem("goal2", 0, true, false, g2Tasks);
-        GoalItem g3 = new GoalItem("goal3", 0, false, true, g3Tasks);
-        GoalItem g4 = new GoalItem("goal4", 0, false, false, g4Tasks);
-        GoalItem g5 = new GoalItem("goal5", 0, true, false, g5Tasks);
+        GoalItem g1 = new GoalItem(-1, -1, "goal1", 0, true, true, g1Tasks); // will add deadline later
+        GoalItem g2 = new GoalItem(-1, -1, "goal2", 0, true, false, g2Tasks);
+        GoalItem g3 = new GoalItem(-1, -1, "goal3", 0, false, true, g3Tasks);
+        GoalItem g4 = new GoalItem(-1, -1, "goal4", 0, false, false, g4Tasks);
+        GoalItem g5 = new GoalItem(-1, -1, "goal5", 0, true, false, g5Tasks);
 
         // add goals to goal lists
         r1Goals.add(g1);

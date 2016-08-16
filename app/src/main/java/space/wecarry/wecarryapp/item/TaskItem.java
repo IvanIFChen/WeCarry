@@ -215,12 +215,12 @@ public class TaskItem implements Serializable {
             if (this.resourcesList.size() != 0) {
                 String out = "";
                 for (ResourceItem ri : this.resourcesList) {
-                    out = ri.getTitle() + ", ";
+                    out = out + ri.getTitle() + ", ";
                 }
                 return out.substring(0, out.lastIndexOf(","));
             }
         }
-        return " ";
+        return "";
     }
 
     public void setResourceFromString(String res) {
@@ -230,7 +230,8 @@ public class TaskItem implements Serializable {
             // TODO: above ^ only parse names, doesn't save email.
             ArrayList<ResourceItem> resList = new ArrayList<ResourceItem>();
             for (String s : items) {
-                ResourceItem ri = new ResourceItem(s, "");
+                ResourceItem ri =
+                        new ResourceItem(this.roleId, this.goalId, this.taskId, s);
                 resList.add(ri);
             }
 

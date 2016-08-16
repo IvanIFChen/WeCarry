@@ -243,25 +243,6 @@ public class DBHelper extends SQLiteOpenHelper{
         return tasks;
     }
 
-    private TaskItem parseTask(Cursor c) {
-        TaskItem ti = new TaskItem(
-                c.getInt(c.getColumnIndex(_ID)),
-                c.getInt(c.getColumnIndex(TASK_GOAL_ID)),
-                c.getInt(c.getColumnIndex(TASK_ROLE_ID)),
-                c.getString(c.getColumnIndex(TASK_TITLE)),
-                Boolean.parseBoolean(c.getString(c.getColumnIndex(TASK_MILESTONE))),
-                c.getInt(c.getColumnIndex(TASK_EST)),
-                c.getInt(c.getColumnIndex(TASK_LST)),
-                c.getInt(c.getColumnIndex(TASK_EET)),
-                c.getInt(c.getColumnIndex(TASK_LET)),
-                c.getInt(c.getColumnIndex(TASK_DEADLINE)),
-                c.getInt(c.getColumnIndex(TASK_DURATION)),
-                new ArrayList<TaskItem>(),
-                new ArrayList<ResourceItem>()); // TODO: parse data
-        ti.setResourceFromString(c.getString(c.getColumnIndex(TASK_RESOURCE))); // TODO: parsing incomplete
-        return ti;
-    }
-
     // fixme: do not use
 //    public TaskItem getTask(String title) {
 //        SQLiteDatabase db = this.getReadableDatabase();
@@ -287,7 +268,6 @@ public class DBHelper extends SQLiteOpenHelper{
 //        return ti;
 //    }
 
-    // TODO: not tested
     public ArrayList<GoalItem> getAllGoal() {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<GoalItem> goalList = new ArrayList<GoalItem>();
@@ -298,14 +278,9 @@ public class DBHelper extends SQLiteOpenHelper{
         if (c.getCount() > 0) {
             for (int i = 0; i < c.getCount(); i++) {
                 c.moveToPosition(i);
-                gi = new GoalItem(
-                        c.getString(2),
-                        c.getLong(3),
-                        Boolean.parseBoolean(c.getString(5)),
-                        Boolean.parseBoolean(c.getString(6)),
-                        new ArrayList<TaskItem>());
+                gi = parseGoal(c);
                 // get goalID in order to find its task items
-                goalID = c.getInt(1);
+                goalID = gi.getGoalId();
                 // getting task items
                 ArrayList<TaskItem> tasks = getTasksByGoalID(goalID);
                 gi.setTaskList(tasks);
@@ -317,7 +292,6 @@ public class DBHelper extends SQLiteOpenHelper{
         return goalList;
     }
 
-    // TODO: not tested
     public ArrayList<TaskItem> getAllTasks() {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<TaskItem> taskList = new ArrayList<TaskItem>();
@@ -328,12 +302,79 @@ public class DBHelper extends SQLiteOpenHelper{
             for (int i = 0; i < cursor.getCount(); i++) {
                 cursor.moveToPosition(i);
                 ti = parseTask(cursor);
+
+                // getting ti's resources.
+//                ti.setResourcesList(getResByTaskID(ti.getTaskId()));
+
                 // add this task to taskList
                 taskList.add(ti);
+                Log.d("DB getAllTasks", ti.toString());
             }
         }
-        Log.i("getAllTasks", "taskList size: " + Integer.toString(taskList.size()));
         return taskList;
+    }
+
+    public ArrayList<ResourceItem> getResByTaskID(int taskID) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<ResourceItem> resList = new ArrayList<ResourceItem>();
+        Cursor c = db.rawQuery("SELECT * FROM " + TABLE_NAME_RESOURCE_LIST, null);
+
+        if (c.getCount() > 0) {
+            for (int i = 0; i < c.getCount(); i++) {
+                c.moveToPosition(i);
+                // if this current cursor item is belong to this taskID.
+                if (c.getInt(c.getColumnIndex(RESOURCE_TASK_ID)) == taskID) {
+                    ResourceItem ri = parseResource(c);
+                    resList.add(ri);
+                    Log.d("DB getResByTaskID", ri.toString());
+                }
+            }
+        }
+        return resList;
+    }
+
+    private TaskItem parseTask(Cursor c) {
+        String resStr = c.getString(c.getColumnIndex(TASK_RESOURCE));
+        TaskItem ti = new TaskItem(
+                c.getInt(c.getColumnIndex(_ID)),
+                c.getInt(c.getColumnIndex(TASK_GOAL_ID)),
+                c.getInt(c.getColumnIndex(TASK_ROLE_ID)),
+                c.getString(c.getColumnIndex(TASK_TITLE)),
+                Boolean.parseBoolean(c.getString(c.getColumnIndex(TASK_MILESTONE))),
+                c.getLong(c.getColumnIndex(TASK_EST)),
+                c.getLong(c.getColumnIndex(TASK_LST)),
+                c.getLong(c.getColumnIndex(TASK_EET)),
+                c.getLong(c.getColumnIndex(TASK_LET)),
+                c.getLong(c.getColumnIndex(TASK_DEADLINE)),
+                c.getLong(c.getColumnIndex(TASK_DURATION)),
+                new ArrayList<TaskItem>(), // TODO: parse data
+                new ArrayList<ResourceItem>()); // still empty
+        ti.setResourceFromString(c.getString(c.getColumnIndex(TASK_RESOURCE)));
+        return ti;
+    }
+
+    private GoalItem parseGoal(Cursor c) {
+        GoalItem gi = new GoalItem(
+                c.getInt(c.getColumnIndex(_ID)),
+                c.getInt(c.getColumnIndex(GOAL_ROLE_ID)),
+                c.getString(c.getColumnIndex(GOAL_TITLE)),
+                c.getLong(c.getColumnIndex(GOAL_DEADLINE)),
+                // let constructor calculate duration.
+                Boolean.parseBoolean(c.getString(c.getColumnIndex(GOAL_IMPORTANCE))),
+                Boolean.parseBoolean(c.getString(c.getColumnIndex(GOAL_URGENCY))),
+                new ArrayList<TaskItem>()); // still empty
+        return gi;
+    }
+
+    private ResourceItem parseResource(Cursor c) {
+        ResourceItem ri = new ResourceItem(
+                c.getInt(c.getColumnIndex(_ID)),
+                c.getInt(c.getColumnIndex(RESOURCE_TASK_ID)),
+                c.getInt(c.getColumnIndex(RESOURCE_GOAL_ID)),
+                c.getInt(c.getColumnIndex(RESOURCE_ROLE_ID)),
+                c.getString(c.getColumnIndex(RESOURCE_TITLE)),
+                c.getString(c.getColumnIndex(RESOURCE_EMAIL)));
+        return ri;
     }
 
     @Override

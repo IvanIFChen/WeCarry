@@ -22,9 +22,31 @@ public class ResourceItem implements Serializable {
         this.email = "";
     }
 
-    public ResourceItem(String title, String email) {
+    public ResourceItem(int resourceId, int taskId, int goalId, int roleId, String title, String email) {
+        this.resourceId = resourceId;
+        this.taskId = taskId;
+        this.goalId = goalId;
+        this.roleId = roleId;
         this.title = title;
         this.email = email;
+    }
+
+    public ResourceItem(int resourceId, int taskId, int goalId, int roleId, String title) {
+        this.resourceId = resourceId;
+        this.taskId = taskId;
+        this.goalId = goalId;
+        this.roleId = roleId;
+        this.title = title;
+        this.email = "";
+    }
+
+    public ResourceItem(int taskId, int goalId, int roleId, String title) {
+        this.resourceId = -1;
+        this.taskId = taskId;
+        this.goalId = goalId;
+        this.roleId = roleId;
+        this.title = title;
+        this.email = "";
     }
 
     public int getResourceId() {

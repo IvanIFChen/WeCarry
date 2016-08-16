@@ -74,7 +74,7 @@ public class StatsFragment extends Fragment {
         Utils.init(getActivity());
 
         // TODO: change this to false to show real data.
-        boolean showDemo = true;
+        boolean showDemo = false;
 
         if(showDemo) {
             // generate demo data

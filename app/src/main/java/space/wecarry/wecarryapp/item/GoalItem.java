@@ -27,25 +27,27 @@ public class GoalItem implements Serializable {
         this.taskList = new ArrayList<>();
     }
 
-    public GoalItem(String title, long deadline, boolean isImportant, boolean isUrgent, ArrayList<TaskItem> taskList) {
+//    public GoalItem(String title, long deadline, boolean isImportant, boolean isUrgent, ArrayList<TaskItem> taskList) {
+//        this.title = title;
+//        this.deadline = deadline;
+//        this.isImportant = isImportant;
+//        this.isUrgent = isUrgent;
+//        this.taskList = taskList;
+//        this.duration = 0;
+//        updateDuration();
+//    }
+
+    public GoalItem(int goalId, int roleId, String title, long deadline, boolean isImportant, boolean isUrgent, ArrayList<TaskItem> taskList) {
+        this.goalId = goalId;
+        this.roleId = roleId;
         this.title = title;
         this.deadline = deadline;
+        this.duration = 0;
         this.isImportant = isImportant;
         this.isUrgent = isUrgent;
         this.taskList = taskList;
-        this.duration = 0;
-        updateDuration();
+        this.updateDuration();
     }
-
-//    public GoalItem(String title, long deadline, long duration, boolean isImportant, boolean isUrgent, ArrayList<TaskItem> taskList) {
-
-    //    }
-//        this.taskList = taskList;
-//        this.isUrgent = isUrgent;
-//        this.isImportant = isImportant;
-//        this.duration = duration;
-//        this.deadline = deadline;
-//        this.title = title;
 
     public int getGoalId() {
         return goalId;

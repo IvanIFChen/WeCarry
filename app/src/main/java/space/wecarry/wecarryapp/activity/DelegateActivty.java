@@ -3,10 +3,12 @@ package space.wecarry.wecarryapp.activity;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.util.Log;
@@ -145,12 +147,28 @@ public class DelegateActivty extends AppCompatActivity {
                 editDeadline.setText(millSecToDateConverter(deadline));
 
             editDuration = (EditText)ll.findViewById(R.id.editTextDuration);
-            editDuration.setText(Long.toString(taskList.get(i).getDuration()));  // TODO: format
+            long duration = taskList.get(i).getDuration();
+            // 偷懶----------------------------------------------------------------------------------------------
+            final CharSequence[] items = {"15 分鐘", "30 分鐘", "1 小時", "2 小時", "4 小時", "8 小時"};    // TODO: To use better method to set resource, maybe we use .xml or cursor
+            final long[] time = {15, 30 ,60 ,120, 240, 480}; // 這邊先偷懶
+            int position =0;
+            for(int j =0; j< time.length; j++) {
+                if(duration == time[j]*60*1000L) {
+                    position = j;
+                    break;
+                }
+            }
+            // ----------------------------------------------------------------------------------------------
+            if(duration != 0) {
+                editDuration.setText(items[position].toString());
+            }else {
+                // If user didn't set any deadline  //目前不用理它?
+            }
 
             editDeadline.setOnClickListener(deadlineClickHandler);
             editDeadline.setId(listViewId);
 
-            editDuration.setOnClickListener(deadlineClickHandler);  //TODO: durationClickHandler
+            editDuration.setOnClickListener(durationClickHandler);
             editDuration.setId(listViewId);
 
             btnDelete = (Button)ll.findViewById(R.id.btn_del);
@@ -252,6 +270,37 @@ public class DelegateActivty extends AppCompatActivity {
             // Get the deadline(Long)
             Long deadline = taskList.get(v.getId()).getDeadline();
             showDatePickerDialog(deadline, (EditText) v, v.getId());
+        }
+    };
+
+    // DurationEdit button click
+    private View.OnClickListener durationClickHandler = new View.OnClickListener() {
+        final CharSequence[] items = {"15 分鐘", "30 分鐘", "1 小時", "2 小時", "4 小時", "8 小時"};    // TODO: To use better method to set resource, maybe we use .xml or cursor
+        final long[] time = {15, 30 ,60 ,120, 240, 480}; // 這邊先偷懶
+        @Override
+        public void onClick(final View v) {
+            Long duration = taskList.get(v.getId()).getDuration();
+            final int[] position = {0};
+            for(int i =0; i< time.length; i++) {
+                if(duration == time[i]*60*1000L) {
+                    position[0] = i;
+                    break;
+                }
+            }
+            new AlertDialog.Builder(DelegateActivty.this)
+                    .setTitle("選擇時間")   // TODO: English
+                    .setSingleChoiceItems(items, position[0], new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            position[0] = which;
+                        }
+                    }).setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    ((EditText) v).setText(items[position[0]].toString());
+                    taskList.get(v.getId()).setDuration(time[position[0]]*60*1000L);
+                }
+            }).setNegativeButton("返回", null).show();
         }
     };
 
