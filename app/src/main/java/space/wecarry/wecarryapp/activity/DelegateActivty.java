@@ -136,8 +136,8 @@ public class DelegateActivty extends AppCompatActivity {
 
             editResource = (EditText)ll.findViewById(R.id.editTextResource);
             editResource.setText(taskList.get(i).resourceToString());
-            editResource.setTextIsSelectable(true);
-            editResource.setFocusable(true);
+//            editResource.setTextIsSelectable(true);
+//            editResource.setFocusable(true);
 
             editDeadline = (EditText)ll.findViewById(R.id.editTextDeadline);
             long deadline = taskList.get(i).getDeadline();

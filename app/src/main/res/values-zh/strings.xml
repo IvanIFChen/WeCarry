@@ -26,6 +26,7 @@
     <string name="editTaskHint">得做什麼事情？</string>
     <string name="duration">為期時間</string>
     <string name="editDurationHint">花費多少時間？</string>
+    <string name="resource">資源</string>
 
     <!--Menu-->
     <string name="action_show_week">過去7天</string>

@@ -25,15 +25,9 @@ import java.util.HashMap;
 
 import space.wecarry.wecarryapp.R;
 import space.wecarry.wecarryapp.Scheduling;
-import space.wecarry.wecarryapp.adapter.TaskAdapter;
-import space.wecarry.wecarryapp.item.GoalItem;
-import space.wecarry.wecarryapp.item.RoleItem;
 import space.wecarry.wecarryapp.item.TaskItem;
 import space.wecarry.wecarryapp.sqlite.DBHelper;
 
-import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_ROLE_ID;
-import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_GOAL_LIST;
-import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_ROLE_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_TASK_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_DEADLINE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_DURATION;

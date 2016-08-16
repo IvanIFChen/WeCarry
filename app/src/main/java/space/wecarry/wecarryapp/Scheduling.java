@@ -153,7 +153,7 @@ public class Scheduling {
     }
 
     // To insert sleepTime in arrayList as busyTime
-    private void insertPreferenceBusyTime( //, int busyStartHour, int busyEndHour, int busyStartMin, int busyEndMin
+    private void insertPreferenceBusyTime( //, int busyStartHour, int busyEndHour, int busyStartMin, int busyEndMin // TODO: User input
     ) {
         Calendar startSleep = Calendar.getInstance();
         Calendar endSleep = Calendar.getInstance();
@@ -223,18 +223,19 @@ public class Scheduling {
         int indexFreeTime =0;
         for(TaskItem ti : tasksList) {
             long duration = ti.getDuration() ;
+            int insertTimes = 0;    // Number of times of inserted to calendar
             // Give a free time to a task,
             // so all of duration of a task should be used with free time
             while(duration >0) {
                 // if the duration has not been consumed
                 // we give it free time
-                int insertTimes = 0;    // Number of times of inserted to calendar
                 if(indexFreeTime < freeTimeItemsList.size()) {
                     duration-= (freeTimeItemsList.get(indexFreeTime).getAvailableTime());
                     long startTime =freeTimeItemsList.get(indexFreeTime).getStart();
                     long endTime = freeTimeItemsList.get(indexFreeTime).getEnd();
                     if(duration <0) {
                         endTime = (freeTimeItemsList.get(indexFreeTime).getAvailableTime()) + duration + startTime;
+                        // TODO: 剩下的時間不要浪費?
                     }
                     addEventToCalendar(ti.getTitle() + "(" + Integer.toString(insertTimes + 1) + ")", startTime, endTime);
                     insertTimes++;
