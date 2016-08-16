@@ -1,7 +1,11 @@
 package space.wecarry.wecarryapp.item;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Ivan IF Chen on 8/9/2016.
@@ -56,8 +60,6 @@ public class TaskItem implements Serializable {
         this.title = title;
         this.deadline = deadline;
         this.duration = processTime;
-//        this.latestEndTime = deadline;
-//        this.latestStartTime = deadline - processTime;
 
     }
 
@@ -67,8 +69,6 @@ public class TaskItem implements Serializable {
         this.title = title;
         this.deadline = deadline;
         this.duration = duration;
-        this.preprocessList = preprocessList;
-        this.resourcesList = resourcesList;
     }
 
     // all fields
