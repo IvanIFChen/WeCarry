@@ -39,6 +39,7 @@
     <!--Menu-->
     <string name="action_show_week">Last 7 days</string>
     <string name="action_show_month">Last 30 days</string>
+    <string name="action_toggle_demo">Toggle demo</string>
     <string name="scheduling">排程</string>
 
     <!--Default delegate activtiy fields-->

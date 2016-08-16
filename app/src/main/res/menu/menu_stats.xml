@@ -11,4 +11,9 @@
         android:orderInCategory="101"
         android:title="@string/action_show_month"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_demo"
+        android:orderInCategory="101"
+        android:title="@string/action_toggle_demo"
+        app:showAsAction="never" />
 </menu>

@@ -31,5 +31,6 @@
     <!--Menu-->
     <string name="action_show_week">過去7天</string>
     <string name="action_show_month">過去30天</string>
+    <string name="action_toggle_demo">顯示範例</string>
     <string name="scheduling">排程</string>
 </resources>

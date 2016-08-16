@@ -47,6 +47,7 @@ public class StatsFragment extends Fragment {
     private ArrayList<GoalItem> goalList;
     private ArrayList<TaskItem> taskList;
     private boolean showInWeek = true;
+    private boolean showDemo = false; // TODO: change this to false to show real data.
     // constants (all in minutes)
     private final float sleepDuration = UserConstants.sleepDuration;
     private final float breakfastDuration = UserConstants.breakfastDuration;
@@ -72,9 +73,6 @@ public class StatsFragment extends Fragment {
 
         // initialize chart library.
         Utils.init(getActivity());
-
-        // TODO: change this to false to show real data.
-        boolean showDemo = false;
 
         if(showDemo) {
             // generate demo data
@@ -122,6 +120,14 @@ public class StatsFragment extends Fragment {
                 ft.attach(frg);
                 ft.commit();
                 break;
+            case R.id.action_demo :
+                this.showDemo ^= true;
+                // refresh the fragment
+                ft.detach(frg);
+                ft.attach(frg);
+                ft.commit();
+                break;
+
         }
         return true;
     }
