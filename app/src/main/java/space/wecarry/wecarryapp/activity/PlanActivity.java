@@ -33,7 +33,6 @@ import space.wecarry.wecarryapp.sqlite.DBHelper;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_DEADLINE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_DURATION;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_TITLE;
-import static space.wecarry.wecarryapp.sqlite.DBConstants.RESOURCE_GOAL_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.RESOURCE_TASK_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_GOAL_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_RESOURCE_LIST;
@@ -63,7 +62,7 @@ public class PlanActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
-        buttonView = LayoutInflater.from(PlanActivity.this).inflate(R.layout.role_goal_object_button, null);
+        buttonView = LayoutInflater.from(PlanActivity.this).inflate(R.layout.activity_role_goal_object_button, null);
         editGoal = (EditText)findViewById(R.id.editTextGoal);
         ll_in_sv = (LinearLayout)findViewById(R.id.linearLayout_in_scrollView);
         btnConfirm = (Button)findViewById(R.id.info_dialog_confirm);
@@ -108,7 +107,7 @@ public class PlanActivity extends AppCompatActivity {
         for (int i = 0; i < mGoal.getTaskList().size(); i++) {
 
             HashMap editMap = new HashMap();
-            View view = LayoutInflater.from(PlanActivity.this).inflate(R.layout.plan_object, null); //物件來源
+            View view = LayoutInflater.from(PlanActivity.this).inflate(R.layout.activity_plan_object, null); //物件來源
             LinearLayout ll = (LinearLayout) view.findViewById(R.id.ll);
 
             editTask = (EditText)ll.findViewById(R.id.editTextTask);

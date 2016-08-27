@@ -27,11 +27,21 @@
     <string name="duration">為期時間</string>
     <string name="editDurationHint">花費多少時間？</string>
     <string name="resource">資源</string>
+    <string name="editResourceHint">要交給誰做？</string>
 
     <!--Menu-->
     <string name="action_show_week">過去7天</string>
     <string name="action_show_month">過去30天</string>
     <string name="action_toggle_demo">顯示範例</string>
     <string name="scheduling">排程</string>
+
+    <!--Default delegate activtiy fields-->
+    <string name="task_teach_string">教</string>
+    <string name="task_collect_result">驗收成果</string>
     <string name="reset">重設</string>
+
+    <!--DelegateActivity-->
+    <string name="pick_a_time">選擇時間</string>
+    <string name="confirm">確認</string>
+    <string name="go_back">返回</string>
 </resources>

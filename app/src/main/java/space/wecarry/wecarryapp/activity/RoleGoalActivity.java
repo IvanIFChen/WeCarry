@@ -36,7 +36,6 @@ import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_ROLE_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_TITLE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_URGENCY;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.RESOURCE_GOAL_ID;
-import static space.wecarry.wecarryapp.sqlite.DBConstants.RESOURCE_ROLE_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_DEADLINE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_DURATION;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_TITLE;
@@ -45,7 +44,6 @@ import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_RESOURCE_LI
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_ROLE_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_TASK_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_GOAL_ID;
-import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_ROLE_ID;
 
 public class RoleGoalActivity extends AppCompatActivity {
     private EditText editRole, editGoal, editDeadline;
@@ -65,7 +63,7 @@ public class RoleGoalActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_role_goal);
-        buttonView = LayoutInflater.from(RoleGoalActivity.this).inflate(R.layout.role_goal_object_button, null);
+        buttonView = LayoutInflater.from(RoleGoalActivity.this).inflate(R.layout.activity_role_goal_object_button, null);
         editRole = (EditText)findViewById(R.id.editTextRole);
         ll_in_sv = (LinearLayout)findViewById(R.id.linearLayout_in_scrollView);
         btnConfirm = (Button)findViewById(R.id.info_dialog_confirm);
@@ -110,7 +108,7 @@ public class RoleGoalActivity extends AppCompatActivity {
         for (int i = 0; i < mRole.getGoalList().size(); i++) {
 
             HashMap editMap = new HashMap();
-            View view = LayoutInflater.from(RoleGoalActivity.this).inflate(R.layout.role_goal_object, null); //物件來源
+            View view = LayoutInflater.from(RoleGoalActivity.this).inflate(R.layout.activity_role_goal_object, null); //物件來源
             LinearLayout ll = (LinearLayout) view.findViewById(R.id.ll);
 
             editGoal = (EditText)ll.findViewById(R.id.editTextGoal);

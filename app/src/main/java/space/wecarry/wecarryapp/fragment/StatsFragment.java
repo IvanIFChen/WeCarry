@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -121,7 +122,7 @@ public class StatsFragment extends Fragment {
                 ft.commit();
                 break;
             case R.id.action_demo :
-                this.showDemo ^= true;
+                this.showDemo ^= true; // XOR gate
                 // refresh the fragment
                 ft.detach(frg);
                 ft.attach(frg);

@@ -14,14 +14,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
+import space.wecarry.wecarryapp.ListDataConverter;
 import space.wecarry.wecarryapp.R;
 import space.wecarry.wecarryapp.activity.RoleGoalActivity;
-import space.wecarry.wecarryapp.adapter.RoleGoalAdapter;
+import space.wecarry.wecarryapp.adapter.CustomExpandableListAdapter;
 import space.wecarry.wecarryapp.item.GoalItem;
 import space.wecarry.wecarryapp.item.RoleItem;
 import space.wecarry.wecarryapp.sqlite.DBHelper;
@@ -32,7 +36,6 @@ import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_GOAL_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_RESOURCE_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_ROLE_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_TASK_LIST;
-import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_GOAL_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_ROLE_ID;
 
 /**
@@ -40,9 +43,12 @@ import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_ROLE_ID;
  */
 public class RoleGoalFragment extends Fragment {
 
-    private ListView listView;
-    private ArrayList mList;
-    private RoleGoalAdapter adapter;
+    private ExpandableListView expandableListView;
+    private ExpandableListAdapter expandableListAdapter;
+    List<String> expandableListTitle;
+    HashMap<String, List<String>> expandableListDetail;
+
+    private ArrayList roleList;
     private DBHelper dbHelper = null;
     private SQLiteDatabase db = null;
     private Cursor cursorRole= null ,cursorGoal = null;
@@ -54,33 +60,61 @@ public class RoleGoalFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_role_goal, container, false);
         getActivity().setTitle(getString(R.string.navigation_drawer_role_goal));
-        listView = (ListView) rootView.findViewById(R.id.listView);
+        expandableListView = (ExpandableListView) rootView.findViewById(R.id.expandableListView);
 
-        // Get date and print-----------------------------------------------------------------------
-        getRoleGoalData();
-        adapter = new RoleGoalAdapter(getActivity(), mList);
-        listView.setAdapter(adapter);
+        // set empty view
         View emptyView = rootView.findViewById(R.id.view_empty);
-        listView.setEmptyView(emptyView);
+        expandableListView.setEmptyView(emptyView);
 
-        // Click------------------------------------------------------------------------------------
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        updateListView();
+
+        expandList();
+
+        // Click ----------------------------------------------------------------------------------
+//        expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+//
+//            @Override
+//            public void onGroupExpand(int groupPosition) { }
+//        });
+//        expandableListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+//
+//            @Override
+//            public void onGroupCollapse(int groupPosition) { }
+//        });
+
+        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public boolean onChildClick(ExpandableListView parent, View v,
+                                        int groupPosition, int childPosition, long id) {
                 Intent intent = new Intent();
                 intent.setClass(getActivity(), RoleGoalActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putInt("roleUserSelected", position);
-                bundle.putSerializable("roleItem", ((RoleItem)mList.get(position)));
+                bundle.putInt("roleUserSelected", groupPosition);
+                bundle.putSerializable("roleItem", ((RoleItem) roleList.get(groupPosition)));
                 intent.putExtras(bundle);
                 startActivityForResult(intent, 0);
+                return false;
             }
         });
+
+        // Click-----------------------------------------------------------------------------------
+//        expandableListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Intent intent = new Intent();
+//                intent.setClass(getActivity(), RoleGoalActivity.class);
+//                Bundle bundle = new Bundle();
+//                bundle.putInt("roleUserSelected", position);
+//                bundle.putSerializable("roleItem", ((RoleItem) roleList.get(position)));
+//                intent.putExtras(bundle);
+//                startActivityForResult(intent, 0);
+//            }
+//        });
         // Long Click-------------------------------------------------------------------------------
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        expandableListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                RoleItem roleItem = (RoleItem) mList.get(position);
+                RoleItem roleItem = (RoleItem) roleList.get(position);
                 deleteRoleDialog(roleItem.getTitle(), roleItem.getId(), view);
                 return true;
             }
@@ -103,8 +137,25 @@ public class RoleGoalFragment extends Fragment {
         return rootView;
     }
 
+    private void updateListView() {
+        // get roleList data from local db.
+        getRoleGoalData();
+
+        expandableListDetail = ListDataConverter.convertRoleListData(roleList);
+        expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
+        expandableListAdapter = new CustomExpandableListAdapter(getActivity(), expandableListTitle, expandableListDetail);
+        expandableListView.setAdapter(expandableListAdapter);
+    }
+
+    private void expandList() {
+        // Expand all groups.
+        int count = expandableListAdapter.getGroupCount();
+        for (int position = 1; position <= count; position++)
+            expandableListView.expandGroup(position - 1);
+    }
+
     private void getRoleGoalData() {
-        mList = new ArrayList<>();
+        roleList = new ArrayList<>();
         // Open db
         dbHelper = new DBHelper(getActivity());
         db = dbHelper.getReadableDatabase();
@@ -139,7 +190,7 @@ public class RoleGoalFragment extends Fragment {
                         cursorGoal.moveToNext();
                     }
                 }
-                mList.add(roleItem);
+                roleList.add(roleItem);
                 cursorRole.moveToNext();
             }
         }
@@ -148,9 +199,10 @@ public class RoleGoalFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            getRoleGoalData();
-            adapter = new RoleGoalAdapter(getActivity(), mList);
-            listView.setAdapter(adapter);
+
+            updateListView();
+            expandList();
+
             Toast.makeText(getActivity(),"Update",Toast.LENGTH_SHORT).show();
         }
     }
@@ -168,9 +220,8 @@ public class RoleGoalFragment extends Fragment {
                 db.delete(TABLE_NAME_RESOURCE_LIST, RESOURCE_ROLE_ID + "=" + String.valueOf(roleId), null);
                 // TODO: Delete Event ??
                 Snackbar.make(view, "已刪除", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
-                getRoleGoalData();
-                adapter = new RoleGoalAdapter(getActivity(), mList);
-                listView.setAdapter(adapter);
+
+                updateListView();
             }
         });
         dialog.setNeutralButton("取消",new DialogInterface.OnClickListener() {

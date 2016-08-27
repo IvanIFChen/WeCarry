@@ -126,7 +126,6 @@ public class DBHelper extends SQLiteOpenHelper{
 //        db.insert(TEST_GOAL_TABLE, null, cv); // fixme: test table
 //    }
 
-    // TODO: not tested
     public void insertTask(TaskItem ti, int goalID, int roleID) {
         Log.d("insertTask", ti.getTitle());
         SQLiteDatabase db = this.getWritableDatabase();
@@ -183,7 +182,6 @@ public class DBHelper extends SQLiteOpenHelper{
 //        return gi;
 //    }
 
-    // TODO: not tested
     public ArrayList<TaskItem> getTasksByGoalID(int goalID) {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<TaskItem> tasks = new ArrayList<TaskItem>();

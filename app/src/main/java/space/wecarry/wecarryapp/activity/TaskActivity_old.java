@@ -58,7 +58,7 @@ public class TaskActivity_old extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delegate);
-        buttonView = LayoutInflater.from(TaskActivity_old.this).inflate(R.layout.role_goal_object_button, null);
+        buttonView = LayoutInflater.from(TaskActivity_old.this).inflate(R.layout.activity_role_goal_object_button, null);
         textTask = (TextView)findViewById(R.id.textTask);
         ll_in_sv = (LinearLayout)findViewById(R.id.linearLayout_in_scrollView);
         btnConfirm = (Button)findViewById(R.id.info_dialog_confirm);

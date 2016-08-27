@@ -288,19 +288,19 @@ public class DelegateActivty extends AppCompatActivity {
                 }
             }
             new AlertDialog.Builder(DelegateActivty.this)
-                    .setTitle("選擇時間")   // TODO: English
+                    .setTitle(getString(R.string.pick_a_time))
                     .setSingleChoiceItems(items, position[0], new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             position[0] = which;
                         }
-                    }).setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                    }).setPositiveButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     ((EditText) v).setText(items[position[0]].toString());
                     taskList.get(v.getId()).setDuration(time[position[0]]*60*1000L);
                 }
-            }).setNegativeButton("返回", null).show();
+            }).setNegativeButton(getString(R.string.go_back), null).show();
         }
     };
 

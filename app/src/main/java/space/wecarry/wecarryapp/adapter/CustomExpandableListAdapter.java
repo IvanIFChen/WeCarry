@@ -5,32 +5,22 @@ import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import space.wecarry.wecarryapp.R;
-import space.wecarry.wecarryapp.item.GoalItem;
-import space.wecarry.wecarryapp.item.RoleItem;
-import space.wecarry.wecarryapp.ListDataConverter;
 
-/**
- * Created by Blair on 2016/8/6.
- */
-public class RoleGoalAdapter extends BaseExpandableListAdapter {
+public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
 
-    private ArrayList<RoleItem> roleList;
-    private LayoutInflater layoutInflater;
-    public Context context;
-    // will get the following two information from roleList.
+    private Context context;
     private List<String> expandableListTitle;
     private HashMap<String, List<String>> expandableListDetail;
 
-    public RoleGoalAdapter(Context context, List<String> expandableListTitle,
+    public CustomExpandableListAdapter(Context context, List<String> expandableListTitle,
                                        HashMap<String, List<String>> expandableListDetail) {
         this.context = context;
         this.expandableListTitle = expandableListTitle;
@@ -68,6 +58,7 @@ public class RoleGoalAdapter extends BaseExpandableListAdapter {
         return this.expandableListDetail.get(this.expandableListTitle.get(listPosition))
                 .size();
     }
+
     @Override
     public Object getGroup(int listPosition) {
         return this.expandableListTitle.get(listPosition);
@@ -85,7 +76,7 @@ public class RoleGoalAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getGroupView(int listPosition, boolean isExpanded,
-                             View convertView,ViewGroup parent) {
+                             View convertView, ViewGroup parent) {
         String listTitle = (String) getGroup(listPosition);
         if (convertView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) this.context.
@@ -96,6 +87,11 @@ public class RoleGoalAdapter extends BaseExpandableListAdapter {
                 .findViewById(R.id.listTitle);
         listTitleTextView.setTypeface(null, Typeface.BOLD);
         listTitleTextView.setText(listTitle);
+
+        // this will make the list view forever expanded, unable to collapse them.
+//        ExpandableListView mExpandableListView = (ExpandableListView) parent;
+//        mExpandableListView.expandGroup(listPosition);
+
         return convertView;
     }
 
