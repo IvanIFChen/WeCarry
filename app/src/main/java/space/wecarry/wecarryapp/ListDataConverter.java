@@ -1,7 +1,11 @@
 package space.wecarry.wecarryapp;
 
+import android.util.Log;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import space.wecarry.wecarryapp.item.GoalItem;
@@ -12,7 +16,7 @@ import space.wecarry.wecarryapp.item.TaskItem;
  * Created by Ivan IF Chen on 8/27/2016.
  */
 public class ListDataConverter {
-    public static HashMap<String, List<String>> convertRoleListData(ArrayList<RoleItem> roleList) {
+    public static LinkedHashMap<String, List<String>> convertRoleListData(ArrayList<RoleItem> roleList) {
         /**
          * Input should be either a roleList (for the Role and Goal fragment)
          * or a goalList (used for the Plan fragment).
@@ -42,7 +46,7 @@ public class ListDataConverter {
          * +-------+---------+
          */
 
-        HashMap<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
+        LinkedHashMap<String, List<String>> expandableListDetail = new LinkedHashMap<String, List<String>>();
 
         // Convert roleList to HashMap.
         for (RoleItem ri : roleList) {
@@ -60,7 +64,7 @@ public class ListDataConverter {
         return expandableListDetail;
     }
 
-    public static HashMap<String, List<String>> convertGoalListData(ArrayList<GoalItem> goalList) {
+    public static LinkedHashMap<String, List<String>> convertGoalListData(ArrayList<GoalItem> goalList) {
         /**
          * Input should be either a roleList (for the Role and Goal fragment)
          * or a goalList (used for the Plan fragment).
@@ -90,7 +94,7 @@ public class ListDataConverter {
          * +-------+---------+
          */
 
-        HashMap<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
+        LinkedHashMap<String, List<String>> expandableListDetail = new LinkedHashMap<String, List<String>>();
 
         // Convert roleList to HashMap.
         for (GoalItem gi : goalList) {
