@@ -14,12 +14,22 @@
         android:id="@+id/linearLayout">
 
         <EditText
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="9"
             android:maxLines="1"
             android:singleLine="true"
             android:hint="@string/editGoalHint"
             android:id="@+id/editTextGoal" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/hint"
+            android:clickable="true"
+            android:id="@+id/textGoalHint" />
     </LinearLayout>
 
     <!--在此使用ScrollView 因為如果過多筆則可以讓使用者往下拉-->

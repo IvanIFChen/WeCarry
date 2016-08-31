@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.ParseException;
@@ -49,6 +50,7 @@ public class PlanActivity extends AppCompatActivity {
     private EditText editGoal, editTask, editDeadline, editDuration;
     private Button btnConfirm, btnCancel, btnNewList, btnDelete;
     private LinearLayout ll_in_sv;
+    private TextView textViewGoalHint;
     private ArrayList<HashMap> objectList;
     private View buttonView;
     private GoalItem mGoal, old_mGoal;
@@ -68,6 +70,7 @@ public class PlanActivity extends AppCompatActivity {
         btnConfirm = (Button)findViewById(R.id.info_dialog_confirm);
         btnCancel = (Button)findViewById(R.id.info_dialog_cancel);
         btnNewList = (Button)buttonView.findViewById(R.id.info_dialog_new);
+        textViewGoalHint = (TextView)findViewById(R.id.textGoalHint);
         today = Calendar.getInstance();
 
         // Get what user selected
@@ -217,6 +220,28 @@ public class PlanActivity extends AppCompatActivity {
                 saveDataInBuffer();
                 mGoal.addTaskItem(new TaskItem());
                 addListView(); //reload view
+            }
+        });
+
+        // Goal Hint
+        textViewGoalHint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(PlanActivity.this);
+                dialog.setTitle("訂目標的「SMART」原則");
+                dialog.setMessage(
+                        "Specific – target a specific area for improvement.\n\n" +
+                        "Measurable – quantify or at least suggest an indicator of progress.\n\n" +
+                        "Assignable – specify who will do it.\n\n" +
+                        "Realistic – state what results can realistically be achieved, given available resources.\n\n" +
+                        "Time-related – specify when the result(s) can be achieved.\n");
+                dialog.setNeutralButton("關閉",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        // Cancel
+                    }
+                });
+                dialog.show();
             }
         });
     }

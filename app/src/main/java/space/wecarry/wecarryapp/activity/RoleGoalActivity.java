@@ -257,10 +257,10 @@ public class RoleGoalActivity extends AppCompatActivity {
             AlertDialog.Builder dialog = new AlertDialog.Builder(RoleGoalActivity.this);
             dialog.setTitle("訂目標的「SMART」原則");
             dialog.setMessage(
-                    "Specific – target a specific area for improvement.\n" +
-                    "Measurable – quantify or at least suggest an indicator of progress.\n" +
-                    "Assignable – specify who will do it.\n" +
-                    "Realistic – state what results can realistically be achieved, given available resources.\n" +
+                    "Specific – target a specific area for improvement.\n\n" +
+                    "Measurable – quantify or at least suggest an indicator of progress.\n\n" +
+                    "Assignable – specify who will do it.\n\n" +
+                    "Realistic – state what results can realistically be achieved, given available resources.\n\n" +
                     "Time-related – specify when the result(s) can be achieved.\n");
             dialog.setNeutralButton("關閉",new DialogInterface.OnClickListener() {
                 @Override
