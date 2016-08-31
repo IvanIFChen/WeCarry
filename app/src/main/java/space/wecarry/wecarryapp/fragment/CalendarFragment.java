@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -166,16 +167,19 @@ public class CalendarFragment extends Fragment {
         buttonSchedule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Starting scheduling
-                new Scheduling(getActivity(), taskList).scheduleAdapter();
-
-                // Go to the Calendar in user's device
-                Uri.Builder builder = CalendarContract.CONTENT_URI.buildUpon();
-                builder.appendPath("time");
-                ContentUris.appendId(builder, Calendar.getInstance().getTimeInMillis());
-                Intent intent = new Intent(Intent.ACTION_VIEW)
-                        .setData(builder.build());
-                startActivity(intent);
+                if(taskList.size() > 0) {
+                    // Starting scheduling
+                    new Scheduling(getActivity(), taskList).scheduleAdapter();
+                    // Go to the Calendar in user's device
+                    Uri.Builder builder = CalendarContract.CONTENT_URI.buildUpon();
+                    builder.appendPath("time");
+                    ContentUris.appendId(builder, Calendar.getInstance().getTimeInMillis());
+                    Intent intent = new Intent(Intent.ACTION_VIEW)
+                            .setData(builder.build());
+                    startActivity(intent);
+                }else {
+                    Toast.makeText(getActivity(), "無任務可排程", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

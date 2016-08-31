@@ -37,6 +37,13 @@ public class Scheduling {
             CalendarContract.Instances.END             // 3
     };
 
+    public static final String[] EVENT_PROJECTION = new String[] {
+            CalendarContract.Calendars._ID,                           // 0
+            CalendarContract.Calendars.ACCOUNT_NAME,                  // 1
+            CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,         // 2
+            CalendarContract.Calendars.OWNER_ACCOUNT                  // 3
+    };
+
     // The indices for the projection array above.
     private static final int PROJECTION_ID_INDEX = 0;
     private static final int PROJECTION_BEGIN_INDEX = 1;
@@ -54,6 +61,8 @@ public class Scheduling {
     private long nowTime = Calendar.getInstance().getTimeInMillis();
     private long projectDeadline;
     private Context context;
+    private Long calID;
+    private String calName;
 
     public Scheduling(Context c){
         this.context = c;
@@ -110,6 +119,9 @@ public class Scheduling {
 
         // Find free time
         findFreeTime();
+
+        // The id of the calendar we insert event
+        calID = getUserLocalCalendarId();
 
         // Start scheduling
 //        scheduleAdapter();
@@ -262,15 +274,15 @@ public class Scheduling {
             }
         }
         // Check if some tasks have no time to do
+        String stringMessage = "\n插入行事曆: "+calName+"(ID:"+String.valueOf(calID)+")";
         if(overDeadlineList.size() > 0) {
-            Toast.makeText(context, "部分任務超過Deadline無法排程", Toast.LENGTH_SHORT).show();   // TODO: English and better method to show message
+            Toast.makeText(context, "部分任務超過Deadline無法排程"+stringMessage, Toast.LENGTH_LONG).show();   // TODO: English and better method to show message
         }else {
-            Toast.makeText(context, "成功排程", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "成功排程"+stringMessage, Toast.LENGTH_LONG).show();
         }
     }
 
     private void addEventToCalendar(String title, long startMillis, long endMillis) {
-        long calID = 1; // The id of calendar we insert event
         ContentResolver cr = context.getContentResolver();
         ContentValues values = new ContentValues();
         values.put(CalendarContract.Events.DTSTART, startMillis);
@@ -278,8 +290,20 @@ public class Scheduling {
         values.put(CalendarContract.Events.TITLE, title);
         values.put(CalendarContract.Events.CALENDAR_ID, calID);
         values.put(CalendarContract.Events.EVENT_TIMEZONE, String.valueOf(TimeZone.getAvailableIDs()));
-        uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+        uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);   // TODO: ???
         saveEventUriToDB(uri.toString());
+    }
+
+    private long getUserLocalCalendarId() {
+        // Run query
+        Cursor cur = null;
+        ContentResolver cr = context.getContentResolver();
+        Uri uri = CalendarContract.Calendars.CONTENT_URI;
+        cur = cr.query(uri, EVENT_PROJECTION, null, null, null);    // TODO: ???
+        cur.moveToFirst();
+        calID = cur.getLong(0);    // The first id in default seems to be local calendar?
+        calName = cur.getString(2);
+        return calID;
     }
 
     public int deleteAllEvent() {
