@@ -9,36 +9,46 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
+import space.wecarry.wecarryapp.ListDataConverter;
 import space.wecarry.wecarryapp.R;
 import space.wecarry.wecarryapp.activity.PlanActivity;
-import space.wecarry.wecarryapp.adapter.PlanAdapter;
+import space.wecarry.wecarryapp.adapter.CustomExpandableListAdapter;
 import space.wecarry.wecarryapp.item.GoalItem;
 import space.wecarry.wecarryapp.item.TaskItem;
 import space.wecarry.wecarryapp.sqlite.DBHelper;
 
 import static space.wecarry.wecarryapp.sqlite.DBConstants.RESOURCE_GOAL_ID;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.RESOURCE_TASK_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_GOAL_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_RESOURCE_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_TASK_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_GOAL_ID;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_ID;
 
 /**
  * Created by Ivan IF Chen on 8/2/2016.
  */
 public class PlanFragment extends Fragment {
 
-    private ListView listView;
-    private ArrayList mList;
-    private PlanAdapter adapter;
+    private ExpandableListView expandableListView;
+    private ExpandableListAdapter expandableListAdapter;
+    List<String> expandableListTitle;
+    HashMap<String, List<String>> expandableListDetail;
+
+    private ArrayList<GoalItem> goalList;
     private DBHelper dbHelper = null;
     private SQLiteDatabase db = null;
     private Cursor cursorGoal = null ,cursorTask = null;
@@ -50,34 +60,72 @@ public class PlanFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_plan, container, false);
         getActivity().setTitle(getString(R.string.navigation_drawer_plan));
-        listView = (ListView) rootView.findViewById(R.id.listView);
+        expandableListView = (ExpandableListView) rootView.findViewById(R.id.expandableListView);
 
-        // Get date and print-----------------------------------------------------------------------
-        getGoalTaskData();
-        adapter = new PlanAdapter(getActivity(), mList);
-        listView.setAdapter(adapter);
+        // set empty view
         View emptyView = rootView.findViewById(R.id.view_empty);
-        listView.setEmptyView(emptyView);
+        expandableListView.setEmptyView(emptyView);
 
-        // Click------------------------------------------------------------------------------------
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        updateListView();
+
+        expandList();
+
+        // group click
+        expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent();
-                intent.setClass(getActivity(), PlanActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putInt("goalUserSelected", position);
-                bundle.putSerializable("goalItem", ((GoalItem)mList.get(position)));
-                intent.putExtras(bundle);
-                startActivityForResult(intent, 0);
+            public boolean onGroupClick(ExpandableListView parent, View v,
+                                        int groupPosition, long id) {
+                // only edit when the group size is 0 (this goal has no tasks).
+                if (goalList.get(groupPosition).getTaskList().size() == 0)
+                    startEditGoalActivity(groupPosition);
+
+                return false;
             }
         });
+
+        // child click
+        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v,
+                                        int groupPosition, int childPosition, long id) {
+//                Toast.makeText(getActivity(), Integer.toString(groupPosition)
+//                        + " - " + Integer.toString(childPosition), Toast.LENGTH_SHORT).show();
+
+                startEditGoalActivity(groupPosition);
+
+                return false;
+            }
+        });
+
         // Long Click-------------------------------------------------------------------------------
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        expandableListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                GoalItem goalItem = (GoalItem) mList.get(position);
-                deleteGoalDialog(goalItem.getTitle(), goalItem.getGoalId(), view);
+
+                long packedPosition = expandableListView.getExpandableListPosition(position);
+
+                int itemType = ExpandableListView.getPackedPositionType(packedPosition);
+                int groupPosition = ExpandableListView.getPackedPositionGroup(packedPosition);
+                int childPosition = ExpandableListView.getPackedPositionChild(packedPosition);
+
+
+                /*  if group item long clicked */
+                if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+                    // delete the group (goal)
+                    GoalItem goalItem = goalList.get(groupPosition);
+                    deleteGoalDialog(goalItem.getTitle(), goalItem.getGoalId(), view);
+                }
+
+                /*  if child item long clicked */
+                else if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+                    // delete the child (task)
+                    GoalItem goalItem = goalList.get(groupPosition);
+                    TaskItem taskItem = goalItem.getTaskList().get(childPosition);
+                    deleteTaskDialog(taskItem.getTitle(), taskItem.getTaskId(), view);
+                }
+
+                // return true no matter what. Because it will cause conflict with the other click
+                // listener (long click is also a click, if false will trigger both listeners).
                 return true;
             }
         });
@@ -85,8 +133,36 @@ public class PlanFragment extends Fragment {
         return rootView;
     }
 
+    private void startEditGoalActivity(int goalPosition) {
+        Intent intent = new Intent();
+        intent.setClass(getActivity(), PlanActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt("goalUserSelected", goalPosition);
+        bundle.putSerializable("goalItem", goalList.get(goalPosition));
+        intent.putExtras(bundle);
+        startActivityForResult(intent, 0);
+    }
+
+    private void updateListView() {
+        // get roleList data from local db.
+        getGoalTaskData();
+
+        expandableListDetail = ListDataConverter.convertGoalListData(goalList);
+        expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
+
+        expandableListAdapter = new CustomExpandableListAdapter(getActivity(), expandableListTitle, expandableListDetail);
+        expandableListView.setAdapter(expandableListAdapter);
+    }
+
+    private void expandList() {
+        // Expand all groups.
+        int count = expandableListAdapter.getGroupCount();
+        for (int position = 1; position <= count; position++)
+            expandableListView.expandGroup(position - 1);
+    }
+
     private void getGoalTaskData() {
-        mList = new ArrayList<>();
+        goalList = new ArrayList<>();
         // Open db
         dbHelper = new DBHelper(getActivity());
         db = dbHelper.getReadableDatabase();
@@ -129,7 +205,7 @@ public class PlanFragment extends Fragment {
                         cursorTask.moveToNext();
                     }
                 }
-                mList.add(goalItem);
+                goalList.add(goalItem);
                 cursorGoal.moveToNext();
             }
         }
@@ -138,9 +214,10 @@ public class PlanFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            getGoalTaskData();
-            adapter = new PlanAdapter(getActivity(), mList);
-            listView.setAdapter(adapter);
+
+            updateListView();
+            expandList();
+
             Toast.makeText(getActivity(),"Update",Toast.LENGTH_SHORT).show();
         }
     }
@@ -157,9 +234,34 @@ public class PlanFragment extends Fragment {
                 db.delete(TABLE_NAME_RESOURCE_LIST, RESOURCE_GOAL_ID + "=" + String.valueOf(goalId), null);
                 // TODO: Delete Event ??
                 Snackbar.make(view, "已刪除", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
-                getGoalTaskData();
-                adapter = new PlanAdapter(getActivity(), mList);
-                listView.setAdapter(adapter);
+
+                updateListView();
+                expandList();
+            }
+        });
+        dialog.setNeutralButton("取消",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                // Cancel
+            }
+        });
+        dialog.show();
+    }
+
+    private void deleteTaskDialog(String taskTitle, final int taskId, final View view) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+        dialog.setTitle("提示");
+        dialog.setMessage("您要刪除"+taskTitle+"這個目標？");
+        dialog.setPositiveButton("刪除",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                db.delete(TABLE_NAME_TASK_LIST, "_ID=" + String.valueOf(taskId), null);
+                db.delete(TABLE_NAME_RESOURCE_LIST, RESOURCE_TASK_ID + "=" + String.valueOf(taskId), null);
+                // TODO: Delete Event ??
+                Snackbar.make(view, "已刪除", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+
+                updateListView();
+                expandList();
             }
         });
         dialog.setNeutralButton("取消",new DialogInterface.OnClickListener() {

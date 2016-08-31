@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,14 +29,17 @@ import space.wecarry.wecarryapp.activity.RoleGoalActivity;
 import space.wecarry.wecarryapp.adapter.CustomExpandableListAdapter;
 import space.wecarry.wecarryapp.item.GoalItem;
 import space.wecarry.wecarryapp.item.RoleItem;
+import space.wecarry.wecarryapp.item.TaskItem;
 import space.wecarry.wecarryapp.sqlite.DBHelper;
 
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_ROLE_ID;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.RESOURCE_GOAL_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.RESOURCE_ROLE_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_GOAL_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_RESOURCE_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_ROLE_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_TASK_LIST;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_GOAL_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_ROLE_ID;
 
 /**
@@ -48,7 +52,7 @@ public class RoleGoalFragment extends Fragment {
     List<String> expandableListTitle;
     HashMap<String, List<String>> expandableListDetail;
 
-    private ArrayList roleList;
+    private ArrayList<RoleItem> roleList;
     private DBHelper dbHelper = null;
     private SQLiteDatabase db = null;
     private Cursor cursorRole= null ,cursorGoal = null;
@@ -70,52 +74,62 @@ public class RoleGoalFragment extends Fragment {
 
         expandList();
 
-        // Click ----------------------------------------------------------------------------------
-//        expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-//
-//            @Override
-//            public void onGroupExpand(int groupPosition) { }
-//        });
-//        expandableListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
-//
-//            @Override
-//            public void onGroupCollapse(int groupPosition) { }
-//        });
-
-        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+        // group click
+        expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
-            public boolean onChildClick(ExpandableListView parent, View v,
-                                        int groupPosition, int childPosition, long id) {
-                Intent intent = new Intent();
-                intent.setClass(getActivity(), RoleGoalActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putInt("roleUserSelected", groupPosition);
-                bundle.putSerializable("roleItem", ((RoleItem) roleList.get(groupPosition)));
-                intent.putExtras(bundle);
-                startActivityForResult(intent, 0);
+            public boolean onGroupClick(ExpandableListView parent, View v,
+                                        int groupPosition, long id) {
+                // only edit when the group size is 0 (this role has no goals).
+                if (roleList.get(groupPosition).getGoalList().size() == 0)
+                    startEditRoleActivity(groupPosition);
+
                 return false;
             }
         });
 
-        // Click-----------------------------------------------------------------------------------
-//        expandableListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Intent intent = new Intent();
-//                intent.setClass(getActivity(), RoleGoalActivity.class);
-//                Bundle bundle = new Bundle();
-//                bundle.putInt("roleUserSelected", position);
-//                bundle.putSerializable("roleItem", ((RoleItem) roleList.get(position)));
-//                intent.putExtras(bundle);
-//                startActivityForResult(intent, 0);
-//            }
-//        });
+        // child click
+        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v,
+                                        int groupPosition, int childPosition, long id) {
+//                Toast.makeText(getActivity(), Integer.toString(groupPosition)
+//                        + " - " + Integer.toString(childPosition), Toast.LENGTH_SHORT).show();
+
+                startEditRoleActivity(groupPosition);
+
+                return false;
+            }
+        });
+
         // Long Click-------------------------------------------------------------------------------
-         expandableListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        expandableListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                RoleItem roleItem = (RoleItem) roleList.get(position);
-                deleteRoleDialog(roleItem.getTitle(), roleItem.getId(), view);
+
+                long packedPosition = expandableListView.getExpandableListPosition(position);
+
+                int itemType = ExpandableListView.getPackedPositionType(packedPosition);
+                int groupPosition = ExpandableListView.getPackedPositionGroup(packedPosition);
+                int childPosition = ExpandableListView.getPackedPositionChild(packedPosition);
+
+
+                /*  if group item long clicked */
+                if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+                    // delete the group (role)
+                    RoleItem roleItem = roleList.get(groupPosition);
+                    deleteRoleDialog(roleItem.getTitle(), roleItem.getId(), view);
+                }
+
+                /*  if child item long clicked */
+                else if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+                    // delete the child (task)
+                    RoleItem roleItem = roleList.get(groupPosition);
+                    GoalItem goalItem = roleItem.getGoalList().get(childPosition);
+                    deleteGoalDialog(goalItem.getTitle(), goalItem.getGoalId(), view);
+                }
+
+                // return true no matter what. Because it will cause conflict with the other click
+                // listener (long click is also a click, if false will trigger both listeners).
                 return true;
             }
         });
@@ -135,6 +149,16 @@ public class RoleGoalFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    private void startEditRoleActivity(int rolePosition) {
+        Intent intent = new Intent();
+        intent.setClass(getActivity(), RoleGoalActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt("roleUserSelected", rolePosition);
+        bundle.putSerializable("roleItem", roleList.get(rolePosition));
+        intent.putExtras(bundle);
+        startActivityForResult(intent, 0);
     }
 
     private void updateListView() {
@@ -222,12 +246,39 @@ public class RoleGoalFragment extends Fragment {
                 Snackbar.make(view, "已刪除", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
 
                 updateListView();
+                expandList();
             }
         });
         dialog.setNeutralButton("取消",new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
             // Cancel
+            }
+        });
+        dialog.show();
+    }
+
+    private void deleteGoalDialog(String goalTitle, final int goalId, final View view) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+        dialog.setTitle("提示");
+        dialog.setMessage("您要刪除"+goalTitle+"這個目標？");
+        dialog.setPositiveButton("刪除",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                db.delete(TABLE_NAME_GOAL_LIST,"_ID=" + String.valueOf(goalId), null);
+                db.delete(TABLE_NAME_TASK_LIST, TASK_GOAL_ID + "=" + String.valueOf(goalId), null);
+                db.delete(TABLE_NAME_RESOURCE_LIST, RESOURCE_GOAL_ID + "=" + String.valueOf(goalId), null);
+                // TODO: Delete Event ??
+                Snackbar.make(view, "已刪除", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+
+                updateListView();
+                expandList();
+            }
+        });
+        dialog.setNeutralButton("取消",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                // Cancel
             }
         });
         dialog.show();

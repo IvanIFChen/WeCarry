@@ -16,11 +16,12 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
-    <ListView
-        android:id="@+id/listView"
+    <ExpandableListView
+        android:id="@+id/expandableListView"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        />
+        android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="0.5dp" />
 
 </RelativeLayout>

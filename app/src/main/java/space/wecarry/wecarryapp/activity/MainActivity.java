@@ -126,12 +126,12 @@ public class MainActivity extends AppCompatActivity
                 fragment = new StatsFragment();
                 fragmentManager.beginTransaction().replace(R.id.mainContainer, fragment).commit();
                 break;
-//            case R.id.nav_setting:
-//                Log.d("Clicked", "setting");
-//                // update the main content by replacing fragments
-////                fragment = new SettingFragment();   // TODO: incompatible type?
-//                fragmentManager.beginTransaction().replace(R.id.mainContainer, fragment).commit();
-//                break;
+            case R.id.nav_setting:
+                Log.d("Clicked", "setting");
+                // update the main content by replacing fragments
+                fragment = new SettingFragment();
+                fragmentManager.beginTransaction().replace(R.id.mainContainer, fragment).commit();
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
