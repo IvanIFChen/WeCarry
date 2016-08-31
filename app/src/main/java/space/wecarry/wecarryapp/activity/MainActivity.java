@@ -2,12 +2,8 @@ package space.wecarry.wecarryapp.activity;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -22,13 +18,13 @@ import space.wecarry.wecarryapp.fragment.CalendarFragment;
 import space.wecarry.wecarryapp.fragment.DelegateFragment;
 import space.wecarry.wecarryapp.fragment.PlanFragment;
 import space.wecarry.wecarryapp.fragment.RoleGoalFragment;
+import space.wecarry.wecarryapp.fragment.SettingFragment;
 import space.wecarry.wecarryapp.fragment.StatsFragment;
 import space.wecarry.wecarryapp.sqlite.DBHelper;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawerLayout;
-    private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +124,12 @@ public class MainActivity extends AppCompatActivity
                 Log.d("Clicked", "stats");
                 // update the main content by replacing fragments
                 fragment = new StatsFragment();
+                fragmentManager.beginTransaction().replace(R.id.mainContainer, fragment).commit();
+                break;
+            case R.id.nav_setting:
+                Log.d("Clicked", "setting");
+                // update the main content by replacing fragments
+                fragment = new SettingFragment();   // TODO: incompatible type?
                 fragmentManager.beginTransaction().replace(R.id.mainContainer, fragment).commit();
                 break;
         }
