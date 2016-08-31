@@ -34,6 +34,8 @@
     <string name="action_show_month">過去30天</string>
     <string name="action_toggle_demo">顯示範例</string>
     <string name="scheduling">排程</string>
+    <string name="action_expand_all">全部拉開</string>
+    <string name="action_collapse_all">全部收起</string>
 
     <!--Default delegate activtiy fields-->
     <string name="task_teach_string">教</string>

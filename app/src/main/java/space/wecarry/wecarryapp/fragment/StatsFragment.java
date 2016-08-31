@@ -100,6 +100,7 @@ public class StatsFragment extends Fragment {
 
         return rootView;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Fragment frg;

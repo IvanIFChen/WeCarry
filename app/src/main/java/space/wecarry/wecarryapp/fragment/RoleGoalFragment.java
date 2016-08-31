@@ -12,6 +12,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -65,6 +68,8 @@ public class RoleGoalFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_role_goal, container, false);
         getActivity().setTitle(getString(R.string.navigation_drawer_role_goal));
         expandableListView = (ExpandableListView) rootView.findViewById(R.id.expandableListView);
+
+        setHasOptionsMenu(true);
 
         // set empty view
         View emptyView = rootView.findViewById(R.id.view_empty);
@@ -151,6 +156,27 @@ public class RoleGoalFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        menu.clear();
+        inflater.inflate(R.menu.menu_expandable_listview,menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_expand_all :
+                expandList();
+                break;
+            case R.id.action_collapse_all :
+                collapseList();
+                break;
+
+        }
+        return true;
+    }
+
     private void startEditRoleActivity(int rolePosition) {
         Intent intent = new Intent();
         intent.setClass(getActivity(), RoleGoalActivity.class);
@@ -174,8 +200,15 @@ public class RoleGoalFragment extends Fragment {
     private void expandList() {
         // Expand all groups.
         int count = expandableListAdapter.getGroupCount();
-        for (int position = 1; position <= count; position++)
-            expandableListView.expandGroup(position - 1);
+        for (int position = 0; position < count; position++)
+            expandableListView.expandGroup(position);
+    }
+
+    private void collapseList() {
+        // Expand all groups.
+        int count = expandableListAdapter.getGroupCount();
+        for (int position = 0; position < count; position++)
+            expandableListView.collapseGroup(position);
     }
 
     private void getRoleGoalData() {
