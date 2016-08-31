@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +48,7 @@ public class RoleGoalFragment extends Fragment {
     List<String> expandableListTitle;
     HashMap<String, List<String>> expandableListDetail;
 
-    private ArrayList<RoleItem> roleList;
+    private ArrayList roleList;
     private DBHelper dbHelper = null;
     private SQLiteDatabase db = null;
     private Cursor cursorRole= null ,cursorGoal = null;
@@ -91,7 +90,7 @@ public class RoleGoalFragment extends Fragment {
                 intent.setClass(getActivity(), RoleGoalActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putInt("roleUserSelected", groupPosition);
-                bundle.putSerializable("roleItem", roleList.get(groupPosition));
+                bundle.putSerializable("roleItem", ((RoleItem) roleList.get(groupPosition)));
                 intent.putExtras(bundle);
                 startActivityForResult(intent, 0);
                 return false;
@@ -112,7 +111,7 @@ public class RoleGoalFragment extends Fragment {
 //            }
 //        });
         // Long Click-------------------------------------------------------------------------------
-        expandableListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+         expandableListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 RoleItem roleItem = (RoleItem) roleList.get(position);
@@ -144,7 +143,6 @@ public class RoleGoalFragment extends Fragment {
 
         expandableListDetail = ListDataConverter.convertRoleListData(roleList);
         expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
-
         expandableListAdapter = new CustomExpandableListAdapter(getActivity(), expandableListTitle, expandableListDetail);
         expandableListView.setAdapter(expandableListAdapter);
     }

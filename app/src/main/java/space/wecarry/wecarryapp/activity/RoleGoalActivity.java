@@ -1,10 +1,13 @@
 package space.wecarry.wecarryapp.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -16,7 +19,10 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -36,6 +42,7 @@ import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_ROLE_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_TITLE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.GOAL_URGENCY;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.RESOURCE_GOAL_ID;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.RESOURCE_ROLE_ID;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_DEADLINE;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_DURATION;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.ROLE_TITLE;
@@ -44,11 +51,13 @@ import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_RESOURCE_LI
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_ROLE_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TABLE_NAME_TASK_LIST;
 import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_GOAL_ID;
+import static space.wecarry.wecarryapp.sqlite.DBConstants.TASK_ROLE_ID;
 
 public class RoleGoalActivity extends AppCompatActivity {
     private EditText editRole, editGoal, editDeadline;
     private Switch switchImportance, switchUrgency;
     private Button btnConfirm, btnCancel, btnNewList, btnDelete;
+    private TextView textViewGoalHint;
     private LinearLayout ll_in_sv;
     private ArrayList<HashMap> objectList;
     private View buttonView;
@@ -133,6 +142,10 @@ public class RoleGoalActivity extends AppCompatActivity {
             btnDelete = (Button)ll.findViewById(R.id.btn_del);
             btnDelete.setOnClickListener(deleteClickHandler);//設定監聽method
             btnDelete.setId(listViewId);//將按鈕帶入id 以供監聽時辨識使用
+
+            textViewGoalHint = (TextView) ll.findViewById(R.id.textGoalHint);
+            textViewGoalHint.setOnClickListener(textGoalHint);
+            textViewGoalHint.setId(listViewId);
             listViewId++;
             //將所有的元件放入map並存入list中
             editMap.put("GOAL", editGoal);
@@ -234,6 +247,28 @@ public class RoleGoalActivity extends AppCompatActivity {
             // Get the deadline(Long)
             Long deadline = mRole.getGoalList().get(v.getId()).getDeadline();
             showDatePickerDialog(deadline, (EditText) v, v.getId());
+        }
+    };
+
+    // GoalHint
+    private View.OnClickListener textGoalHint = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(RoleGoalActivity.this);
+            dialog.setTitle("訂目標的「SMART」原則");
+            dialog.setMessage(
+                    "Specific – target a specific area for improvement.\n" +
+                    "Measurable – quantify or at least suggest an indicator of progress.\n" +
+                    "Assignable – specify who will do it.\n" +
+                    "Realistic – state what results can realistically be achieved, given available resources.\n" +
+                    "Time-related – specify when the result(s) can be achieved.\n");
+            dialog.setNeutralButton("關閉",new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface arg0, int arg1) {
+                    // Cancel
+                }
+            });
+            dialog.show();
         }
     };
 

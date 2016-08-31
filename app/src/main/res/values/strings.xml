@@ -51,5 +51,6 @@
     <string name="pick_a_time">Pick a time</string>
     <string name="confirm">Confirm</string>
     <string name="go_back">Go back</string>
+    <string name="hint">(hint)</string>
 
 </resources>
